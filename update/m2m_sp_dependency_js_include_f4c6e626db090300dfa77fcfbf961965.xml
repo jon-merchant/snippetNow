@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="m2m_sp_dependency_js_include">
+    <m2m_sp_dependency_js_include action="INSERT_OR_UPDATE">
+        <order>100</order>
+        <sp_dependency display_value="aceEditor">10a62ee2db090300dfa77fcfbf96197a</sp_dependency>
+        <sp_js_include display_value="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js">a6b66a66db090300dfa77fcfbf961945</sp_js_include>
+        <sys_class_name>m2m_sp_dependency_js_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-09-10 01:50:03</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>f4c6e626db090300dfa77fcfbf961965</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>aceEditor.https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js</sys_name>
+        <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
+        <sys_update_name>m2m_sp_dependency_js_include_f4c6e626db090300dfa77fcfbf961965</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-09-10 01:50:03</sys_updated_on>
+    </m2m_sp_dependency_js_include>
+</record_update>

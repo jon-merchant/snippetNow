@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <client_script><![CDATA[function($scope,spUtil) {
+	/* widget controller */
+	var c = this;
+	$scope.snippet = {};
+	
+	
+	var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/sqlserver");
+    editor.getSession().setMode("ace/mode/javascript");
+	editor.getSession().setUseWrapMode(true);
+	editor.setOptions({
+		maxLines: Infinity
+	});
+	
+	if (c.data.snippet) {
+		$scope.snippet = c.data.snippet
+		editor.setValue(c.data.snippet.editor);
+		editor.clearSelection();
+	}
+	$scope.snippetType = {
+		displayValue: c.data.snippet.type.display_value,
+		value: c.data.snippet.type.value,
+		name: 'snippetType'
+	};
+	$scope.snippetApp = {
+		displayValue: c.data.snippet.application.display_value,
+		value: c.data.snippet.application.value,
+		name: 'snippetApp'
+	};
+	
+	$scope.$on("field.change", function(evt, parms) {
+		/*if (parms.field.name == 'snippetType') {
+			c.data.setSnippetType = parms.newValue;
+		}*/
+		
+		
+		/*c.server.update().then(function(response) {
+			spUtil.update($scope);
+		});*/
+	});
+	
+	$scope.submit = function() {
+		$scope.snippet.editor = editor.getValue();
+		$scope.snippet.type = $scope.snippetType;
+		$scope.snippet.app = $scope.snippetApp;
+		console.log($scope.snippet);
+		c.data.snippet = $scope.snippet;
+		c.server.update().then(function(response) {
+			//spUtil.update($scope);
+			console.log(c.data.recordAction);
+		})
+	};
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>#editor {&#13;
+  min-height: 400px;&#13;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>snippetnow-form</id>
+        <internal>false</internal>
+        <link/>
+        <name>SnippetNow Form</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+	
+	if (input && input.snippet) {
+		var done = actionSnippet(input.snippet);
+		if (done) {
+			data.recordAction = true;
+		} else {
+			data.recordAction = false;
+		}
+	}
+	
+	data.snippetType = {};
+	data.snippetType.name = 'Please Select';
+	data.snippetType.value = '';
+	data.snippetApp = {};
+	data.snippetApp.name = 'Please Select';
+	data.snippetApp.value = '';
+	
+	var record = {};
+	record.sys_id = $sp.getParameter('sys_id');
+	if (record.sys_id) {
+		data.snippet = getSnippetRecord(record.sys_id);	
+	}
+	
+	function getSnippetRecord(sys_id) {
+		/*******************
+		* Get Snippet Record
+		*
+		*******************/
+		var record = {};
+		var rec = new GlideRecord('x_92893_snippetnow_table');
+		rec.addEncodedQuery('sys_id='+sys_id);
+		rec.query();
+		while(rec.next()) {
+			record.application = {};
+			record.application.value = rec.application.toString();
+			record.application.display_value = rec.getDisplayValue('application');
+			record.type = {};
+			record.type.value = rec.type.toString();
+			record.type.display_value = rec.getDisplayValue('type');
+			record.title = rec.getDisplayValue('title');
+			record.description = rec.getDisplayValue('description');
+			record.editor = rec.getValue('snippet');
+			record.sys_id = rec.getUniqueValue();
+			return record
+			
+		}
+	}
+	
+	function actionSnippet(snippet) {
+		/*******************
+		* Create Snippet Record
+		*
+		*******************/
+		var rec = new GlideRecord('x_92893_snippetnow_table');
+		rec.initialize();
+		
+		if (snippet && snippet.sys_id) {
+			//tis update
+			rec.addQuery('sys_id',snippet.sys_id);
+			rec.query();
+			while(rec.next()) {
+				rec.title = snippet.title;
+				rec.description = snippet.description;
+				rec.snippet = snippet.editor;
+				rec.type = snippet.type.sys_id;
+				var action = rec.update();
+			}
+		} else {
+			//tis insert
+			rec.title = snippet.title;
+			rec.description = snippet.description;
+			rec.snippet = snippet.editor;
+			rec.type = snippet.type.value;
+			var action = rec.insert();
+		}
+		if (action) {
+			return true
+		}
+		return false;
+		
+	}
+	
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-09-08 15:52:45</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
+        <sys_mod_count>71</sys_mod_count>
+        <sys_name>SnippetNow Form</sys_name>
+        <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
+        <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-09-10 04:50:19</sys_updated_on>
+        <template><![CDATA[<div>
+<!-- your widget template -->
+  <div class="panel panel-primary">
+    <div class="panel-heading">New Snippet</div>
+    <div class="panel-body">
+      <form>
+        <div class="form-group">
+          <label for="snippetTitle">Title</label>
+          <input type="text" ng-model="snippet.title" class="form-control" id="snippetTitle" placeholder="Snippet Title">
+          <input type="hidden" ng-model="snippet.sys_id">
+        </div>  
+		<div class="form-group">
+          <label for="snippetDescription">Description</label>
+          <textarea class="form-control" ng-model="snippet.description"></textarea>
+        </div>
+        <!-- Need some types, and stuff here -->
+        <div class="form-group">
+          <label for="snippetApp">Snippet Application</label>
+          <div >
+            <sn-record-picker default-query="'active=true'" field="snippetApp" table="'x_92893_snippetnow_snippetnow_applications'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="snippetType">Snippet Type</label>
+          <div >
+            <sn-record-picker default-query="'active=true'" field="snippetType" table="'x_92893_snippetnow_snippet_type'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
+          </div>
+        </div>
+       <div class="form-group">
+          <label for="snippetHTML">Snippet</label>
+          <div id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
+       </div>
+        <div class="form-group">
+          <div class="pull-right">
+            <button type="cancel" class="btn btn-danger">Cancel</button>
+            <button ng-if="!snippet.sys_id" type="submit" class="btn btn-primary" ng-click="submit('insert')">Submit</button>
+            <button ng-if="snippet.sys_id" type="submit" class="btn btn-success" ng-click="submit('update')">Update</button>
+          </div>
+  		</div>
+      </form>
+      
+    </div>
+  </div>
+</div>]]></template>
+    </sp_widget>
+</record_update>
