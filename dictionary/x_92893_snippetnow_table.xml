@@ -2,6 +2,7 @@
 <database>
     <element label="SnippetNow Table" max_length="40" name="x_92893_snippetnow_table" type="collection">
         <element label="Application" max_length="32" name="application" reference="x_92893_snippetnow_snippetnow_applications" type="reference"/>
+        <element label="Color" max_length="40" name="color" type="color"/>
         <element label="Description" max_length="65536" name="description" type="string"/>
         <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>
         <element label="Snippet" max_length="65536" name="snippet" type="script"/>

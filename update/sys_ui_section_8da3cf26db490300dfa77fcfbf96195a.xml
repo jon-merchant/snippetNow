@@ -5,13 +5,13 @@
             <element>number</element>
             <position>0</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-10 03:56:48</sys_created_on>
-            <sys_id>e5c30366db490300dfa77fcfbf961984</sys_id>
+            <sys_created_on>2017-09-10 21:29:58</sys_created_on>
+            <sys_id>34d47efadb014300dfa77fcfbf961936</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_snippetnow_applications" sys_domain="global" view="Default view">8da3cf26db490300dfa77fcfbf96195a</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-10 03:56:48</sys_updated_on>
+            <sys_updated_on>2017-09-10 21:29:58</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -19,13 +19,13 @@
             <element>name</element>
             <position>1</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-10 03:56:48</sys_created_on>
-            <sys_id>69c30366db490300dfa77fcfbf961984</sys_id>
+            <sys_created_on>2017-09-10 21:29:58</sys_created_on>
+            <sys_id>b4d47efadb014300dfa77fcfbf961936</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_snippetnow_applications" sys_domain="global" view="Default view">8da3cf26db490300dfa77fcfbf96195a</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-10 03:56:48</sys_updated_on>
+            <sys_updated_on>2017-09-10 21:29:58</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -33,27 +33,41 @@
             <element>value</element>
             <position>2</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-10 03:56:48</sys_created_on>
-            <sys_id>e9c30366db490300dfa77fcfbf961984</sys_id>
+            <sys_created_on>2017-09-10 21:29:58</sys_created_on>
+            <sys_id>38d47efadb014300dfa77fcfbf961936</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_snippetnow_applications" sys_domain="global" view="Default view">8da3cf26db490300dfa77fcfbf96195a</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-10 03:56:48</sys_updated_on>
+            <sys_updated_on>2017-09-10 21:29:58</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>color</element>
+            <position>3</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-09-10 21:29:58</sys_created_on>
+            <sys_id>b8d47efadb014300dfa77fcfbf961936</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_snippetnow_applications" sys_domain="global" view="Default view">8da3cf26db490300dfa77fcfbf96195a</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-09-10 21:29:58</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>active</element>
-            <position>3</position>
+            <position>4</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-10 03:56:48</sys_created_on>
-            <sys_id>6dc30366db490300dfa77fcfbf961984</sys_id>
+            <sys_created_on>2017-09-10 21:29:58</sys_created_on>
+            <sys_id>3cd47efadb014300dfa77fcfbf961936</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_snippetnow_applications" sys_domain="global" view="Default view">8da3cf26db490300dfa77fcfbf96195a</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-10 03:56:48</sys_updated_on>
+            <sys_updated_on>2017-09-10 21:29:58</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
