@@ -19,10 +19,13 @@
 		c.modalInstance.close();
 	}
 	
-	spUtil.get("snippetnow-form", {}).then(function(response) {
+	spUtil.get("snippetnow-form", {formType: "modal"}).then(function(response) {
 		c.snippetNowForm = response;
-  });
-	
+	});
+	/*spUtil.get("snippetnow-form", {formType:'modal'}).then(function(response) {
+		c.snippetNowForm = response;
+	  });
+	*/
 	$scope.createNew = function() {
 		/**************
 		* Modal pop - create new
@@ -46,7 +49,7 @@
         <docs/>
         <field_list/>
         <has_preview>true</has_preview>
-        <id>snippetnow_navigator</id>
+        <id>snippetnow-navigator</id>
         <internal>false</internal>
         <link/>
         <name>SnippetNow Navigator</name>
@@ -64,6 +67,9 @@
 	data.snippet.types = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippet_type','type','x_92893_snippetnow_table');
 	
 	data.snippet.records = new SnippetNow_DAO().getSnippetRecords('x_92893_snippetnow_table');
+	
+	
+	
 })();]]></script>
         <servicenow>false</servicenow>
         <sys_class_name>sp_widget</sys_class_name>
@@ -71,7 +77,7 @@
         <sys_created_on>2017-09-10 19:28:47</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>75199676dbcd0300dfa77fcfbf961910</sys_id>
-        <sys_mod_count>59</sys_mod_count>
+        <sys_mod_count>69</sys_mod_count>
         <sys_name>SnippetNow Navigator</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -79,7 +85,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_75199676dbcd0300dfa77fcfbf961910</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-11 00:07:47</sys_updated_on>
+        <sys_updated_on>2017-09-11 03:01:37</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   
@@ -131,6 +137,10 @@
     </div>
   </div>
   
-</div>]]></template>
+</div>
+<script type="text/ng-template" id="createNew">
+	<sp-widget widget="c.snippetNowForm"></sp-widget>
+
+</script>]]></template>
     </sp_widget>
 </record_update>

@@ -5,6 +5,7 @@
 	/* widget controller */
 	var c = this;
 	$scope.snippet = {};
+	console.log($scope);
 	
 	
 	var editor = ace.edit("editor");
@@ -42,6 +43,7 @@
 			spUtil.update($scope);
 		});*/
 	});
+	
 	
 	$scope.submit = function() {
 		$scope.snippet.editor = editor.getValue();
@@ -92,11 +94,13 @@
 	data.snippetApp.name = 'Please Select';
 	data.snippetApp.value = '';
 	
+	
 	var record = {};
 	record.sys_id = $sp.getParameter('sys_id');
 	if (record.sys_id) {
 		data.snippet = getSnippetRecord(record.sys_id);	
 	} else {
+		
 		/*data.snippet = {};
 		data.snippet.application = {};
 		data.snippet.application.display_value = '';
@@ -172,7 +176,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>73</sys_mod_count>
+        <sys_mod_count>89</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -180,7 +184,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-10 23:58:53</sys_updated_on>
+        <sys_updated_on>2017-09-11 03:17:57</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <div class="panel panel-primary">
@@ -215,7 +219,7 @@
        </div>
         <div class="form-group">
           <div class="pull-right">
-            <button type="cancel" class="btn btn-danger">Cancel</button>
+            <button ng-iftype="!snippet.sys_id" class="btn btn-danger" ng-click="$parent.c.closeModal();">Cancel</button>
             <button ng-if="!snippet.sys_id" type="submit" class="btn btn-primary" ng-click="submit('insert')">Submit</button>
             <button ng-if="snippet.sys_id" type="submit" class="btn btn-success" ng-click="submit('update')">Update</button>
           </div>
