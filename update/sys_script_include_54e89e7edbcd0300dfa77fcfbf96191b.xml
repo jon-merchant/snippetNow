@@ -54,6 +54,43 @@ SnippetNow_DAO.prototype = {
 		return c;
 	},
 	
+	getSnippetRecords: function(tableName,encodedQuery,startIndex,limit,orderBy,ascendingOrder) {
+		var glideRecord = new GlideRecordSecure(tableName);
+		if (encodedQuery) {
+			glideRecord.addEncodedQuery(encodedQuery);
+		}
+		if (orderBy) {
+            if (ascendingOrder) {
+                glideRecord.orderBy(orderBy);
+            } else {
+                glideRecord.orderByDesc(orderBy);
+            }
+        } else {
+            glideRecord.orderByDesc('sys_updated_on');
+        }
+		if (startIndex && startIndex >= 0 && numberOfRecords > 0) {
+            glideRecord.chooseWindow(startIndex, startIndex + numberOfRecords);
+        }
+		glideRecord.query();
+		var records = [];
+		while(glideRecord.next()){
+			var app = {};
+			app.display_value = glideRecord.getDisplayValue('application');
+			app.sys_id = glideRecord.application.toString();
+			var type = {};
+			type.display_value = glideRecord.getDisplayValue('type');
+			type.sys_id = glideRecord.type.toString();
+			records.push({
+				sys_id:glideRecord.sys_id.toString(),
+				title:glideRecord.getValue('title'),
+				description:glideRecord.getValue('description'),
+				application:app,
+				type:type
+			});
+		}
+		return records;
+	},
+	
     type: 'SnippetNow_DAO'
 };]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
@@ -61,7 +98,7 @@ SnippetNow_DAO.prototype = {
         <sys_created_on>2017-09-10 19:28:15</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>54e89e7edbcd0300dfa77fcfbf96191b</sys_id>
-        <sys_mod_count>18</sys_mod_count>
+        <sys_mod_count>27</sys_mod_count>
         <sys_name>SnippetNow_DAO</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy>read</sys_policy>
@@ -69,6 +106,6 @@ SnippetNow_DAO.prototype = {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_script_include_54e89e7edbcd0300dfa77fcfbf96191b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-10 22:07:30</sys_updated_on>
+        <sys_updated_on>2017-09-10 23:26:13</sys_updated_on>
     </sys_script_include>
 </record_update>
