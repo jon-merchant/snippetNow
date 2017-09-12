@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
-        <client_script><![CDATA[function($scope,spUtil) {
+        <client_script><![CDATA[function($scope,spUtil,$timeout,$rootScope) {
 	/* widget controller */
 	var c = this;
 	$scope.snippet = {};
-	console.log($scope);
 	
+	$scope.snippetType = {};
+	$scope.snippetApp = {};
 	
 	var editor = ace.edit("editor");
     editor.setTheme("ace/theme/sqlserver");
     editor.getSession().setMode("ace/mode/javascript");
 	editor.getSession().setUseWrapMode(true);
 	editor.setOptions({
-		maxLines: Infinity
+		maxLines: 200
 	});
 	
 	if (c.data.snippet) {
@@ -32,6 +33,30 @@
 			name: 'snippetApp'
 		};
 	}
+	
+	console.log("Listening");
+	$scope.$on("selectedSnippet",function(event,data) {
+		$timeout(function() {
+			console.log("BOOO",data);
+			if (data) {
+				$scope.snippet = data;
+				
+				editor.setValue($scope.snippet.snippet);
+				editor.clearSelection();
+
+				$scope.snippetType = {
+					displayValue: $scope.snippet.type.display_value,
+					value: $scope.snippet.type.sys_id,
+					name: 'snippetType'
+				};
+				$scope.snippetApp = {
+					displayValue: $scope.snippet.application.display_value,
+					value: $scope.snippet.application.sys_id,
+					name: 'snippetApp'
+				};
+			}
+		},500)
+	})
 	
 	$scope.$on("field.change", function(evt, parms) {
 		/*if (parms.field.name == 'snippetType') {
@@ -56,10 +81,11 @@
 			console.log(c.data.recordAction);
 		})
 	};
+	console.log("Form",$scope);
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css>#editor {&#13;
-  min-height: 400px;&#13;
+        <css>#editor {
+  min-height: 400px;
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -176,7 +202,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>89</sys_mod_count>
+        <sys_mod_count>124</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -184,19 +210,24 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-11 03:17:57</sys_updated_on>
+        <sys_updated_on>2017-09-12 22:48:32</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
-  <div class="panel panel-primary">
-    <div class="panel-heading">New Snippet</div>
-    <div class="panel-body">
+  <!--<div class="panel panel-primary">-->
+    <!--<div class="panel-heading">New Snippet</div>-->
+    <!--<div class="panel-body">-->
+  	
+      <h3>
+        Snippet
+      </h3>
+    
       <form>
         <div class="form-group">
           <label for="snippetTitle">Title</label>
           <input type="text" ng-model="snippet.title" class="form-control" id="snippetTitle" placeholder="Snippet Title">
           <input type="hidden" ng-model="snippet.sys_id">
         </div>  
-		<div class="form-group">
+				<div class="form-group">
           <label for="snippetDescription">Description</label>
           <textarea class="form-control" ng-model="snippet.description"></textarea>
         </div>
@@ -226,8 +257,8 @@
   		</div>
       </form>
       
-    </div>
-  </div>
+    <!--</div>-->
+  <!--</div>-->
 </div>]]></template>
     </sp_widget>
 </record_update>
