@@ -27,7 +27,8 @@
 		},200);
 	})
 	
-	c.openModal = function(tpl) {
+	c.openModal = function(tpl,modalData) {
+		$scope.modalData = modalData;
 		c.modalInstance = $uibModal.open({
 			templateUrl: tpl,
 			scope: $scope
@@ -58,9 +59,18 @@
 	$scope.addType = function() {
 		c.openModal('addType');
 	}
-	$scope.editApplication = function(app,index) {
-		console.log(app,index);
+	$scope.editThis = function(record,kind) {
+		console.log(record,kind);
+		var modalData = {};
+		if (kind == 'app') {
+			modalData.title = "Edit Application "+record.label;	
+		} else {
+			modalData.title = "Edit Type "+record.label;
+		}
+		modalData.record = record;
+		c.openModal('editThis',modalData);
 	}
+	
 	$scope.onlyThisKind = function(kind,record) {
 		console.log(kind,record);
 		$scope.appName = record.label;
@@ -131,7 +141,7 @@
         <sys_created_on>2017-09-10 19:28:47</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>75199676dbcd0300dfa77fcfbf961910</sys_id>
-        <sys_mod_count>119</sys_mod_count>
+        <sys_mod_count>134</sys_mod_count>
         <sys_name>SnippetNow Navigator</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -139,7 +149,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_75199676dbcd0300dfa77fcfbf961910</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-12 23:30:06</sys_updated_on>
+        <sys_updated_on>2017-09-13 02:15:50</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   
@@ -168,17 +178,17 @@
           APPLICATIONS <i class="fa fa-plus-circle pull-right" aria-hidden="true" ng-click="addApplication()"></i>
         </h4>
         <div class="list-group">
-          <div class="list-group-item clearfix" ng-class="{active:activeFilter === app.label}" ng-model="appName" ng-repeat="app in snippet.applications" ng-click="onlyThisKind('app',app)">  <i class="fa fa-circle" style="color:{{app.color}}"></i> {{app.label}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="editApplication(app,$index); $event.stopPropagation();"></i> <span class="badge pull-right">{{app.count}}</span></div>
+          <div class="list-group-item clearfix" ng-class="{active:activeFilter === app.label}" ng-model="appName" ng-repeat="app in snippet.applications" ng-click="onlyThisKind('app',app)">  <i class="fa fa-circle" style="color:{{app.color}}"></i> {{app.label}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="editThis(app,'app'); $event.stopPropagation();"></i> <span class="badge pull-right">{{app.count}}</span></div>
         </div>
         <h4>TYPES <i class="fa fa-plus-circle pull-right" aria-hidden="true" ng-click="addType()"></i></h4>
         <div class="list-group">
-          <div class="list-group-item clearfix" ng-repeat="type in snippet.types"><i class="fa fa-circle" style="color:{{type.color}}"></i> {{type.label}} <label class="badge pull-right">{{type.count}}</label></div>
+          <div class="list-group-item clearfix" ng-class="{active:activeFilter === type.label}" ng-model="typeName" ng-repeat="type in snippet.types" ng-click="onlyThisKind('type',type)"><i class="fa fa-circle" style="color:{{type.color}}"></i> {{type.label}} <i ng-id="$index-type-edit" class="fa fa-pencil" ng-click="editThis(type,'type'); $event.stopPropagation();"></i> <label class="badge pull-right">{{type.count}}</label></div>
         </div>
         
       </div>
       <div class="col-md-6 col-sm-6 col-xs-6">
       	<div class="list-group">
-          <div ng-repeat="record in snippet.records | filter:appName" class="list-group-item" ng-click="selectSnippet(record)">
+          <div ng-repeat="record in snippet.records | filter:appName | filter:typeName" class="list-group-item" ng-click="selectSnippet(record)">
             <div>
               {{record.title}}
             </div>
@@ -212,6 +222,25 @@
 	<div class="panel panel-primary">
   	<div class="panel-heading">New Type</div>
     <div class="panel-body">
+    
+    </div>
+  </div>
+</script>
+<script type="text/ng-template" id="editThis">
+	<div class="panel panel-primary">
+  	<div class="panel-heading">{{modalData.title}}</div>
+    <div class="panel-body">
+    	<form>
+      	<div class="form-group">
+        	<label for="editTitle">Title</label>
+          <input type="text" ng-model="modalData.record.label" class="form-control"/> 
+        </div>
+        <label for="editColor">Color</label>
+        <div class="input-group">
+          <input colorpicker ng-model="modalData.record.color" class="form-control"/>
+          <span class="input-group-addon" id="basic-addon2"><i class="fa fa-square" aria-hidden="true" style="color:{{modalData.record.color}}"></i></span>
+        </div>
+      </form>
     
     </div>
   </div>
