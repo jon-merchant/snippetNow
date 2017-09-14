@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
-        <client_script><![CDATA[function($scope,spUtil,$timeout,$rootScope) {
+        <client_script><![CDATA[function($scope,spUtil,$timeout,$rootScope,$http,$uibModal) {
 	/* widget controller */
 	var c = this;
 	$scope.snippet = {};
@@ -12,10 +12,11 @@
 	var editor = ace.edit("editor");
     editor.setTheme("ace/theme/sqlserver");
     editor.getSession().setMode("ace/mode/javascript");
-	editor.getSession().setUseWrapMode(true);
-	editor.setOptions({
-		maxLines: 200
-	});
+		editor.getSession().setUseWrapMode(true);
+		
+		editor.setOptions({
+			maxLines: 200
+		});
 	
 	if (c.data.snippet) {
 		$scope.snippet = c.data.snippet;
@@ -32,6 +33,17 @@
 			value: c.data.snippet.application.value,
 			name: 'snippetApp'
 		};
+	}
+	
+	c.openModal = function(tpl) {
+		c.modalInstance = $uibModal.open({
+			templateUrl: tpl,
+			scope: $scope
+		});
+	}
+ 
+	c.closeModal = function() {
+		c.modalInstance.close();
 	}
 	
 	console.log("Listening");
@@ -73,16 +85,33 @@
 	
 	
 	
-	$scope.submit = function() {
-		$scope.snippet.editor = editor.getValue();
-		$scope.snippet.type = $scope.snippetType;
-		$scope.snippet.app = $scope.snippetApp;
-		console.log($scope.snippet);
+	$scope.submit = function(type) {
+		
 		c.data.snippet = $scope.snippet;
 		c.server.update().then(function(response) {
 			//spUtil.update($scope);
-			location.reload();
+			console.log(response);
+			if (response.recordAction && type == 'update') {
+				c.openModal('updatedSnippet');
+				$timeout(function() {
+					c.closeModal();
+				},1000)
+			}
 		})
+		
+		
+	};
+	
+
+	String.prototype.escapeSpecialChars = function() {
+    return this.replace(/(?:\r\n|\r|\n)/g, "<br>")
+               /*.replace(/\\'/g, "\\'")
+               .replace(/\\"/g, '\\"')
+               .replace(/\&/g, "\\&")
+               .replace(/\r/g, "\\r")
+               .replace(/\t/g, "\\t")
+               .replace(/\b/g, "\\b")
+               .replace(/\f/g, "\\f");*/
 	};
 	console.log("Form",$scope);
 }]]></client_script>
@@ -190,8 +219,8 @@
 			rec.title = snippet.title;
 			rec.description = snippet.description;
 			rec.snippet = snippet.editor;
-			rec.type = snippet.type.value;
-			rec.aplication = snippet.application.value;
+			rec.type = snippet.type.sys_id;
+			rec.aplication = snippet.application.sys_id;
 			action = rec.insert();
 		}
 		if (action) {
@@ -208,7 +237,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>137</sys_mod_count>
+        <sys_mod_count>185</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -216,7 +245,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-13 23:21:07</sys_updated_on>
+        <sys_updated_on>2017-09-14 23:31:03</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -251,6 +280,11 @@
           </div>
         </div>
        <div class="form-group">
+         <tags-input ng-model="snippet.tags" add-on-paste="true">
+          <auto-complete source="loadTags($query)"></auto-complete>
+        </tags-input>
+        </div>
+       <div class="form-group">
           <label for="snippetHTML">Snippet</label>
           <div id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
        </div>
@@ -265,6 +299,14 @@
       
     <!--</div>-->
   <!--</div>-->
-</div>]]></template>
+</div>
+<script type="text/ng-template" id="updatedSnippet">
+	<div ng-show="c.data.recordAction" class="alert alert-success" style="margin-bottom:0px">
+    <strong>Success!</strong> Snippet has been updated!.
+  </div>
+  <div ng-show="c.data.recordAction == false" class="alert alert-danger">
+    <strong>Error!</strong> Snippet did not save, please try again.
+  </div>
+</script>]]></template>
     </sp_widget>
 </record_update>
