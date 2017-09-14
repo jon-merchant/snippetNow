@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update table="sys_script_include">
     <sys_script_include action="INSERT_OR_UPDATE">
-        <access>package_private</access>
+        <access>public</access>
         <active>true</active>
         <api_name>x_92893_snippetnow.SnippetNow_DAO</api_name>
-        <client_callable>false</client_callable>
+        <client_callable>true</client_callable>
         <description/>
         <name>SnippetNow_DAO</name>
         <script><![CDATA[var SnippetNow_DAO = Class.create();
@@ -25,13 +25,36 @@ SnippetNow_DAO.prototype = {
 			gs.info("DAO "+eq);
 			record.push({
 				sys_id: gr.sys_id.toString(),
-				label: gr.getValue('name'),
+				name: gr.getValue('name'),
 				color: gr.getValue('color'),
-				count: this.getCount(recordTable,eq)
+				count: this.getCount(recordTable,eq),
+				value: gr.getValue('value')
 			});
 		}
 		return record;
 		
+	},
+	saveAppTypes: function(record,type) {
+		/******************
+		* Add new Applications or Types
+		* return true/false
+		******************/
+		gs.info("SnippetNow called saveAppTypes");
+		var table;
+		if (type == 'app') {
+			table = 'x_92893_snippetnow_snippetnow_applications';
+		} else {
+			table = 'x_92893_snippetnow_snippet_type';
+		}
+		gs.info("SnippetNow "+JSON.stringify(record));
+		var ir = new GlideRecord(table);
+		ir.initialize();
+		ir.active = true;
+		ir.name = record[0].name;
+		ir.value = record[0].value;
+		ir.color = record[0].color;
+		var inserted = ir.insert();
+		return inserted;
 	},
 	getCount: function(tableName, encodedQuery) {
 		/******************
@@ -86,6 +109,7 @@ SnippetNow_DAO.prototype = {
 				description:glideRecord.getValue('description'),
 				application:app,
 				type:type,
+				color:glideRecord.getValue('color'),
 				snippet:glideRecord.getValue('snippet')
 			});
 		}
@@ -99,7 +123,7 @@ SnippetNow_DAO.prototype = {
         <sys_created_on>2017-09-10 19:28:15</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>54e89e7edbcd0300dfa77fcfbf96191b</sys_id>
-        <sys_mod_count>28</sys_mod_count>
+        <sys_mod_count>41</sys_mod_count>
         <sys_name>SnippetNow_DAO</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy>read</sys_policy>
@@ -107,6 +131,6 @@ SnippetNow_DAO.prototype = {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_script_include_54e89e7edbcd0300dfa77fcfbf96191b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-11 16:05:50</sys_updated_on>
+        <sys_updated_on>2017-09-14 03:37:29</sys_updated_on>
     </sys_script_include>
 </record_update>
