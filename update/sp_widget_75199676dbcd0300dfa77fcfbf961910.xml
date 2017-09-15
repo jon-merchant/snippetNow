@@ -221,7 +221,7 @@
         <sys_created_on>2017-09-10 19:28:47</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>75199676dbcd0300dfa77fcfbf961910</sys_id>
-        <sys_mod_count>193</sys_mod_count>
+        <sys_mod_count>194</sys_mod_count>
         <sys_name>SnippetNow Navigator</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -229,7 +229,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_75199676dbcd0300dfa77fcfbf961910</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-14 19:55:51</sys_updated_on>
+        <sys_updated_on>2017-09-15 20:53:52</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   
@@ -268,7 +268,7 @@
       </div>
       <div class="col-md-6 col-sm-6 col-xs-6">
       	<div class="list-group snippet-listings">
-          <div ng-repeat="record in snippet.records | filter:appName | filter:typeName" class="list-group-item" ng-click="selectSnippet(record)" ng-class="{active:activeRecord === record.sys_id}">
+          <div ng-repeat="record in snippet.records track by record.sys_id | filter:appName | filter:typeName" class="list-group-item" ng-click="selectSnippet(record)" ng-class="{active:activeRecord === record.sys_id}">
             <div class="snippetRecord">
               <div class="snippetNav-title">
                 {{record.title}}

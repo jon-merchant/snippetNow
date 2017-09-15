@@ -6,6 +6,7 @@
 	var c = this;
 	$scope.snippet = {};
 	
+	
 	$scope.snippetType = {};
 	$scope.snippetApp = {};
 	
@@ -15,7 +16,7 @@
 		editor.getSession().setUseWrapMode(true);
 		
 		editor.setOptions({
-			maxLines: 200
+			
 		});
 	
 	if (c.data.snippet) {
@@ -46,11 +47,18 @@
 		c.modalInstance.close();
 	}
 	
+	$scope.showComments = function(val) {
+		console.log("comments",val);
+		//if yes, show the add comments and previous comments
+	}
+	
 	console.log("Listening");
 	$scope.$on("selectedSnippet",function(event,data) {
 		$timeout(function() {
 			console.log("BOOO",data);
 			if (data) {
+				$scope.comments = {};
+				$scope.comments.show = false;
 				$scope.snippet = data;
 				
 				editor.setValue($scope.snippet.snippet);
@@ -82,6 +90,11 @@
 			spUtil.update($scope);
 		});*/
 	});
+	
+	$scope.loadTags = function(query) {
+		
+		return c.data.tagList;
+	}
 	
 	
 	
@@ -116,8 +129,12 @@
 	console.log("Form",$scope);
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css>#editor {
-  min-height: 400px;
+        <css>#editor {&#13;
+  height: 100%&#13;
+}&#13;
+.editor-group {&#13;
+  height: 400px;&#13;
+  margin-bottom: 40px;&#13;
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -167,6 +184,8 @@
 		data.snippet.type.display_value = '';
 		data.snippet.type.value = '';*/
 	}
+	
+	data.tagList = new SnippetNow_DAO().getTagList();
 	
 	function getSnippetRecord(sys_id) {
 		/*******************
@@ -237,7 +256,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>185</sys_mod_count>
+        <sys_mod_count>204</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -245,7 +264,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-14 23:31:03</sys_updated_on>
+        <sys_updated_on>2017-09-15 22:09:47</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -284,8 +303,9 @@
           <auto-complete source="loadTags($query)"></auto-complete>
         </tags-input>
         </div>
-       <div class="form-group">
-          <label for="snippetHTML">Snippet</label>
+       <div class="form-group editor-group">
+         <label for="snippetHTML">Snippet </label>
+         <div class="small pull-right">Show comments <input type="checkbox" ng-model="comments.show" ng-change="showComments(comments.show)" ng-true-value="true" ng-false-value="false"/></div>
           <div id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
        </div>
         <div class="form-group">

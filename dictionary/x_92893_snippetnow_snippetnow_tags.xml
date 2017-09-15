@@ -2,6 +2,6 @@
 <database>
     <element label="SnippetNow Tags" max_length="40" name="x_92893_snippetnow_snippetnow_tags" type="collection">
         <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>
-        <element label="Tag" max_length="40" name="tag" type="string"/>
+        <element display="true" label="Tag" max_length="40" name="tag" type="string"/>
     </element>
 </database>

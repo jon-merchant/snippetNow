@@ -77,6 +77,32 @@ SnippetNow_DAO.prototype = {
 		return c;
 	},
 	
+	getTagList: function() {
+		var gt = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
+		gt.query();
+		var tags = [];
+		while(gt.next()) {
+			tags.push({"text":gt.getDisplayValue('tag')});
+		}
+		return tags;
+	},
+	
+	getTags: function(list) {
+		var sList = list.split(",");
+		var nList = [];
+		var count = sList.length;
+		for(var i=0;i<count;i++) {
+			var gt = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
+			gt.addEncodedQuery("sys_id="+sList[i]);
+			gt.query();
+			while(gt.next()) {
+				nList.push({"text":gt.getDisplayValue('tag')});
+			}
+		}
+		return nList;
+		
+	},
+	
 	getSnippetRecords: function(tableName,encodedQuery,startIndex,limit,orderBy,ascendingOrder) {
 		var glideRecord = new GlideRecordSecure(tableName);
 		if (encodedQuery) {
@@ -98,11 +124,19 @@ SnippetNow_DAO.prototype = {
 		var records = [];
 		while(glideRecord.next()){
 			var app = {};
-				app.display_value = glideRecord.getDisplayValue('application');
-				app.sys_id = glideRecord.application.toString();
-				var type = {};
-					type.display_value = glideRecord.getDisplayValue('type');
-					type.sys_id = glideRecord.type.toString();
+			app.display_value = glideRecord.getDisplayValue('application');
+			app.sys_id = glideRecord.application.toString();
+			var type = {};
+			type.display_value = glideRecord.getDisplayValue('type');
+			type.sys_id = glideRecord.type.toString();
+					
+			var t = glideRecord.getValue('tags');
+			if (t) {
+				t = this.getTags(t);
+			} else {
+				t = '';
+			}
+			gs.info("SnippetNOW tags "+t);
 					records.push({
 						sys_id:glideRecord.sys_id.toString(),
 						title:glideRecord.getValue('title'),
@@ -110,7 +144,8 @@ SnippetNow_DAO.prototype = {
 						application:app,
 						type:type,
 						color:glideRecord.getValue('color'),
-						snippet:glideRecord.getValue('snippet')
+						snippet:glideRecord.getValue('snippet'),
+						tags:t
 					});
 				}
 				return records;
@@ -143,7 +178,7 @@ SnippetNow_DAO.prototype = {
         <sys_created_on>2017-09-10 19:28:15</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>54e89e7edbcd0300dfa77fcfbf96191b</sys_id>
-        <sys_mod_count>43</sys_mod_count>
+        <sys_mod_count>51</sys_mod_count>
         <sys_name>SnippetNow_DAO</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy>read</sys_policy>
@@ -151,6 +186,6 @@ SnippetNow_DAO.prototype = {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_script_include_54e89e7edbcd0300dfa77fcfbf96191b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-14 20:06:18</sys_updated_on>
+        <sys_updated_on>2017-09-15 21:33:36</sys_updated_on>
     </sys_script_include>
 </record_update>
