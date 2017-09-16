@@ -9,7 +9,7 @@
         <element label="Previous Comments" max_length="4000" name="previous_comments" type="journal_list"/>
         <element label="Snippet" max_length="65536" name="snippet" type="script"/>
         <element default="javascript:current.getTableName();" dynamic_default_value="b5cb83a85f220100a9ad2572f2b4773c" label="Class" max_length="80" name="sys_class_name" type="sys_class_name" use_dynamic_default="true"/>
-        <element attributes="no_sort=true,slushbucket_ref_no_expand=true" label="Tags" max_length="40" name="tags" reference="x_92893_snippetnow_snippetnow_tags" type="glide_list"/>
+        <element attributes="no_sort=true,slushbucket_ref_no_expand=true" label="Tags" max_length="4000" name="tags" reference="x_92893_snippetnow_snippetnow_tags" type="glide_list"/>
         <element attributes="edge_encryption_enabled=true" label="Title" max_length="40" name="title" type="string"/>
         <element label="Type" max_length="32" name="type" reference="x_92893_snippetnow_snippet_type" type="reference"/>
         <index name="index">

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl/>
+        <http_method>POST</http_method>
+        <name>checkTags</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+    // implement resource here
+	var pathParams = request.pathParams;
+	var list = pathParams.list;
+	gs.info("SnippetNOW Tags "+list);
+	var tags = new SnippetNow_DAO().checkTags(list);
+	
+	return tags;
+
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_92893_snippetnow/snippetnow_api/checkTags/{list}</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/checkTags/{list}</relative_path>
+        <request_example/>
+        <requires_acl_authorization>false</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-09-15 22:52:15</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>8947f0a8db910300dfa77fcfbf961944</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>checkTags</sys_name>
+        <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
+        <sys_update_name>sys_ws_operation_8947f0a8db910300dfa77fcfbf961944</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-09-15 23:16:31</sys_updated_on>
+        <web_service_definition display_value="SnippetNow_API">25d3577bdb0d0300dfa77fcfbf961909</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>

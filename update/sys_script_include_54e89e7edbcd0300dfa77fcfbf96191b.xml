@@ -77,6 +77,53 @@ SnippetNow_DAO.prototype = {
 		return c;
 	},
 	
+	findTag: function(tag) {
+		var response = {};
+		var ft = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
+		ft.addEncodedQuery("tag="+tag);
+		ft.query();
+		if (ft.next()) {
+			response.sys_id = ft.sys_id.toString();
+			response.tag = ft.getValue('tag');
+		} else {
+			response.sys_id = null;
+			response.tag = tag;
+		}
+		return response;
+	},
+	checkTags: function(list) {
+		//list = JSON.parse(list);
+		var nList = [];
+		for(var i=0;i<list.length;i++) {
+			nList.push(this.findTag(list[i].text));
+		}
+		for(var j=0;j<nList.length;j++) {
+			if (nList[j].sys_id == null) {
+				//needs to be added
+				gs.info("SnippetNow add tag "+nList[j].tag);
+				var sys_id = this.addTag(nList[j].tag);
+				nList[j].sys_id = sys_id;
+			}
+		}
+		var simpleList = [];
+		for(var k=0;k<nList.length;k++) {
+			simpleList.push(nList[k].sys_id);
+		}
+		gs.info("SnippetNOW "+JSON.stringify(nList));
+		var l = simpleList.join(",");
+		gs.info("SnippetNOW "+l);
+		return l;
+		
+		
+	},
+	addTag: function(tag) {
+		var at = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
+		at.initialize();
+		at.tag = tag;
+		var newID = at.insert();
+		gs.info("SnippetNow new id "+newID);
+		return newID;
+	},
 	getTagList: function() {
 		var gt = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
 		gt.query();
@@ -178,7 +225,7 @@ SnippetNow_DAO.prototype = {
         <sys_created_on>2017-09-10 19:28:15</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>54e89e7edbcd0300dfa77fcfbf96191b</sys_id>
-        <sys_mod_count>51</sys_mod_count>
+        <sys_mod_count>70</sys_mod_count>
         <sys_name>SnippetNow_DAO</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy>read</sys_policy>
@@ -186,6 +233,6 @@ SnippetNow_DAO.prototype = {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_script_include_54e89e7edbcd0300dfa77fcfbf96191b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-15 21:33:36</sys_updated_on>
+        <sys_updated_on>2017-09-16 00:04:33</sys_updated_on>
     </sys_script_include>
 </record_update>
