@@ -8,6 +8,8 @@
 	$scope.simpleTags = '';	
 	$scope.snippetType = {};
 	$scope.snippetApp = {};
+	console.log("FIRST",$scope.snippet);
+	console.log("FIRST",c.data.snippet);
 	
 	var editor = ace.edit("editor");
     editor.setTheme("ace/theme/sqlserver");
@@ -15,7 +17,8 @@
 		editor.getSession().setUseWrapMode(true);
 		
 		editor.setOptions({
-			
+			minLines: 10,
+			maxLines: 20
 		});
 	
 	if (c.data.snippet) {
@@ -33,6 +36,14 @@
 			value: c.data.snippet.application.value,
 			name: 'snippetApp'
 		};
+	}
+	
+	
+	$scope.openModal = function(tpl) {
+		$rootScope.modalInstance = $uibModal.open({
+			templateUrl: tpl,
+			scope: $scope
+		});
 	}
 	
 	$scope.closeModal = function() {
@@ -117,42 +128,34 @@
 	
 	
 	$scope.submit = function(type) {
-		console.log("Snippet",$scope.snippet.tags);
+		console.log("Snippet",$scope.snippet);
+		console.log("SnippetType",$scope.snippetType);
+		console.log("SnippetApp",$scope.snippetApp);
 		
-		
-		//handle some tags
-		/*$http({
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json;charset=UTF-8"
-			},
-			url: "/api/x_92893_snippetnow/snippetnow_api/checkTags/"+JSON.stringify($scope.snippet.tags)
-		})
-		.success(function(response) {
-			if (response && response.result) {
-				$timeout(function() {
-						$scope.$apply(function() {
-							$scope.snippet.simpleTags = response.result;
-						})
-					})	
-			}
-		})
-		.error(function(response) {
-			
-		})*/
-		
+		$scope.snippet.application = $scope.snippetApp;
+		$scope.snippet.type = $scope.snippetType;
+		$scope.snippet.editor = editor.getValue();
 		
 		c.data.snippet = $scope.snippet;
 		
 		console.log("C DATA",c.data.snippet);
 		c.server.update().then(function(response) {
 			//spUtil.update($scope);
-			console.log(response);
+			console.log("Response",response);
 			if (response.recordAction && type == 'update') {
-				c.openModal('updatedSnippet');
+				console.log("UPDATE Scope",$scope.snippet);
+				$scope.snippet.application.display_value = $scope.snippet.application.displayValue;
+				$scope.snippet.type.display_value = $scope.snippet.type.displayValue;
+				$scope.openModal('updatedSnippet');
 				$timeout(function() {
-					c.closeModal();
+					$scope.closeModal();
+					spUtil.update($scope);
 				},1000)
+			}
+			if (response.recordAction && type == 'insert') {
+				$timeout(function() {
+					$scope.closeModal();
+				});
 			}
 			
 		})
@@ -182,10 +185,10 @@
   margin-bottom: 40px;
 }
 .editor-new {
-  height: 250px;
+  /*height: 250px;*/
 }
 .editor-existing {
-  height: 350px;
+  /*height: 350px;*/
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -205,7 +208,7 @@
   /* e.g., data.table = $sp.getValue('table'); */
 	
 	if (input && input.snippet) {
-		console.log(input.snippet.simpleTags);
+		//console.log(input.snippet.simpleTags);
 		var done = actionSnippet(input.snippet);
 		if (done) {
 			data.recordAction = true;
@@ -214,13 +217,12 @@
 		}
 	}
 	
-	data.snippetType = {};
+	/*data.snippetType = {};
 	data.snippetType.name = 'Please Select';
 	data.snippetType.value = '';
 	data.snippetApp = {};
 	data.snippetApp.name = 'Please Select';
-	data.snippetApp.value = '';
-	
+	data.snippetApp.value = '';*/
 	
 	var record = {};
 	record.sys_id = $sp.getParameter('sys_id');
@@ -238,6 +240,7 @@
 	}
 	
 	data.tagList = new SnippetNow_DAO().getTagList();
+	//$sp.log(data.snippet);
 	
 	function getSnippetRecord(sys_id) {
 		/*******************
@@ -277,7 +280,7 @@
 			t = new SnippetNow_DAO().checkTags(snippet.tags);
 			
 		}
-		console.log(t);
+		//console.log(t);
 		
 		var action;
 		var rec = new GlideRecord('x_92893_snippetnow_table');
@@ -291,21 +294,24 @@
 				rec.title = snippet.title;
 				rec.description = snippet.description;
 				rec.snippet = snippet.editor;
-				rec.type = snippet.type.sys_id;
-				rec.application = snippet.application.sys_id;
+				rec.type = snippet.type.value;
+				rec.application = snippet.application.value;
 				rec.tags = t;
 				
 				action = rec.update();
+				
 			}
 		} else {
 			//tis insert
 			rec.title = snippet.title;
 			rec.description = snippet.description;
 			rec.snippet = snippet.editor;
-			rec.type = snippet.type.sys_id;
-			rec.aplication = snippet.application.sys_id;
+			rec.type = snippet.type.value;
+			rec.application = snippet.application.value;
 			action = rec.insert();
 		}
+		
+		
 		if (action) {
 			return true
 		}
@@ -320,7 +326,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>279</sys_mod_count>
+        <sys_mod_count>312</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -328,7 +334,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-17 06:35:26</sys_updated_on>
+        <sys_updated_on>2017-09-18 21:19:12</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -401,7 +407,7 @@
 	<div ng-show="c.data.recordAction" class="alert alert-success" style="margin-bottom:0px">
     <strong>Success!</strong> Snippet has been updated!.
   </div>
-  <div ng-show="c.data.recordAction == false" class="alert alert-danger">
+  <div ng-show="c.data.recordAction == false" class="alert alert-danger" style="margin-bottom:0px">
     <strong>Error!</strong> Snippet did not save, please try again.
   </div>
 </script>]]></template>
