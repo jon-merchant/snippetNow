@@ -30,14 +30,14 @@
 	
 	c.openModal = function(tpl,modalData) {
 		$scope.modalData = modalData;
-		c.modalInstance = $uibModal.open({
+		$rootScope.modalInstance = $uibModal.open({
 			templateUrl: tpl,
 			scope: $scope
 		});
 	}
  
 	c.closeModal = function() {
-		c.modalInstance.close();
+		$rootScope.modalInstance.close();
 	}
 	
 	spUtil.get("snippetnow-form", {formType: "modal"}).then(function(response) {
@@ -64,9 +64,11 @@
 		console.log(record,kind);
 		var modalData = {};
 		if (kind == 'app') {
-			modalData.title = "Edit Application "+record.name;	
+			modalData.title = "Edit Application "+record.name;
+			modalData.type = 'app';
 		} else {
 			modalData.title = "Edit Type "+record.name;
+			modalData.type = 'type';
 		}
 		modalData.record = record;
 		c.openModal('editThis',modalData);
@@ -98,10 +100,47 @@
 		$scope.activeRecord = record.sys_id;
 	}
 	$scope.updateAppType = function(record) {
-		console.log(record);
+		console.log("Update",record);
+		//record = record.record;
 		//need $http to update
 		//also update modalData
-		//modalData.record.value = modalData.record.name.replace(/\W+/g, '_').toLowerCase()
+		record.record.value = record.record.name.replace(/\W+/g, '_').toLowerCase();
+		
+		
+		record.record.type = record.type;
+		record = record.record;
+		record.color = encodeURIComponent(record.color);
+		var a = [];
+		a.push(record);
+		jRecord = JSON.stringify(a);
+		console.log("jRecord",jRecord);
+		$http({
+			method: "POST",
+			headers: {
+				"Accept": "application/json;charset=UTF-8",
+				"Content-Type": "application/json;charset=UTF-8"	
+			},
+			url: "/api/x_92893_snippetnow/snippetnow_api/updateAppType/"+jRecord
+		})
+		.success(function(response) {
+			console.log("Success",response);
+			c.closeModal();
+			$timeout(function() {
+				record.color = decodeURIComponent(record.color);
+				spUtil.update($scope);	
+			},300);
+			
+		})
+		.error(function(response) {
+			var d = {};
+			d.alertType = "danger";
+			d.message = "There was a problem updating the record, please try again."
+			c.openModal('alert',d);
+			$timeout(function() {
+				c.closeModal();
+			},500);
+		})
+		
 	}
 	$scope.insertAppType = function(record,type) {
 		
@@ -190,11 +229,27 @@
 }
 .small-text-snippets {
   font-size: 10px;
-  text-transform: uppercase;
+  
 }
 .snippet-listing {
   max-height: 700px;
   overflow: auto;
+}
+.small-caps {
+  text-transform: uppercase;
+  opacity: 0.6;
+  font-size: 65%;
+}
+.small-italics {
+  font-style: italic;
+  font-size: 85%;
+}
+.small-tags {
+  font-size: 75%;
+  margin-top: 5px;
+}
+.small-tags span {
+  padding-right: 5px;
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -230,7 +285,7 @@
         <sys_created_on>2017-09-10 19:28:47</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>75199676dbcd0300dfa77fcfbf961910</sys_id>
-        <sys_mod_count>208</sys_mod_count>
+        <sys_mod_count>245</sys_mod_count>
         <sys_name>SnippetNow Navigator</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -238,7 +293,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_75199676dbcd0300dfa77fcfbf961910</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-16 01:03:52</sys_updated_on>
+        <sys_updated_on>2017-09-17 16:54:28</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   
@@ -283,23 +338,29 @@
         </div>
       </div>
       <div class="col-md-6 col-sm-6 col-xs-6">
+        <div class="input-group" style="padding-bottom: 10px;">
+          <input type="text" ng-model="searchRecords" placeholder="Search..." class="form-control"/>
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+          </span>
+        </div>
       	<div class="list-group snippet-listings">
-          <div ng-repeat="record in snippet.records | filter:appName | filter:typeName | filter:tagName" class="list-group-item" ng-click="selectSnippet(record)" ng-class="{active:activeRecord === record.sys_id}">
+          <div style="border-left:20px solid {{record.application.color}}" ng-repeat="record in snippet.records | filter:searchRecords | filter:appName | filter:typeName | filter:tagName" class="list-group-item" ng-click="selectSnippet(record)" ng-class="{active:activeRecord === record.sys_id}">
             <div class="snippetRecord">
+              <div class="small-caps">
+                <span>{{record.application.display_value}}</span>
+                <span ng-if="record.application.display_value"> | </span>
+                <span>{{record.type.display_value}}</span>
+              </div>
+              
               <h4>
               	{{record.title}} 
               </h4>
-              <h6>
-              	{{record.description}}	 
-            	</h6>
-                
-              <div>
-                <span class="small">{{record.application.display_value}}</span>
-                <span class="small" ng-if="record.application.display_value"> | </span>
-                <span class="small">{{record.type.display_value}}</span>
+              <div class="small-italics">
+              	{{record.description}}	  
               </div>
-              <div>
-                <span class="small" ng-repeat="tag in record.tags">{{tag.text}}</span>
+              <div class="small-tags">
+                <span ng-repeat="tag in record.tags">{{tag.text}}</span>
               </div>
               
             </div>
@@ -381,6 +442,11 @@
       </form>
     
     </div>
+  </div>
+</script>
+<script type="text/ng-template" id="alert">
+	<div class="alert alert-{{modalData.alertType}}" style="margin-bottom: 0px;">
+  	<p>{{modalData.message}}</p>
   </div>
 </script>]]></template>
     </sp_widget>

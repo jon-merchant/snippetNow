@@ -56,6 +56,30 @@ SnippetNow_DAO.prototype = {
 		var inserted = ir.insert();
 		return inserted;
 	},
+	updateAppType: function(record,type) {
+		/**********************
+		* Update Application or Type
+		* return true/false
+		**********************/
+		
+		gs.info("SnippetNow Update AppType "+JSON.stringify(record));
+		if (type == 'app') {
+			table = 'x_92893_snippetnow_snippetnow_applications';
+		} else {
+			table = 'x_92893_snippetnow_snippet_type';
+		}
+		var ur = new GlideRecord(table);
+		ur.addEncodedQuery('sys_id='+record[0].sys_id);
+		gs.info("SnippetNow Update AppType "+ur.getEncodedQuery());
+		ur.query();
+		while(ur.next()) {
+			ur.name = record[0].name;
+			ur.value = record[0].value;
+			ur.color = decodeURIComponent(record[0].color);
+			var updated = ur.update();
+			return updated;
+		}
+	},
 	getCount: function(tableName, encodedQuery) {
 		/******************
  		* Get counts
@@ -150,6 +174,22 @@ SnippetNow_DAO.prototype = {
 		
 	},
 	
+	getColor: function(type,sys_id) {
+		var table;
+		if (type == 'app') {
+			table = 'x_92893_snippetnow_snippetnow_applications';
+		} else if (type == 'type') {
+			table = 'x_92893_snippetnow_snippet_type';
+		}
+		
+		var c = new GlideRecord(table);
+		c.addEncodedQuery("sys_id="+sys_id);
+		c.query();
+		while(c.next()) {
+			return c.getValue('color');
+		}
+	},
+	
 	getSnippetRecords: function(tableName,encodedQuery,startIndex,limit,orderBy,ascendingOrder) {
 		var glideRecord = new GlideRecordSecure(tableName);
 		if (encodedQuery) {
@@ -173,16 +213,19 @@ SnippetNow_DAO.prototype = {
 			var app = {};
 			app.display_value = glideRecord.getDisplayValue('application');
 			app.sys_id = glideRecord.application.toString();
+			app.color = this.getColor('app',app.sys_id);
 			var type = {};
 			type.display_value = glideRecord.getDisplayValue('type');
 			type.sys_id = glideRecord.type.toString();
-					
+			type.color = this.getColor('type',type.sys_id);		
 			var t = glideRecord.getValue('tags');
 			if (t) {
 				t = this.getTags(t);
 			} else {
 				t = '';
 			}
+			var notes = glideRecord.comments.getJournalEntry(-1);
+			var na = notes.split("\n\n");
 			gs.info("SnippetNOW tags "+t);
 					records.push({
 						sys_id:glideRecord.sys_id.toString(),
@@ -192,7 +235,8 @@ SnippetNow_DAO.prototype = {
 						type:type,
 						color:glideRecord.getValue('color'),
 						snippet:glideRecord.getValue('snippet'),
-						tags:t
+						tags:t,
+						previous_comments:na
 					});
 				}
 				return records;
@@ -225,7 +269,7 @@ SnippetNow_DAO.prototype = {
         <sys_created_on>2017-09-10 19:28:15</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>54e89e7edbcd0300dfa77fcfbf96191b</sys_id>
-        <sys_mod_count>70</sys_mod_count>
+        <sys_mod_count>84</sys_mod_count>
         <sys_name>SnippetNow_DAO</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy>read</sys_policy>
@@ -233,6 +277,6 @@ SnippetNow_DAO.prototype = {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_script_include_54e89e7edbcd0300dfa77fcfbf96191b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-16 00:04:33</sys_updated_on>
+        <sys_updated_on>2017-09-17 16:48:53</sys_updated_on>
     </sys_script_include>
 </record_update>

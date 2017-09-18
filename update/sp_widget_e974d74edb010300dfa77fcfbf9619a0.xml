@@ -35,7 +35,20 @@
 		};
 	}
 	
-	c.openModal = function(tpl) {
+	$scope.closeModal = function() {
+		console.log("triggered");
+		$rootScope.modalInstance.close();
+	}
+	
+	$scope.editorHeight = function() {
+		if ($scope.snippet.sys_id) {
+			return "editor-existing";
+		}	else {
+			return "editor-new";
+		}
+	}
+	
+	/*c.openModal = function(tpl) {
 		c.modalInstance = $uibModal.open({
 			templateUrl: tpl,
 			scope: $scope
@@ -44,11 +57,17 @@
  
 	c.closeModal = function() {
 		c.modalInstance.close();
-	}
+	}*/
 	
+	$scope.showCommentBox = false;
 	$scope.showComments = function(val) {
 		console.log("comments",val);
 		//if yes, show the add comments and previous comments
+		if (val) {
+			$scope.showCommentBox = true;
+		} else {
+			$scope.showCommentBox = false;
+		}
 	}
 	
 	console.log("Listening");
@@ -155,12 +174,18 @@
 	console.log("Form",$scope);
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css>#editor {&#13;
-  height: 100%&#13;
-}&#13;
-.editor-group {&#13;
-  height: 400px;&#13;
-  margin-bottom: 40px;&#13;
+        <css>#editor {
+  height: 100%
+}
+.editor-group {
+  /*height: 400px;*/
+  margin-bottom: 40px;
+}
+.editor-new {
+  height: 250px;
+}
+.editor-existing {
+  height: 350px;
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -295,7 +320,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>260</sys_mod_count>
+        <sys_mod_count>279</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -303,7 +328,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-16 00:18:03</sys_updated_on>
+        <sys_updated_on>2017-09-17 06:35:26</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -342,14 +367,27 @@
           <auto-complete source="loadTags($query)"></auto-complete>
         </tags-input>
         </div>
-       <div class="form-group editor-group">
+       <div class="form-group editor-group" ng-class="editorHeight()">
          <label for="snippetHTML">Snippet </label>
-         <div class="small pull-right">Show comments <input type="checkbox" ng-model="comments.show" ng-change="showComments(comments.show)" ng-true-value="true" ng-false-value="false"/></div>
+         <div class="small pull-right" ng-if="snippet.sys_id">Show comments <input type="checkbox" ng-model="comments.show" ng-change="showComments(comments.show)" ng-true-value="true" ng-false-value="false"/></div>
           <div id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
        </div>
+        <div ng-if="showCommentBox" class="form-group">
+        	<label for="snippetComments">Add Comment</label>
+          <textarea ng-model="snippet.add_comments" class="form-control"></textarea>
+          
+          <div class="comment-area">
+            <label form="snippetPreviousComments">Previous Comments</label>
+            <div>
+              <div ng-repeat="comment in snippet.previous_comments">
+                {{comment}}
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="form-group">
           <div class="pull-right">
-            <button ng-if="!snippet.sys_id" class="btn btn-danger" ng-click="$parent.c.closeModal();">Cancel</button>
+            <button ng-if="!snippet.sys_id" class="btn btn-danger" ng-click="closeModal()">Cancel</button>
             <button ng-if="!snippet.sys_id" type="submit" class="btn btn-primary" ng-click="submit('insert')">Submit</button>
             <button ng-if="snippet.sys_id" type="submit" class="btn btn-success" ng-click="submit('update')">Update</button>
           </div>
