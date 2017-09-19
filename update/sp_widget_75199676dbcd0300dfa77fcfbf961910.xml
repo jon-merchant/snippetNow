@@ -19,6 +19,7 @@
 	
 	
 	
+	
 	/*$timeout(function() {
 		$rootScope.$broadcast('defaultSnippet',$scope.snippet.records[0]);	
 	},100);*/
@@ -41,6 +42,13 @@
 			spUtil.update($scope);
 			
 		},100);
+	});
+	
+	$scope.$on("newTags",function(event,data) {
+		$timeout(function() {
+			$scope.snippet.tags = data;
+			spUtil.update($scope);
+		})
 	})
 	
 	c.openModal = function(tpl,modalData) {
@@ -211,8 +219,9 @@
 			
 		}*/
 	}
-	
-	
+	if ($scope.snippet.records.length == 0 && $scope.snippet.applications.length == 0 && $scope.snippet.types.length == 0 && $scope.snippet.tags.length == 0) {
+		c.openModal('no-records');
+	}
 	console.log("Nav",$scope);
 }]]></client_script>
         <controller_as>c</controller_as>
@@ -264,6 +273,9 @@
 }
 .small-tags span {
   padding-right: 5px;
+}
+.tag-btn {
+  margin-right: 5px;
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -300,14 +312,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-09-10 19:28:47</sys_created_on>
         <sys_id>75199676dbcd0300dfa77fcfbf961910</sys_id>
-        <sys_mod_count>284</sys_mod_count>
+        <sys_mod_count>297</sys_mod_count>
         <sys_name>SnippetNow Navigator</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_75199676dbcd0300dfa77fcfbf961910</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-19 04:09:57</sys_updated_on>
+        <sys_updated_on>2017-09-19 04:52:55</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   
@@ -346,7 +358,7 @@
           TAGS
         </h4>
         <div class="">
-        	<button class="btn btn-default" ng-repeat="tag in snippet.tags" ng-class="{active:activeFilter === tag.text}" ng-model="tagName" ng-click="onlyThisKind('tag',tag)">
+        	<button class="btn btn-default tag-btn" ng-repeat="tag in snippet.tags" ng-class="{active:activeFilter === tag.text}" ng-model="tagName" ng-click="onlyThisKind('tag',tag)">
             {{tag.text}}
           </button> 
         </div>
@@ -461,6 +473,15 @@
 <script type="text/ng-template" id="alert">
 	<div class="alert alert-{{modalData.alertType}}" style="margin-bottom: 0px;">
   	<p>{{modalData.message}}</p>
+  </div>
+</script>
+<script type="text/ng-template" id="no-records">
+	<div class="panel panel-info">
+  	<div class="panel-heading">New Users - Suggestions</div>
+    <div class="panel-body">
+    	<p>It looks like you are running this for the first time, or have removed all your records.</p>
+      <p>In either case, here's a little helpful guide and things to do.</p>
+    </div>
   </div>
 </script>]]></template>
     </sp_widget>
