@@ -10,7 +10,7 @@
 	
 	
 	if ($scope.snippet) {
-		if ($scope.snippet.record && $scope.snippet.record.length > 0) {
+		if ($scope.snippet.records && $scope.snippet.records.length > 0) {
 			$scope.activeRecord = $scope.snippet.records[0].sys_id
 		}
 		$scope.selectedSnippet = $scope.snippet.records[0];
@@ -32,6 +32,17 @@
 		},200);
 	})
 	
+	$scope.$on('newSnippet',function(event,data) {
+		$timeout(function() {
+			console.log("New Snippet",data);
+			$scope.snippet.records.unshift(data);
+			$scope.selectedSnippet = data;
+			$scope.activeRecord = data;
+			spUtil.update($scope);
+			
+		},100);
+	})
+	
 	c.openModal = function(tpl,modalData) {
 		$scope.modalData = modalData;
 		$rootScope.modalInstance = $uibModal.open({
@@ -44,17 +55,16 @@
 		$rootScope.modalInstance.close();
 	}
 	
-	spUtil.get("snippetnow-form", {formType: "modal"}).then(function(response) {
-		c.snippetNowForm = response;
-	});
-	/*spUtil.get("snippetnow-form", {formType:'modal'}).then(function(response) {
+	
+	spUtil.get("snippetnow-form", {formType:'modal'}).then(function(response) {
 		c.snippetNowForm = response;
 	  });
-	*/
+
 	$scope.createNew = function() {
 		/**************
 		* Modal pop - create new
 		**************/
+		
 		
 		c.openModal('createNew');
 	}
@@ -265,7 +275,7 @@
         <internal>false</internal>
         <link/>
         <name>SnippetNow Navigator</name>
-        <option_schema/>
+        <option_schema>[]</option_schema>
         <public>false</public>
         <roles/>
         <script><![CDATA[(function() {
@@ -282,20 +292,22 @@
 	data.snippet.tags = new SnippetNow_DAO().getTagList();
 	
 	
+	
+	
 })();]]></script>
         <servicenow>false</servicenow>
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-09-10 19:28:47</sys_created_on>
         <sys_id>75199676dbcd0300dfa77fcfbf961910</sys_id>
-        <sys_mod_count>254</sys_mod_count>
+        <sys_mod_count>284</sys_mod_count>
         <sys_name>SnippetNow Navigator</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_75199676dbcd0300dfa77fcfbf961910</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-18 21:58:39</sys_updated_on>
+        <sys_updated_on>2017-09-19 04:09:57</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   

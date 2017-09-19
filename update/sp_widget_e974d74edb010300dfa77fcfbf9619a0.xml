@@ -23,8 +23,13 @@
 	
 	if (c.data.snippet) {
 		$scope.snippet = c.data.snippet;
-		editor.setValue(c.data.snippet.editor);
-		editor.clearSelection();
+		console.log("Is There a SNippet",c.data.snippet.editor,c.data.snippet.snippet);
+		if (c.data.snippet.editor || c.data.snippet.snippet) {
+			editor.setValue(c.data.snippet.editor);
+			editor.clearSelection();
+		} else {
+			editor.setValue("//Enter your code here");
+		}
 	
 		$scope.snippetType = {
 			displayValue: c.data.snippet.type.display_value,
@@ -51,13 +56,7 @@
 		$rootScope.modalInstance.close();
 	}
 	
-	$scope.editorHeight = function() {
-		if ($scope.snippet.sys_id) {
-			return "editor-existing";
-		}	else {
-			return "editor-new";
-		}
-	}
+	
 	
 	/*c.openModal = function(tpl) {
 		c.modalInstance = $uibModal.open({
@@ -90,8 +89,12 @@
 				$scope.comments.show = false;
 				$scope.snippet = data;
 				
-				editor.setValue($scope.snippet.snippet);
-				editor.clearSelection();
+				if ($scope.snippet.snippet) {
+					editor.setValue($scope.snippet.snippet);
+					editor.clearSelection();
+				} else {
+					editor.setValue("//Enter Your Code Here");
+				}
 
 				$scope.snippetType = {
 					displayValue: $scope.snippet.type.display_value,
@@ -142,19 +145,27 @@
 		c.server.update().then(function(response) {
 			//spUtil.update($scope);
 			console.log("Response",response);
+			$scope.snippet.application.display_value = $scope.snippet.application.displayValue;
+			$scope.snippet.type.display_value = $scope.snippet.type.displayValue;
+			
 			if (response.recordAction && type == 'update') {
 				console.log("UPDATE Scope",$scope.snippet);
-				$scope.snippet.application.display_value = $scope.snippet.application.displayValue;
-				$scope.snippet.type.display_value = $scope.snippet.type.displayValue;
+				
 				$scope.openModal('updatedSnippet');
 				$timeout(function() {
 					$scope.closeModal();
+					//window.location.reload();
 					spUtil.update($scope);
 				},1000)
 			}
 			if (response.recordAction && type == 'insert') {
 				$timeout(function() {
+					
+					//$rootScope.$broadcast('newSnippet',$scope.snippet);
+					//spUtil.update($scope);
 					$scope.closeModal();
+					window.location.reload();
+					
 				});
 			}
 			
@@ -200,7 +211,7 @@
         <internal>false</internal>
         <link/>
         <name>SnippetNow Form</name>
-        <option_schema/>
+        <option_schema>[{"name":"type","label":"Type","type":"string"}]</option_schema>
         <public>false</public>
         <roles/>
         <script><![CDATA[(function() {
@@ -223,6 +234,7 @@
 	data.snippetApp = {};
 	data.snippetApp.name = 'Please Select';
 	data.snippetApp.value = '';*/
+	
 	
 	var record = {};
 	record.sys_id = $sp.getParameter('sys_id');
@@ -280,7 +292,8 @@
 			t = new SnippetNow_DAO().checkTags(snippet.tags);
 			
 		}
-		//console.log(t);
+		console.log("Tags");
+		console.log(t);
 		
 		var action;
 		var rec = new GlideRecord('x_92893_snippetnow_table');
@@ -299,6 +312,7 @@
 				rec.tags = t;
 				
 				action = rec.update();
+				$sp.log(action);
 				
 			}
 		} else {
@@ -308,6 +322,7 @@
 			rec.snippet = snippet.editor;
 			rec.type = snippet.type.value;
 			rec.application = snippet.application.value;
+			rec.tags = t;
 			action = rec.insert();
 		}
 		
@@ -325,14 +340,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>312</sys_mod_count>
+        <sys_mod_count>336</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-18 21:19:12</sys_updated_on>
+        <sys_updated_on>2017-09-19 04:29:15</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
