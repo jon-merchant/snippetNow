@@ -155,8 +155,8 @@
 				$timeout(function() {
 					$rootScope.$broadcast("newTags",response.tagList);
 					$scope.closeModal();
-					//window.location.reload();
-					spUtil.update($scope);
+					window.location.reload();
+					//spUtil.update($scope);
 				},1000)
 			}
 			if (response.recordAction && type == 'insert') {
@@ -311,7 +311,7 @@
 				rec.type = snippet.type.value;
 				rec.application = snippet.application.value;
 				rec.tags = t;
-				
+				rec.comments = snippet.add_comments;
 				action = rec.update();
 				$sp.log(action);
 				
@@ -340,15 +340,17 @@
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>337</sys_mod_count>
+        <sys_mod_count>340</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-19 04:37:49</sys_updated_on>
+        <sys_updated_on>2017-09-20 03:48:29</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
