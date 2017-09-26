@@ -276,7 +276,13 @@
 }
 .tag-btn {
   margin-right: 5px;
-}</css>
+}
+.tooltip {
+  z-index:1000;
+}
+
+
+</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
         <description/>
@@ -313,7 +319,7 @@
         <sys_created_on>2017-09-10 19:28:47</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>75199676dbcd0300dfa77fcfbf961910</sys_id>
-        <sys_mod_count>310</sys_mod_count>
+        <sys_mod_count>318</sys_mod_count>
         <sys_name>SnippetNow Navigator</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -321,7 +327,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_75199676dbcd0300dfa77fcfbf961910</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-20 03:30:36</sys_updated_on>
+        <sys_updated_on>2017-09-25 23:54:27</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   
@@ -375,6 +381,7 @@
       	<div class="list-group snippet-listings">
           <div style="" ng-repeat="record in snippet.records | filter:searchRecords | filter:appName | filter:typeName | filter:tagName" class="list-group-item" ng-click="selectSnippet(record)" ng-class="{active:activeRecord === record.sys_id}">
             <div class="snippetRecord">
+              <span class="pull-right" tooltip-placement="left" uib-tooltip="{{record.created_by.name}}"><sn-avatar class="avatar-small-medium" primary="record.created_by.sys_id" /></span>
               <div class="small-caps">
                 <span>{{record.application.display_value}}</span>
                 <span ng-if="record.application.display_value"> | </span>
