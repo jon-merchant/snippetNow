@@ -87,6 +87,7 @@
 			if (data) {
 				$scope.comments = {};
 				$scope.comments.show = false;
+				$scope.showCommentBox = false;
 				$scope.snippet = data;
 				
 				if ($scope.snippet.snippet) {
@@ -211,12 +212,16 @@
 
 .avatar-circle {
   display: block;
-  padding-right: 5px;
+  padding-right: 15px;
 }
 
 .chat {
     /*width: 400px;*/
-    width: 80%;
+    width: 90%;
+}
+
+.avatar {
+  box-shadow: 0 0 6px #333;
 }
 
 .me-bubble{
@@ -246,7 +251,7 @@
   
 }
 
-.you-.bubble{
+.you-bubble{
     background-color: $success;
     border-radius: 5px;
     box-shadow: 0 0 6px #B2B2B2;
@@ -434,7 +439,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>350</sys_mod_count>
+        <sys_mod_count>359</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -442,7 +447,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-26 01:06:05</sys_updated_on>
+        <sys_updated_on>2017-09-26 03:18:10</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -492,7 +497,7 @@
           
           <div class="comment-area">
             <label form="snippetPreviousComments">Previous Comments</label>
-            <div class="chat">
+            <div class="chat clearfix">
               <div ng-repeat="comment in snippet.previous_comments">
                 <div class="" ng-class="whoSaidIt(comment.created_by.sys_id,snippet.created_by.sys_id)">
                   <span class="avatar-circle pull-left" uib-tooltip="{{comment.created_by.name}}"><sn-avatar class="avatar-small-medium" primary="comment.created_by.sys_id" /></span>
@@ -502,6 +507,7 @@
             </div>
           </div>
         </div>
+       
         <div class="form-group">
           <div class="pull-right">
             <button ng-if="!snippet.sys_id" class="btn btn-danger" ng-click="closeModal()">Cancel</button>
