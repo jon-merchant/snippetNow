@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database>
     <element audit="true" label="SnippetNow Table" max_length="40" name="x_92893_snippetnow_table" type="collection">
+        <element label="Allow others to edit" max_length="40" name="allow_others_to_edit" type="boolean"/>
         <element label="Application" max_length="32" name="application" reference="x_92893_snippetnow_snippetnow_applications" type="reference"/>
         <element label="Color" max_length="40" name="color" type="color"/>
         <element label="Comments" max_length="4000" name="comments" type="journal"/>

@@ -5,13 +5,13 @@
             <element>number</element>
             <position>0</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-25 22:29:56</sys_created_on>
-            <sys_id>6d629c73db510300dfa77fcfbf961911</sys_id>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>644a4ec5db210300dfa77fcfbf9619e4</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-25 22:29:56</sys_updated_on>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -19,139 +19,153 @@
             <element>sys_created_by</element>
             <position>1</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-25 22:29:56</sys_created_on>
-            <sys_id>25629c73db510300dfa77fcfbf961912</sys_id>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>2c4a4ec5db210300dfa77fcfbf9619e4</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-25 22:29:56</sys_updated_on>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>allow_others_to_edit</element>
+            <position>2</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>ac4a4ec5db210300dfa77fcfbf9619e4</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>color</element>
-            <position>2</position>
+            <position>3</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-25 22:29:56</sys_created_on>
-            <sys_id>a5629c73db510300dfa77fcfbf961912</sys_id>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>204a4ec5db210300dfa77fcfbf9619e5</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-25 22:29:56</sys_updated_on>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>title</element>
-            <position>3</position>
+            <position>4</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-25 22:29:56</sys_created_on>
-            <sys_id>29629c73db510300dfa77fcfbf961912</sys_id>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>a04a4ec5db210300dfa77fcfbf9619e5</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-25 22:29:56</sys_updated_on>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>description</element>
-            <position>4</position>
+            <position>5</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-25 22:29:56</sys_created_on>
-            <sys_id>a9629c73db510300dfa77fcfbf961912</sys_id>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>244a4ec5db210300dfa77fcfbf9619e5</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-25 22:29:56</sys_updated_on>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>application</element>
-            <position>5</position>
+            <position>6</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-25 22:29:56</sys_created_on>
-            <sys_id>2d629c73db510300dfa77fcfbf961912</sys_id>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>a44a4ec5db210300dfa77fcfbf9619e5</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-25 22:29:56</sys_updated_on>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>type</element>
-            <position>6</position>
+            <position>7</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-25 22:29:56</sys_created_on>
-            <sys_id>ad629c73db510300dfa77fcfbf961912</sys_id>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>284a4ec5db210300dfa77fcfbf9619e5</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-25 22:29:56</sys_updated_on>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>tags</element>
-            <position>7</position>
+            <position>8</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-25 22:29:56</sys_created_on>
-            <sys_id>21629c73db510300dfa77fcfbf961913</sys_id>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>a84a4ec5db210300dfa77fcfbf9619e5</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-25 22:29:56</sys_updated_on>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>snippet</element>
-            <position>8</position>
+            <position>9</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-25 22:29:56</sys_created_on>
-            <sys_id>a1629c73db510300dfa77fcfbf961913</sys_id>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>2c4a4ec5db210300dfa77fcfbf9619e5</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-25 22:29:56</sys_updated_on>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>comments</element>
-            <position>9</position>
+            <position>10</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-25 22:29:56</sys_created_on>
-            <sys_id>25629c73db510300dfa77fcfbf961913</sys_id>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>ac4a4ec5db210300dfa77fcfbf9619e5</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-25 22:29:56</sys_updated_on>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>activity.xml</element>
-            <position>10</position>
+            <position>11</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-25 22:29:56</sys_created_on>
-            <sys_id>a5629c73db510300dfa77fcfbf961913</sys_id>
+            <sys_created_on>2017-09-30 04:26:00</sys_created_on>
+            <sys_id>204a4ec5db210300dfa77fcfbf9619e6</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter display_value="Activities (filtered)">444ea5c6bf310100e628555b3f0739d6</sys_ui_formatter>
             <sys_ui_section caption="NULL" display_value="" name="x_92893_snippetnow_table" sys_domain="global" view="Default view">f63cc70adb010300dfa77fcfbf9619a2</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-25 22:29:56</sys_updated_on>
+            <sys_updated_on>2017-09-30 04:26:00</sys_updated_on>
             <sys_user/>
             <type>formatter</type>
         </sys_ui_element>

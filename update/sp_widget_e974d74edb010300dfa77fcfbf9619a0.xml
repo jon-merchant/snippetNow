@@ -25,6 +25,10 @@
 		$scope.snippet = c.data.snippet;
 		console.log("Is There a SNippet",c.data.snippet.editor,c.data.snippet.snippet);
 		if (c.data.snippet.editor || c.data.snippet.snippet) {
+			if (!c.data.snippet.allow_others_to_edit) {
+				console.log("Hello");
+				editor.setReadOnly();
+			}
 			editor.setValue(c.data.snippet.editor);
 			editor.clearSelection();
 		} else {
@@ -89,7 +93,13 @@
 				$scope.comments.show = false;
 				$scope.showCommentBox = false;
 				$scope.snippet = data;
-				
+				if (!$scope.snippet.allow_others_to_edit) {
+					editor.setReadOnly(true);
+					$scope.youCanEdit = false;
+				} else {
+					editor.setReadOnly(false);
+					$scope.youCanEdit = true;
+				}
 				if ($scope.snippet.snippet) {
 					editor.setValue($scope.snippet.snippet);
 					editor.clearSelection();
@@ -182,7 +192,42 @@
 		}
 		return 'you-bubble you';
 	}
-
+	
+	$scope.canYouEdit = function() {
+		var creator = '';
+		if ($scope.snippet && $scope.snippet.created_by && $scope.snippet.created_by.sys_id) {
+			creator = $scope.snippet.created_by.sys_id;
+		}
+		if (c.data.current_user == creator) {
+			console.log("Return False");
+			return false;	
+		} 
+		console.log("Return True");
+		return true;
+	}
+	
+	$scope.canEdit = function(val) {
+		var creator = '';
+		if ($scope.snippet && $scope.snippet.created_by && $scope.snippet.created_by.sys_id) {
+			creator = $scope.snippet.created_by.sys_id;
+		}
+		if (val) {
+			//checked
+			//not read only
+			$scope.youCanEdit = true;
+		} else {
+			//not checked
+			if (creator != c.data.current_user) {
+				
+				//set to readonly;
+				$scope.youCanEdit = false;
+			} else {
+				//not read only
+				$scope.youCanEdit = true;
+			} 
+		}
+	}
+	
 	String.prototype.escapeSpecialChars = function() {
     return this.replace(/(?:\r\n|\r|\n)/g, "<br>")
                /*.replace(/\\'/g, "\\'")
@@ -350,6 +395,7 @@
 	}
 	
 	data.tagList = new SnippetNow_DAO().getTagList();
+	data.current_user = gs.getUserID();
 	//$sp.log(data.snippet);
 	
 	function getSnippetRecord(sys_id) {
@@ -408,6 +454,7 @@
 				rec.type = snippet.type.value;
 				rec.application = snippet.application.value;
 				rec.tags = t;
+				rec.allow_others_to_edit = snippet.allow_others_to_edit;
 				rec.comments = snippet.add_comments;
 				action = rec.update();
 				$sp.log(action);
@@ -420,6 +467,7 @@
 			rec.snippet = snippet.editor;
 			rec.type = snippet.type.value;
 			rec.application = snippet.application.value;
+			rec.allow_others_to_edit = snippet.allow_others_to_edit;
 			rec.tags = t;
 			action = rec.insert();
 		}
@@ -439,7 +487,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>359</sys_mod_count>
+        <sys_mod_count>391</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -447,7 +495,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-26 03:18:10</sys_updated_on>
+        <sys_updated_on>2017-09-30 05:44:17</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -461,28 +509,29 @@
       <form>
         <div class="form-group">
           <label for="snippetTitle">Title</label>
-          <input type="text" ng-model="snippet.title" class="form-control" id="snippetTitle" placeholder="Snippet Title">
+          <div class="small pull-right" >Allow others to edit <input type="checkbox" ng-disabled="canYouEdit()" ng-model="snippet.allow_others_to_edit" ng-change="canEdit(snippet.allow_others_to_edit)" ng-true-value="true" ng-false-value="false"/> <i class="fa fa-info-circle" aria-hidden="true"></i></div>
+          <input type="text" ng-model="snippet.title" class="form-control" ng-readonly="!youCanEdit" id="snippetTitle" placeholder="Snippet Title">
           <input type="hidden" ng-model="snippet.sys_id">
         </div>  
 				<div class="form-group">
           <label for="snippetDescription">Description</label>
-          <textarea class="form-control" ng-model="snippet.description"></textarea>
+          <textarea class="form-control" ng-model="snippet.description" ng-readonly="!youCanEdit"></textarea>
         </div>
         <!-- Need some types, and stuff here -->
         <div class="form-group">
           <label for="snippetApp">Snippet Application</label>
           <div >
-            <sn-record-picker default-query="'active=true'" field="snippetApp" table="'x_92893_snippetnow_snippetnow_applications'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
+            <sn-record-picker sn-disabled="!youCanEdit" default-query="'active=true'" field="snippetApp" table="'x_92893_snippetnow_snippetnow_applications'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
           </div>
         </div>
         <div class="form-group">
           <label for="snippetType">Snippet Type</label>
           <div >
-            <sn-record-picker default-query="'active=true'" field="snippetType" table="'x_92893_snippetnow_snippet_type'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
+            <sn-record-picker sn-disabled="!youCanEdit"  default-query="'active=true'" field="snippetType" table="'x_92893_snippetnow_snippet_type'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
           </div>
         </div>
        <div class="form-group">
-         <tags-input ng-model="snippet.tags" add-on-paste="true">
+         <tags-input ng-model="snippet.tags" add-on-paste="true" ng-disable="!youCanEdit" ng-readonly="!youCanEdit">
           <auto-complete source="loadTags($query)"></auto-complete>
         </tags-input>
         </div>
