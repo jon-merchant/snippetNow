@@ -163,20 +163,20 @@
             <sum>false</sum>
             <sys_class_name>sys_ui_list</sys_class_name>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2017-09-20 03:45:31</sys_created_on>
+            <sys_created_on>2017-10-01 19:20:33</sys_created_on>
             <sys_customer_update>false</sys_customer_update>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
-            <sys_id>3d1166f1db510300dfa77fcfbf961907</sys_id>
+            <sys_id>c290e229db214300dfa77fcfbf961997</sys_id>
             <sys_mod_count>0</sys_mod_count>
-            <sys_name>sys_dictionary</sys_name>
-            <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
+            <sys_name/>
+            <sys_package/>
             <sys_policy/>
             <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
             <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
-            <sys_update_name>sys_ui_list_sys_db_object_4344f6f5bf1320001875647fcf0739ad_null</sys_update_name>
+            <sys_update_name/>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2017-09-20 03:45:31</sys_updated_on>
+            <sys_updated_on>2017-10-01 19:20:33</sys_updated_on>
             <sys_user display_value="System Administrator">6816f79cc0a8016401c5a33be04be441</sys_user>
             <view display_value="Default view" name="NULL">Default view</view>
             <view_name/>

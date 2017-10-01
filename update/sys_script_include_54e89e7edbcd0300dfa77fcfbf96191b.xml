@@ -12,6 +12,24 @@ SnippetNow_DAO.prototype = {
 	initialize: function() {
 	},
 	
+	getHelp: function() {
+		/*****************
+		* Retreive the Help topics
+		* return object of objects
+		*****************/
+		
+		
+		var hr = new GlideRecord('x_92893_snippetnow_snippetnow_help');
+		hr.addEncodedQuery('active=true');
+		hr.query();
+		while(hr.next()) {
+			var help = {};
+			help[hr.getDisplayValue('topic')] = {title:hr.getDisplayValue('title'),body:hr.getDisplayValue('help'),topic:hr.getDisplayValue('topic')};
+		}
+		
+		return help;
+	},
+	
 	getTypeApps: function(tableName,type,recordTable) {
 		/******************
  		* Get either Types or Applications
@@ -325,7 +343,7 @@ SnippetNow_DAO.prototype = {
         <sys_created_on>2017-09-10 19:28:15</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>54e89e7edbcd0300dfa77fcfbf96191b</sys_id>
-        <sys_mod_count>111</sys_mod_count>
+        <sys_mod_count>113</sys_mod_count>
         <sys_name>SnippetNow_DAO</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy>read</sys_policy>
@@ -333,6 +351,6 @@ SnippetNow_DAO.prototype = {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_script_include_54e89e7edbcd0300dfa77fcfbf96191b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-30 05:10:25</sys_updated_on>
+        <sys_updated_on>2017-10-01 19:38:51</sys_updated_on>
     </sys_script_include>
 </record_update>

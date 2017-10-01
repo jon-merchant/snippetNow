@@ -23,10 +23,10 @@
 	
 	if (c.data.snippet) {
 		$scope.snippet = c.data.snippet;
-		console.log("Is There a SNippet",c.data.snippet.editor,c.data.snippet.snippet);
+		//console.log("Is There a SNippet",c.data.snippet.editor,c.data.snippet.snippet);
 		if (c.data.snippet.editor || c.data.snippet.snippet) {
 			if (!c.data.snippet.allow_others_to_edit) {
-				console.log("Hello");
+				//console.log("Hello");
 				editor.setReadOnly();
 			}
 			editor.setValue(c.data.snippet.editor);
@@ -46,9 +46,17 @@
 			name: 'snippetApp'
 		};
 	}
+	$scope.iNeedHelp = function(val) {
+		$scope.openModal('showHelp',val);
+	}
 	
-	
-	$scope.openModal = function(tpl) {
+	$scope.openModal = function(tpl,topic) {
+		console.log(topic);
+		if (topic) {
+			$scope.modalData = c.data.help[topic];
+		}
+		console.log($scope.modalData,c.data.help);
+		
 		$rootScope.modalInstance = $uibModal.open({
 			templateUrl: tpl,
 			scope: $scope
@@ -56,7 +64,7 @@
 	}
 	
 	$scope.closeModal = function() {
-		console.log("triggered");
+		//console.log("triggered");
 		$rootScope.modalInstance.close();
 	}
 	
@@ -84,7 +92,7 @@
 		}
 	}
 	
-	console.log("Listening");
+	//console.log("Listening");
 	$scope.$on("selectedSnippet",function(event,data) {
 		$timeout(function() {
 			console.log("BOOO",data);
@@ -142,9 +150,9 @@
 	
 	
 	$scope.submit = function(type) {
-		console.log("Snippet",$scope.snippet);
-		console.log("SnippetType",$scope.snippetType);
-		console.log("SnippetApp",$scope.snippetApp);
+		//console.log("Snippet",$scope.snippet);
+		//console.log("SnippetType",$scope.snippetType);
+		//console.log("SnippetApp",$scope.snippetApp);
 		
 		$scope.snippet.application = $scope.snippetApp;
 		$scope.snippet.type = $scope.snippetType;
@@ -152,15 +160,15 @@
 		
 		c.data.snippet = $scope.snippet;
 		
-		console.log("C DATA",c.data.snippet);
+		//console.log("C DATA",c.data.snippet);
 		c.server.update().then(function(response) {
 			//spUtil.update($scope);
-			console.log("Response",response);
+			//console.log("Response",response);
 			$scope.snippet.application.display_value = $scope.snippet.application.displayValue;
 			$scope.snippet.type.display_value = $scope.snippet.type.displayValue;
 			
 			if (response.recordAction && type == 'update') {
-				console.log("UPDATE Scope",$scope.snippet);
+				//console.log("UPDATE Scope",$scope.snippet);
 				
 				$scope.openModal('updatedSnippet');
 				$timeout(function() {
@@ -198,12 +206,39 @@
 		if ($scope.snippet && $scope.snippet.created_by && $scope.snippet.created_by.sys_id) {
 			creator = $scope.snippet.created_by.sys_id;
 		}
-		if (c.data.current_user == creator) {
-			console.log("Return False");
-			return false;	
-		} 
-		console.log("Return True");
-		return true;
+		if (!$scope.snippet.sys_id) {
+			$scope.youCanEdit = true;
+			return false;
+		} else {
+			
+			if (creator == c.data.current_user) {
+				$scope.youCanEdit = true;
+				return false;
+			} else if (creator != c.data.current_user) {
+				if ($scope.snippet.allow_others_to_edit) {
+					$scope.youCanEdit = true;
+					return true;
+				} else {
+					$scope.youCanEdit = false;
+					return true;
+				}
+			}
+			
+			/*if (c.data.current_user == creator) {
+				console.log("Return False",creator,c.data.current_user);
+				$scope.youCanEdit = true;
+				return false;	
+			} else {
+				if ($scope.snippet.allow_others_to_edit && creator == c.data.current_user) {
+					$scope.youCanEdit = true;
+					return false;
+				} else {
+					//console.log("Return True");
+					$scope.youCanEdit = false;
+					return true;
+				}
+			}*/
+		}
 	}
 	
 	$scope.canEdit = function(val) {
@@ -211,21 +246,31 @@
 		if ($scope.snippet && $scope.snippet.created_by && $scope.snippet.created_by.sys_id) {
 			creator = $scope.snippet.created_by.sys_id;
 		}
-		if (val) {
-			//checked
-			//not read only
+		if (!$scope.snippet.sys_id) {
 			$scope.youCanEdit = true;
 		} else {
-			//not checked
-			if (creator != c.data.current_user) {
-				
-				//set to readonly;
-				$scope.youCanEdit = false;
-			} else {
+		
+			if (val) {
+				//checked
 				//not read only
 				$scope.youCanEdit = true;
-			} 
+			} else {
+				//not checked
+				if (creator != c.data.current_user) {
+
+					//set to readonly;
+					$scope.youCanEdit = false;
+				} else {
+					//not read only
+					$scope.youCanEdit = true;
+				} 
+
+			}
 		}
+	}
+	
+	$scope.showHelp = function(topic) {
+		
 	}
 	
 	String.prototype.escapeSpecialChars = function() {
@@ -396,6 +441,8 @@
 	
 	data.tagList = new SnippetNow_DAO().getTagList();
 	data.current_user = gs.getUserID();
+	
+	data.help = new SnippetNow_DAO().getHelp();
 	//$sp.log(data.snippet);
 	
 	function getSnippetRecord(sys_id) {
@@ -487,7 +534,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>391</sys_mod_count>
+        <sys_mod_count>426</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -495,7 +542,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-30 05:44:17</sys_updated_on>
+        <sys_updated_on>2017-10-01 22:27:37</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -509,7 +556,7 @@
       <form>
         <div class="form-group">
           <label for="snippetTitle">Title</label>
-          <div class="small pull-right" >Allow others to edit <input type="checkbox" ng-disabled="canYouEdit()" ng-model="snippet.allow_others_to_edit" ng-change="canEdit(snippet.allow_others_to_edit)" ng-true-value="true" ng-false-value="false"/> <i class="fa fa-info-circle" aria-hidden="true"></i></div>
+          <div class="small pull-right" >Allow others to edit <input type="checkbox" ng-disabled="canYouEdit()" ng-model="snippet.allow_others_to_edit" ng-change="canEdit(snippet.allow_others_to_edit)" ng-true-value="true" ng-false-value="false"/> <i class="fa fa-info-circle" aria-hidden="true" ng-click="iNeedHelp('allow_others_to_edit')"></i></div>
           <input type="text" ng-model="snippet.title" class="form-control" ng-readonly="!youCanEdit" id="snippetTitle" placeholder="Snippet Title">
           <input type="hidden" ng-model="snippet.sys_id">
         </div>  
@@ -531,9 +578,18 @@
           </div>
         </div>
        <div class="form-group">
-         <tags-input ng-model="snippet.tags" add-on-paste="true" ng-disable="!youCanEdit" ng-readonly="!youCanEdit">
-          <auto-complete source="loadTags($query)"></auto-complete>
-        </tags-input>
+         <label for="tagBUttons">Tags</label>
+         <div ng-if="youCanEdit">
+         	<tags-input ng-model="snippet.tags" add-on-paste="true" ng-disable="!youCanEdit" ng-readonly="!youCanEdit">
+            <auto-complete source="loadTags($query)"></auto-complete>
+          </tags-input>  
+         </div>
+         <div ng-if="!youCanEdit">
+           
+           <button ng-repeat="tag in snippet.tags" class="btn btn-default" ng-disabled="!youCanEdit">
+             {{tag.text}}
+           </button>
+         </div>
         </div>
        <div class="form-group editor-group" ng-class="editorHeight()">
          <label for="snippetHTML">Snippet </label>
@@ -569,6 +625,18 @@
     <!--</div>-->
   <!--</div>-->
 </div>
+<script type="text/ng-template" id="showHelp">
+	<div class="panel panel-info">
+  	<div class="panel panel-heading">
+    	SnippetNOW Help - {{modalData.title}}
+      <i class="fa fa-times fa-2x pull-right" aria-hidden="true" ng-click="closeModal()"></i>
+   </div>
+   <div class="panel panel-body">
+   	<div ng-bind-html="modalData.body"></div>
+   </div>
+  </div>
+
+</script>
 <script type="text/ng-template" id="updatedSnippet">
 	<div ng-show="c.data.recordAction" class="alert alert-success" style="margin-bottom:0px">
     <strong>Success!</strong> Snippet has been updated!.

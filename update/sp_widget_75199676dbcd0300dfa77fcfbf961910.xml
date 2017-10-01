@@ -225,65 +225,66 @@
 	console.log("Nav",$scope);
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css>.new-button-row {
-  padding-bottom: 10px;
-}
-.badge {
-  background-color: #717171;
-}
-.fa-pencil {
-  visibility: hidden;
-}
-.list-group-item:hover {
-  .fa-pencil {
-    visibility: visible;
-  }
-}
-.snippetRecord {
-  line-height: 16px;
-}
-.snippetNav-title{
-  font-weight: bold;
-  font-weight: 14px;
-}
-.snippetNav-subTitle {
-  font-size: 12px;
-  
-}
-.small-text-snippets {
-  font-size: 10px;
-  
-}
-.snippet-listings {
-  max-height: 700px;
-  overflow: auto;
-}
-.small-caps {
-  text-transform: uppercase;
-  opacity: 0.6;
-  font-size: 65%;
-}
-.small-italics {
-  font-style: italic;
-  font-size: 85%;
-}
-.small-tags {
-  font-size: 75%;
-  margin-top: 5px;
-}
-.small-tags span {
-  padding-right: 5px;
-}
-.tag-btn {
-  margin-right: 5px;
-}
-.tooltip {
-  z-index:1000;
-}
-.avatar {
-  box-shadow: 0 0 6px #333;
-}
-
+        <css>.new-button-row {&#13;
+  padding-bottom: 10px;&#13;
+}&#13;
+.badge {&#13;
+  background-color: #717171;&#13;
+}&#13;
+.fa-pencil {&#13;
+  visibility: hidden;&#13;
+}&#13;
+.list-group-item:hover {&#13;
+  .fa-pencil {&#13;
+    visibility: visible;&#13;
+  }&#13;
+}&#13;
+.snippetRecord {&#13;
+  line-height: 16px;&#13;
+}&#13;
+.snippetNav-title{&#13;
+  font-weight: bold;&#13;
+  font-weight: 14px;&#13;
+}&#13;
+.snippetNav-subTitle {&#13;
+  font-size: 12px;&#13;
+  &#13;
+}&#13;
+.small-text-snippets {&#13;
+  font-size: 10px;&#13;
+  &#13;
+}&#13;
+.snippet-listings {&#13;
+  max-height: 700px;&#13;
+  overflow: auto;&#13;
+}&#13;
+.small-caps {&#13;
+  text-transform: uppercase;&#13;
+  opacity: 0.6;&#13;
+  font-size: 65%;&#13;
+}&#13;
+.small-italics {&#13;
+  font-style: italic;&#13;
+  font-size: 85%;&#13;
+}&#13;
+.small-tags {&#13;
+  font-size: 75%;&#13;
+  margin-top: 5px;&#13;
+}&#13;
+.small-tags span {&#13;
+  padding-right: 5px;&#13;
+}&#13;
+.tag-btn {&#13;
+  margin-right: 5px;&#13;
+  margin-bottom: 5px;&#13;
+}&#13;
+.tooltip {&#13;
+  z-index:1000;&#13;
+}&#13;
+.avatar {&#13;
+  box-shadow: 0 0 6px #333;&#13;
+}&#13;
+&#13;
 </css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -311,6 +312,7 @@
 	data.snippet.records = new SnippetNow_DAO().getSnippetRecords('x_92893_snippetnow_table');
 	data.snippet.tags = new SnippetNow_DAO().getTagList();
 	
+	data.help = new SnippetNow_DAO().getHelp();
 	
 	
 	
@@ -321,7 +323,7 @@
         <sys_created_on>2017-09-10 19:28:47</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>75199676dbcd0300dfa77fcfbf961910</sys_id>
-        <sys_mod_count>321</sys_mod_count>
+        <sys_mod_count>323</sys_mod_count>
         <sys_name>SnippetNow Navigator</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -329,7 +331,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_75199676dbcd0300dfa77fcfbf961910</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-09-30 04:11:41</sys_updated_on>
+        <sys_updated_on>2017-10-01 22:39:33</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   
