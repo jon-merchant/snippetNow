@@ -220,7 +220,8 @@
 		}*/
 	}
 	if ($scope.snippet.records.length == 0 && $scope.snippet.applications.length == 0 && $scope.snippet.types.length == 0 && $scope.snippet.tags.length == 0) {
-		c.openModal('no-records');
+		var md = c.data.help.first_run;
+		c.openModal('showHelp',md);
 	}
 	console.log("Nav",$scope);
 }]]></client_script>
@@ -323,7 +324,7 @@
         <sys_created_on>2017-09-10 19:28:47</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>75199676dbcd0300dfa77fcfbf961910</sys_id>
-        <sys_mod_count>323</sys_mod_count>
+        <sys_mod_count>325</sys_mod_count>
         <sys_name>SnippetNow Navigator</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -331,7 +332,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_75199676dbcd0300dfa77fcfbf961910</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-10-01 22:39:33</sys_updated_on>
+        <sys_updated_on>2017-10-01 22:51:17</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   
@@ -490,22 +491,18 @@
   	<p>{{modalData.message}}</p>
   </div>
 </script>
-<script type="text/ng-template" id="no-records">
-	<div class="panel panel-primary">
-  	<div class="panel-heading">New Users - Suggestions</div>
-    <div class="panel-body">
-    	<p>It looks like this might be the first time you are running <strong>SnippetNow</strong>. If this is the case, here's a couple of suggestions to get you started.</p>
-      <p>The function of this page is to keep track of useful <em>snippets</em> that you may want to have for future reference.</p>
-      <h4>To get started</h4>
-      <p>There's a couple of way you can go about this, but my suggestion would be to create at least 1 <strong>APPLICATION</strong> and 1 <strong>TYPE</strong> first. The idea behind this is that when you are creating <em>snippets</em> you want as much meta data available to filter and find those snippets you want to reference.</p>
-      <p>Example:<br><strong>APPLICATION</strong>: Service Portal<br><strong>TYPE</strong>: Widget - Client Script</p>
-      <p>Then go hog wild and add those snippets!</p>
-       <div class="pull-right clearfix">
-        <button class="btn btn-danger" ng-click="c.closeModal()">Close</button>
-      </div>
-    </div>
-   
+<script type="text/ng-template" id="showHelp">
+	<div class="panel panel-info">
+  	<div class="panel panel-heading">
+    	SnippetNOW Help - {{modalData.title}}
+      <i class="fa fa-times fa-2x pull-right" aria-hidden="true" ng-click="closeModal()"></i>
+   </div>
+   <div class="panel panel-body">
+   	<div ng-bind-html="modalData.body"></div>
+   </div>
   </div>
-</script>]]></template>
+
+</script>
+]]></template>
     </sp_widget>
 </record_update>
