@@ -10,6 +10,12 @@
 	$scope.snippetApp = {};
 	console.log("FIRST",$scope.snippet);
 	console.log("FIRST",c.data.snippet);
+	//$scope.snippetSetOptions = c.data.related_records;
+	$scope.snippetSetOptions = [{id:1,label:"Script 1"},{id:2,label:"Script 2"}];
+	$scope.snippetSetModel = [];
+	$scope.example1model = []; 
+	$scope.example1data = [ {id: 1, label: "David"}, {id: 2, label: "Jhon"}, {id: 3, label: "Danny"} ];
+	$scope.exampleExtraSettings = {externalIdProp : ''};
 	
 	var editor = ace.edit("editor");
     editor.setTheme("ace/theme/sqlserver");
@@ -443,7 +449,8 @@
 	data.current_user = gs.getUserID();
 	
 	data.help = new SnippetNow_DAO().getHelp();
-	//$sp.log(data.snippet);
+	data.related_records = getSnippets();
+	
 	
 	function getSnippetRecord(sys_id) {
 		/*******************
@@ -527,6 +534,18 @@
 		
 	}
 	
+	function getSnippets() {
+		var allSnippets = [];
+		var gr = new GlideRecord('x_92893_snippetnow_table');
+		gr.orderBy('title');
+		gr.query();
+		while(gr.next()) {
+			var label = gr.getDisplayValue('title') + " | " + gr.getDisplayValue('application') + " - " +gr.getDisplayValue('type');
+			allSnippets.push({id:gr.getUniqueValue(),label:gr.getDisplayValue('title')});
+		}
+		return allSnippets;
+	}
+	
 })();]]></script>
         <servicenow>false</servicenow>
         <sys_class_name>sp_widget</sys_class_name>
@@ -534,7 +553,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>426</sys_mod_count>
+        <sys_mod_count>455</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -542,7 +561,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-10-01 22:27:37</sys_updated_on>
+        <sys_updated_on>2017-10-25 04:19:07</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -596,6 +615,14 @@
          <div class="small pull-right" ng-if="snippet.sys_id">Show comments <input type="checkbox" ng-model="comments.show" ng-change="showComments(comments.show)" ng-true-value="true" ng-false-value="false"/></div>
           <div id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
        </div>
+       <div class="form-group">
+         <label for="snippetRelated">Related Snippets</label>
+         
+         <!--<div ng-dropdown-multiselect="" options="snippetSetOptions" selected-model="snippetSetModel"></div>-->
+         <div ng-dropdown-multiselect="" options="example1data" selected-model="example1model" extra-settings="exampleExtraSettings"></div>
+        </div>
+        
+        
         <div ng-if="showCommentBox" class="form-group">
         	<label for="snippetComments">Add Comment</label>
           <textarea ng-model="snippet.add_comments" class="form-control"></textarea>
