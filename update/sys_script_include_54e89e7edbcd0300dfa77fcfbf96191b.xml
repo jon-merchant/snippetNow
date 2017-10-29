@@ -9,341 +9,429 @@
         <name>SnippetNow_DAO</name>
         <script><![CDATA[var SnippetNow_DAO = Class.create();
 SnippetNow_DAO.prototype = {
-	initialize: function() {
-	},
-	
-	getHelp: function() {
-		/*****************
-		* Retreive the Help topics
-		* return object of objects
-		*****************/
-		
-		
-		var hr = new GlideRecord('x_92893_snippetnow_snippetnow_help');
-		hr.addEncodedQuery('active=true');
-		hr.query();
-		while(hr.next()) {
-			var help = {};
-			help[hr.getDisplayValue('topic')] = {title:hr.getDisplayValue('title'),body:hr.getDisplayValue('help'),topic:hr.getDisplayValue('topic')};
-		}
-		
-		return help;
-	},
-	
-	getTypeApps: function(tableName,type,recordTable) {
-		/******************
- 		* Get either Types or Applications
- 		* return records
- 		******************/
-		var record = [];
-		var gr = new GlideRecordSecure(tableName);
-		gr.query();
-		while(gr.next()) {
-			var eq = type+'='+gr.sys_id.toString();
-			gs.info("DAO "+eq);
-			record.push({
-				sys_id: gr.sys_id.toString(),
-				name: gr.getValue('name'),
-				color: gr.getValue('color'),
-				count: this.getCount(recordTable,eq),
-				value: gr.getValue('value')
-			});
-		}
-		return record;
-		
-	},
-	saveAppTypes: function(record,type) {
-		/******************
- 		* Add new Applications or Types
- 		* return true/false
- 		******************/
-		gs.info("SnippetNow called saveAppTypes");
-		var table;
-		if (type == 'app') {
-			table = 'x_92893_snippetnow_snippetnow_applications';
-		} else {
-			table = 'x_92893_snippetnow_snippet_type';
-		}
-		gs.info("SnippetNow "+JSON.stringify(record));
-		var ir = new GlideRecord(table);
-		ir.initialize();
-		ir.active = true;
-		ir.name = record[0].name;
-		ir.value = record[0].value;
-		ir.color = record[0].color;
-		var inserted = ir.insert();
-		return inserted;
-	},
-	updateAppType: function(record,type) {
-		/**********************
-		* Update Application or Type
-		* return true/false
-		**********************/
-		
-		gs.info("SnippetNow Update AppType "+JSON.stringify(record));
-		if (type == 'app') {
-			table = 'x_92893_snippetnow_snippetnow_applications';
-		} else {
-			table = 'x_92893_snippetnow_snippet_type';
-		}
-		var ur = new GlideRecord(table);
-		ur.addEncodedQuery('sys_id='+record[0].sys_id);
-		gs.info("SnippetNow Update AppType "+ur.getEncodedQuery());
-		ur.query();
-		while(ur.next()) {
-			ur.name = record[0].name;
-			ur.value = record[0].value;
-			ur.color = decodeURIComponent(record[0].color);
-			var updated = ur.update();
-			return updated;
-		}
-	},
-	getCount: function(tableName, encodedQuery) {
-		/******************
- 		* Get counts
- 		* return int
- 		******************/
-		var c = 0;
-		var count = new GlideAggregate(tableName);
-		
-		if (encodedQuery) {
-			count.addEncodedQuery(encodedQuery);
-		}
-		
-		count.addAggregate('COUNT');
-		count.query();
-		
-		if (count.next())
-			c = count.getAggregate('COUNT');
-		
-		return c;
-	},
-	
-	findTag: function(tag) {
-		var response = {};
-		var ft = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
-		ft.addEncodedQuery("tag="+tag);
-		ft.query();
-		if (ft.next()) {
-			response.sys_id = ft.sys_id.toString();
-			response.tag = ft.getValue('tag');
-		} else {
-			response.sys_id = null;
-			response.tag = tag;
-		}
-		return response;
-	},
-	checkTags: function(list) {
-		//list = JSON.parse(list);
-		var nList = [];
-		for(var i=0;i<list.length;i++) {
-			nList.push(this.findTag(list[i].text));
-		}
-		for(var j=0;j<nList.length;j++) {
-			if (nList[j].sys_id == null) {
-				//needs to be added
-				gs.info("SnippetNow add tag "+nList[j].tag);
-				var sys_id = this.addTag(nList[j].tag);
-				nList[j].sys_id = sys_id;
-			}
-		}
-		var simpleList = [];
-		for(var k=0;k<nList.length;k++) {
-			simpleList.push(nList[k].sys_id);
-		}
-		gs.info("SnippetNOW "+JSON.stringify(nList));
-		var l = simpleList.join(",");
-		gs.info("SnippetNOW "+l);
-		return l;
-		
-		
-	},
-	addTag: function(tag) {
-		var at = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
-		at.initialize();
-		at.tag = tag;
-		var newID = at.insert();
-		gs.info("SnippetNow new id "+newID);
-		return newID;
-	},
-	getTagList: function() {
-		var gt = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
-		gt.query();
-		var tags = [];
-		while(gt.next()) {
-			tags.push({"text":gt.getDisplayValue('tag')});
-		}
-		return tags;
-	},
-	
-	getTags: function(list) {
-		var sList = list.split(",");
-		var nList = [];
-		var count = sList.length;
-		for(var i=0;i<count;i++) {
-			var gt = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
-			gt.addEncodedQuery("sys_id="+sList[i]);
-			gt.query();
-			while(gt.next()) {
-				nList.push({"text":gt.getDisplayValue('tag')});
-			}
-		}
-		return nList;
-		
-	},
-	getCreatedBy: function(userID) {
-		var user = {};
-		var gu = new GlideRecord('sys_user');
-		gu.addEncodedQuery('user_name='+userID);
-		gu.query();
-		if(gu.next()) {
-			user.sys_id = gu.sys_id.toString();
-			user.name = gu.getDisplayValue('name');
-		}
-		return user;
-	},
-	getColor: function(type,sys_id) {
-		var table;
-		if (type == 'app') {
-			table = 'x_92893_snippetnow_snippetnow_applications';
-		} else if (type == 'type') {
-			table = 'x_92893_snippetnow_snippet_type';
-		}
-		
-		var c = new GlideRecord(table);
-		c.addEncodedQuery("sys_id="+sys_id);
-		c.query();
-		while(c.next()) {
-			return c.getValue('color');
-		}
-	},
-	
-	getSnippetRecords: function(tableName,encodedQuery,startIndex,limit,orderBy,ascendingOrder) {
-		var glideRecord = new GlideRecordSecure(tableName);
-		if (encodedQuery) {
-			glideRecord.addEncodedQuery(encodedQuery);
-		}
-		if (orderBy) {
-			if (ascendingOrder) {
-				glideRecord.orderBy(orderBy);
-			} else {
-				glideRecord.orderByDesc(orderBy);
-			}
-		} else {
-			glideRecord.orderByDesc('sys_updated_on');
-		}
-		if (startIndex && startIndex >= 0 && numberOfRecords > 0) {
-			glideRecord.chooseWindow(startIndex, startIndex + numberOfRecords);
-		}
-		glideRecord.query();
-		var records = [];
-		while(glideRecord.next()){
-			var app = {};
-			
-			app.display_value = glideRecord.getDisplayValue('application');
-			app.sys_id = glideRecord.application.toString();
-			app.value = glideRecord.application.toString();
-			app.color = this.getColor('app',app.sys_id);
-			var type = {};
-			type.display_value = glideRecord.getDisplayValue('type');
-			type.sys_id = glideRecord.type.toString();
-			type.value = glideRecord.type.toString();
-			type.color = this.getColor('type',type.sys_id);	
-			var cb = this.getCreatedBy(glideRecord.sys_created_by.toString());
-			var t = glideRecord.getValue('tags');
-			if (t) {
-				t = this.getTags(t);
-			} else {
-				t = '';
-			}
-			var notes = glideRecord.comments.getJournalEntry(-1);
-			var na = notes.split("\n\n");
-			var nn = [];
-			for (var m=0;m<na.length;m++) {
-				if (this.getUserFromJournal(na[m])) {
-					nn.push(this.getUserFromJournal(na[m]));
-				}
-				
-			}
-			var oe = glideRecord.getValue('allow_others_to_edit');
-			if (oe == '1') {
-				oe = true;
-			} else {
-				oe = false;
-			}
-			gs.info("SnippetNOW tags "+t);
-					records.push({
-						created_by:cb,
-						sys_id:glideRecord.sys_id.toString(),
-						title:glideRecord.getValue('title'),
-						description:glideRecord.getValue('description'),
-						application:app,
-						allow_others_to_edit:oe,
-						type:type,
-						color:glideRecord.getValue('color'),
-						snippet:glideRecord.getValue('snippet'),
-						tags:t,
-						previous_comments:nn,
-						notes:notes
-					});
-				}
-				return records;
-			},
-			getUserFromJournal: function(line) {
-				var note = {};
-				//(?<=\- )(.*?)(?= \()
-				var pattern = new RegExp(/\- (.*?)\(/);
-				if (line) {
-					var un = line.match(pattern).pop();
-					gs.info("SnippetNow "+JSON.stringify(un));
-					
-					var gu = new GlideRecord('sys_user');
-					gu.addEncodedQuery("name="+un);
-					gu.query();
-					if(gu.next()) {
-						note.comment = line;
-						note.created_by = {
-							sys_id:gu.sys_id.toString(),
-							name: gu.getDisplayValue('name')
-						}
-					}
-					return note;
-					
-					
-				}
-				//var extract = line.match(pattern).pop();
-				
-				//
-				
-			},
-			updateSnippet: function(snippet) {
-				/********************
- 				* Saves the new copy of the snippet
- 				* returns true/false
- 				********************/
-				
-				var ur = new GlideRecord('x_92893_snippetnow_table');
-				ur.initialize();
-				ur.active = true;
-				ur.snippet = snippet.snippet;
-				ur.color = snippet.color;
-				ur.application = snippet.application;
-				ur.type = snippet.type;
-				ur.title = snippet.title;
-				ur.description = snippet.description;
-				var updated = ur.update();
-				return updated;
-				
-			},
-			
-			type: 'SnippetNow_DAO'
-		};]]></script>
+    initialize: function() {},
+
+    getHelp: function() {
+        /*****************
+         * Retreive the Help topics
+         * return object of objects
+         *****************/
+
+
+        var hr = new GlideRecord('x_92893_snippetnow_snippetnow_help');
+        hr.addEncodedQuery('active=true');
+        hr.query();
+        while (hr.next()) {
+            var help = {};
+            help[hr.getDisplayValue('topic')] = {
+                title: hr.getDisplayValue('title'),
+                body: hr.getDisplayValue('help'),
+                topic: hr.getDisplayValue('topic')
+            };
+        }
+
+        return help;
+    },
+
+    getTypeApps: function(tableName, type, recordTable) {
+        /******************
+         * Get either Types or Applications
+         * return records
+         ******************/
+        var record = [];
+        var gr = new GlideRecordSecure(tableName);
+        gr.query();
+        while (gr.next()) {
+            var eq = type + '=' + gr.sys_id.toString();
+            gs.info("DAO " + eq);
+            record.push({
+                sys_id: gr.sys_id.toString(),
+                name: gr.getValue('name'),
+                color: gr.getValue('color'),
+                count: this.getCount(recordTable, eq),
+                value: gr.getValue('value')
+            });
+        }
+        return record;
+
+    },
+    saveAppTypes: function(record, type) {
+        /******************
+         * Add new Applications or Types
+         * return true/false
+         ******************/
+        gs.info("SnippetNow called saveAppTypes");
+        var table;
+        if (type == 'app') {
+            table = 'x_92893_snippetnow_snippetnow_applications';
+        } else {
+            table = 'x_92893_snippetnow_snippet_type';
+        }
+        gs.info("SnippetNow " + JSON.stringify(record));
+        var ir = new GlideRecord(table);
+        ir.initialize();
+        ir.active = true;
+        ir.name = record[0].name;
+        ir.value = record[0].value;
+        ir.color = record[0].color;
+        var inserted = ir.insert();
+        return inserted;
+    },
+    updateAppType: function(record, type) {
+        /**********************
+         * Update Application or Type
+         * return true/false
+         **********************/
+
+        gs.info("SnippetNow Update AppType " + JSON.stringify(record));
+        if (type == 'app') {
+            table = 'x_92893_snippetnow_snippetnow_applications';
+        } else {
+            table = 'x_92893_snippetnow_snippet_type';
+        }
+        var ur = new GlideRecord(table);
+        ur.addEncodedQuery('sys_id=' + record[0].sys_id);
+        gs.info("SnippetNow Update AppType " + ur.getEncodedQuery());
+        ur.query();
+        while (ur.next()) {
+            ur.name = record[0].name;
+            ur.value = record[0].value;
+            ur.color = decodeURIComponent(record[0].color);
+            var updated = ur.update();
+            return updated;
+        }
+    },
+    getCount: function(tableName, encodedQuery) {
+        /******************
+         * Get counts
+         * return int
+         ******************/
+        var c = 0;
+        var count = new GlideAggregate(tableName);
+
+        if (encodedQuery) {
+            count.addEncodedQuery(encodedQuery);
+        }
+
+        count.addAggregate('COUNT');
+        count.query();
+
+        if (count.next())
+            c = count.getAggregate('COUNT');
+
+        return c;
+    },
+
+    findTag: function(tag) {
+        var response = {};
+        var ft = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
+        ft.addEncodedQuery("tag=" + tag);
+        ft.query();
+        if (ft.next()) {
+            response.sys_id = ft.sys_id.toString();
+            response.tag = ft.getValue('tag');
+        } else {
+            response.sys_id = null;
+            response.tag = tag;
+        }
+        return response;
+    },
+    checkTags: function(list) {
+        //list = JSON.parse(list);
+        var nList = [];
+        for (var i = 0; i < list.length; i++) {
+            nList.push(this.findTag(list[i].text));
+        }
+        for (var j = 0; j < nList.length; j++) {
+            if (nList[j].sys_id == null) {
+                //needs to be added
+                gs.info("SnippetNow add tag " + nList[j].tag);
+                var sys_id = this.addTag(nList[j].tag);
+                nList[j].sys_id = sys_id;
+            }
+        }
+        var simpleList = [];
+        for (var k = 0; k < nList.length; k++) {
+            simpleList.push(nList[k].sys_id);
+        }
+        gs.info("SnippetNOW " + JSON.stringify(nList));
+        var l = simpleList.join(",");
+        gs.info("SnippetNOW " + l);
+        return l;
+
+
+    },
+    addTag: function(tag) {
+        var at = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
+        at.initialize();
+        at.tag = tag;
+        var newID = at.insert();
+        gs.info("SnippetNow new id " + newID);
+        return newID;
+    },
+    getTagList: function() {
+        var gt = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
+        gt.query();
+        var tags = [];
+        while (gt.next()) {
+            tags.push({
+                "text": gt.getDisplayValue('tag')
+            });
+        }
+        return tags;
+    },
+
+    getTags: function(list) {
+        var sList = list.split(",");
+        var nList = [];
+        var count = sList.length;
+        for (var i = 0; i < count; i++) {
+            var gt = new GlideRecord('x_92893_snippetnow_snippetnow_tags');
+            gt.addEncodedQuery("sys_id=" + sList[i]);
+            gt.query();
+            while (gt.next()) {
+                nList.push({
+                    "text": gt.getDisplayValue('tag')
+                });
+            }
+        }
+        return nList;
+
+    },
+    getCreatedBy: function(userID) {
+        var user = {};
+        var gu = new GlideRecord('sys_user');
+        gu.addEncodedQuery('user_name=' + userID);
+        gu.query();
+        if (gu.next()) {
+            user.sys_id = gu.sys_id.toString();
+            user.name = gu.getDisplayValue('name');
+        }
+        return user;
+    },
+    getColor: function(type, sys_id) {
+        var table;
+        if (type == 'app') {
+            table = 'x_92893_snippetnow_snippetnow_applications';
+        } else if (type == 'type') {
+            table = 'x_92893_snippetnow_snippet_type';
+        }
+
+        var c = new GlideRecord(table);
+        c.addEncodedQuery("sys_id=" + sys_id);
+        c.query();
+        while (c.next()) {
+            return c.getValue('color');
+        }
+    },
+
+    getRelatedRecordList: function(list) {
+    	if (list) {
+	    	list = list.split(",");
+	    	var arr = [];
+	    	for (var i=0;i<list.length;i++) {
+		    	var glideRecord = new GlideRecord("x_92893_snippetnow_table");
+		        glideRecord.get(list[i]);
+		        if (glideRecord) {
+		        	var rr = {};
+		        	rr.id = glideRecord.getUniqueValue();
+		        	rr.label = glideRecord.getDisplayValue('title');
+		        	arr.push(rr);
+		        }	
+		     }
+		     return arr;
+		 }
+		 return '';
+    },
+
+    getSnippetRecord: function(sys_id) {
+        var glideRecord = new GlideRecord("x_92893_snippetnow_table");
+        glideRecord.get(sys_id);
+        gs.info("getSnippetRecord "+glideRecord.sys_id);
+        if (glideRecord) {
+            var app = {};
+
+            app.display_value = glideRecord.getDisplayValue('application');
+            app.sys_id = glideRecord.application.toString();
+            app.value = glideRecord.application.toString();
+            app.color = this.getColor('app', app.sys_id);
+            var type = {};
+            type.display_value = glideRecord.getDisplayValue('type');
+            type.sys_id = glideRecord.type.toString();
+            type.value = glideRecord.type.toString();
+            type.color = this.getColor('type', type.sys_id);
+            var cb = this.getCreatedBy(glideRecord.sys_created_by.toString());
+            var t = glideRecord.getValue('tags');
+            if (t) {
+                t = this.getTags(t);
+            } else {
+                t = '';
+            }
+            var notes = glideRecord.comments.getJournalEntry(-1);
+            var na = notes.split("\n\n");
+            var nn = [];
+            for (var m = 0; m < na.length; m++) {
+                if (this.getUserFromJournal(na[m])) {
+                    nn.push(this.getUserFromJournal(na[m]));
+                }
+
+            }
+            var oe = glideRecord.getValue('allow_others_to_edit');
+            if (oe == '1') {
+                oe = true;
+            } else {
+                oe = false;
+            }
+            gs.info("SnippetNOW tags " + t);
+            var record = [];
+            record.push({
+                created_by: cb,
+                sys_id: glideRecord.sys_id.toString(),
+                title: glideRecord.getValue('title'),
+                description: glideRecord.getValue('description'),
+                application: app,
+                allow_others_to_edit: oe,
+                type: type,
+                color: glideRecord.getValue('color'),
+                snippet: glideRecord.getValue('snippet'),
+                tags: t,
+                previous_comments: nn,
+                notes: notes
+            });
+            gs.info("getSnippetRecord "+record[0].title);
+            return record[0];
+        }
+        
+    },
+
+    getSnippetRecords: function(tableName, encodedQuery, startIndex, limit, orderBy, ascendingOrder) {
+        var glideRecord = new GlideRecordSecure(tableName);
+        if (encodedQuery) {
+            glideRecord.addEncodedQuery(encodedQuery);
+        }
+        if (orderBy) {
+            if (ascendingOrder) {
+                glideRecord.orderBy(orderBy);
+            } else {
+                glideRecord.orderByDesc(orderBy);
+            }
+        } else {
+            glideRecord.orderByDesc('sys_updated_on');
+        }
+        if (startIndex && startIndex >= 0 && numberOfRecords > 0) {
+            glideRecord.chooseWindow(startIndex, startIndex + numberOfRecords);
+        }
+        glideRecord.query();
+        var records = [];
+        while (glideRecord.next()) {
+            var app = {};
+
+            app.display_value = glideRecord.getDisplayValue('application');
+            app.sys_id = glideRecord.application.toString();
+            app.value = glideRecord.application.toString();
+            app.color = this.getColor('app', app.sys_id);
+            var type = {};
+            type.display_value = glideRecord.getDisplayValue('type');
+            type.sys_id = glideRecord.type.toString();
+            type.value = glideRecord.type.toString();
+            type.color = this.getColor('type', type.sys_id);
+            var cb = this.getCreatedBy(glideRecord.sys_created_by.toString());
+            var t = glideRecord.getValue('tags');
+            if (t) {
+                t = this.getTags(t);
+            } else {
+                t = '';
+            }
+            var notes = glideRecord.comments.getJournalEntry(-1);
+            var na = notes.split("\n\n");
+            var nn = [];
+            for (var m = 0; m < na.length; m++) {
+                if (this.getUserFromJournal(na[m])) {
+                    nn.push(this.getUserFromJournal(na[m]));
+                }
+
+            }
+            var oe = glideRecord.getValue('allow_others_to_edit');
+            if (oe == '1') {
+                oe = true;
+            } else {
+                oe = false;
+            }
+            gs.info("SnippetNOW tags " + t);
+            records.push({
+                created_by: cb,
+                sys_id: glideRecord.sys_id.toString(),
+                title: glideRecord.getValue('title'),
+                description: glideRecord.getValue('description'),
+                application: app,
+                allow_others_to_edit: oe,
+                type: type,
+                color: glideRecord.getValue('color'),
+                snippet: glideRecord.getValue('snippet'),
+                tags: t,
+                previous_comments: nn,
+                notes: notes,
+                related_snippets: glideRecord.getValue('related_snippets'),
+                related_list: this.getRelatedRecordList(glideRecord.getValue('related_snippets'))
+            });
+        }
+        return records;
+    },
+    getUserFromJournal: function(line) {
+        var note = {};
+        //(?<=\- )(.*?)(?= \()
+        var pattern = new RegExp(/\- (.*?)\(/);
+        if (line) {
+            var un = line.match(pattern).pop();
+            gs.info("SnippetNow " + JSON.stringify(un));
+
+            var gu = new GlideRecord('sys_user');
+            gu.addEncodedQuery("name=" + un);
+            gu.query();
+            if (gu.next()) {
+                note.comment = line;
+                note.created_by = {
+                    sys_id: gu.sys_id.toString(),
+                    name: gu.getDisplayValue('name')
+                }
+            }
+            return note;
+
+
+        }
+        //var extract = line.match(pattern).pop();
+
+        //
+
+    },
+    updateSnippet: function(snippet) {
+        /********************
+         * Saves the new copy of the snippet
+         * returns true/false
+         ********************/
+
+        var ur = new GlideRecord('x_92893_snippetnow_table');
+        ur.initialize();
+        ur.active = true;
+        ur.snippet = snippet.snippet;
+        ur.color = snippet.color;
+        ur.application = snippet.application;
+        ur.type = snippet.type;
+        ur.title = snippet.title;
+        ur.description = snippet.description;
+        var updated = ur.update();
+        return updated;
+
+    },
+
+    type: 'SnippetNow_DAO'
+};]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-09-10 19:28:15</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>54e89e7edbcd0300dfa77fcfbf96191b</sys_id>
-        <sys_mod_count>113</sys_mod_count>
+        <sys_mod_count>127</sys_mod_count>
         <sys_name>SnippetNow_DAO</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy>read</sys_policy>
@@ -351,6 +439,6 @@ SnippetNow_DAO.prototype = {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_script_include_54e89e7edbcd0300dfa77fcfbf96191b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-10-01 19:38:51</sys_updated_on>
+        <sys_updated_on>2017-10-29 22:46:50</sys_updated_on>
     </sys_script_include>
 </record_update>

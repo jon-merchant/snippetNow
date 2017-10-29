@@ -10,12 +10,11 @@
 	$scope.snippetApp = {};
 	console.log("FIRST",$scope.snippet);
 	console.log("FIRST",c.data.snippet);
-	//$scope.snippetSetOptions = c.data.related_records;
-	$scope.snippetSetOptions = [{id:1,label:"Script 1"},{id:2,label:"Script 2"}];
+	$scope.snippetSetOptions = c.data.related_records;
 	$scope.snippetSetModel = [];
 	$scope.example1model = []; 
 	$scope.example1data = [ {id: 1, label: "David"}, {id: 2, label: "Jhon"}, {id: 3, label: "Danny"} ];
-	$scope.exampleExtraSettings = {externalIdProp : ''};
+	$scope.snippetExtraSettings = {externalIdProp : ''};
 	
 	var editor = ace.edit("editor");
     editor.setTheme("ace/theme/sqlserver");
@@ -29,6 +28,14 @@
 	
 	if (c.data.snippet) {
 		$scope.snippet = c.data.snippet;
+		
+		var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
+		console.log(related_id);
+		if (related_id > -1) {
+				$scope.snippetSetOptions.splice(related_id, 1);
+		}
+		
+		
 		//console.log("Is There a SNippet",c.data.snippet.editor,c.data.snippet.snippet);
 		if (c.data.snippet.editor || c.data.snippet.snippet) {
 			if (!c.data.snippet.allow_others_to_edit) {
@@ -121,6 +128,10 @@
 					editor.setValue("//Enter Your Code Here");
 				}
 
+				if ($scope.snippet.related_list) {
+					$scope.snippetSetModel = $scope.snippet.related_list;
+				}
+
 				$scope.snippetType = {
 					displayValue: $scope.snippet.type.display_value,
 					value: $scope.snippet.type.sys_id,
@@ -131,6 +142,16 @@
 					value: $scope.snippet.application.sys_id,
 					name: 'snippetApp'
 				};
+				
+				console.log($scope.snippet.sys_id);
+				$scope.snippetSetOptions = $scope.snippetSetOptions.filter(function(el){
+					return el.id !== $scope.snippet.sys_id;
+				});
+				/*var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
+				console.log(related_id);
+				if (related_id > -1) {
+						$scope.snippetSetOptions.splice(related_id, 1);
+				}*/
 			}
 		},500)
 	})
@@ -163,7 +184,9 @@
 		$scope.snippet.application = $scope.snippetApp;
 		$scope.snippet.type = $scope.snippetType;
 		$scope.snippet.editor = editor.getValue();
-		
+		//need to get the related list also
+
+
 		c.data.snippet = $scope.snippet;
 		
 		//console.log("C DATA",c.data.snippet);
@@ -273,6 +296,33 @@
 
 			}
 		}
+	}
+	
+	$scope.gotoSnippet = function(id) {
+		$scope.modalData = {load_snippet:id};
+		$scope.openModal('loadNewSnippetConfirm');
+		
+		
+	}
+	$scope.loadNewSnippet = function(obj) {
+		console.log(obj);
+		$scope.closeModal();
+
+		$http({
+			method: "POST",
+			headers: {
+				"Accept": "application/json;charset=UTF-8",
+				"Content-Type": "application/json;charset=UTF-8"	
+			},
+			url: "/api/x_92893_snippetnow/snippetnow_api/getSnippet/"+obj.load_snippet
+		})
+		.then(function(response) {
+			console.log("Response",response);
+			if (response && response.data && response.data.result) {
+				$scope.snippet = response.data.result;
+			}
+		}) 
+
 	}
 	
 	$scope.showHelp = function(topic) {
@@ -394,7 +444,13 @@
     box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );
     right: -9px;    
 }
-</css>
+
+.related-snip-list {
+  margin-bottom: 10px;
+}
+.btn {
+    margin-right: 5px;
+}</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
         <description/>
@@ -434,6 +490,7 @@
 	record.sys_id = $sp.getParameter('sys_id');
 	if (record.sys_id) {
 		data.snippet = getSnippetRecord(record.sys_id);	
+		
 	} else {
 		
 		/*data.snippet = {};
@@ -449,7 +506,7 @@
 	data.current_user = gs.getUserID();
 	
 	data.help = new SnippetNow_DAO().getHelp();
-	data.related_records = getSnippets();
+	data.related_records = getSnippets(record.sys_id);
 	
 	
 	function getSnippetRecord(sys_id) {
@@ -534,9 +591,10 @@
 		
 	}
 	
-	function getSnippets() {
+	function getSnippets(id) {
 		var allSnippets = [];
 		var gr = new GlideRecord('x_92893_snippetnow_table');
+		gr.addEncodedQuery('sys_id!='+id);
 		gr.orderBy('title');
 		gr.query();
 		while(gr.next()) {
@@ -553,7 +611,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>455</sys_mod_count>
+        <sys_mod_count>489</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -561,7 +619,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-10-25 04:19:07</sys_updated_on>
+        <sys_updated_on>2017-10-29 23:28:57</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -616,10 +674,13 @@
           <div id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
        </div>
        <div class="form-group">
-         <label for="snippetRelated">Related Snippets</label>
          
-         <!--<div ng-dropdown-multiselect="" options="snippetSetOptions" selected-model="snippetSetModel"></div>-->
-         <div ng-dropdown-multiselect="" options="example1data" selected-model="example1model" extra-settings="exampleExtraSettings"></div>
+         <label for="snippetRelated">Related Snippets</label>
+         <div class="related-snip-list">
+           <button ng-repeat="rSnip in snippetSetModel" class="btn btn-default" ng-click="gotoSnippet(rSnip.id)"> {{rSnip.label}} </button>
+         </div>
+         <div ng-dropdown-multiselect="" options="snippetSetOptions" selected-model="snippetSetModel" extra-settings="snippetExtraSettings"></div>
+         <!--<div ng-dropdown-multiselect="" options="example1data" selected-model="example1model" extra-settings="exampleExtraSettings"></div>-->
         </div>
         
         
@@ -670,6 +731,19 @@
   </div>
   <div ng-show="c.data.recordAction == false" class="alert alert-danger" style="margin-bottom:0px">
     <strong>Error!</strong> Snippet did not save, please try again.
+  </div>
+</script>
+<script type="text/ng-template" id="loadNewSnippetConfirm">
+	<div class="panel panel-info">
+  	<div class="panel panel-heading">
+    	Confirm
+    </div>
+    <div class="panel panel-body">
+    	<p>This will load a new Snippet, if you have unsaved work on the current Snippet, please click "Cancel" and save your work, then try this action again. Otherwise click "Ok" and the new Snippet will be loaded.</p>
+      <div class="pull-right">
+      	<button class="btn btn-success" ng-click="loadNewSnippet(modalData)">OK - Load Snippet</button> <button class="btn btn-danger" ng-click="closeModal()">Cancel</button>
+     </div>
+    </div>
   </div>
 </script>]]></template>
     </sp_widget>
