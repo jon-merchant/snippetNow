@@ -174,10 +174,21 @@
 		return c.data.tagList;
 	}
 	
-	
+	function relatedList(list) {
+		console.log(list);
+		var arr = [];
+		if (list) {
+			for(var i=0;i<list.length;i++) {
+				arr.push(list[i].id);
+			}
+		}
+		console.log(arr);
+		arr = arr.join(",");	
+		return arr;
+	}
 	
 	$scope.submit = function(type) {
-		//console.log("Snippet",$scope.snippet);
+		console.log("Snippet",$scope.snippet);
 		//console.log("SnippetType",$scope.snippetType);
 		//console.log("SnippetApp",$scope.snippetApp);
 		
@@ -185,7 +196,7 @@
 		$scope.snippet.type = $scope.snippetType;
 		$scope.snippet.editor = editor.getValue();
 		//need to get the related list also
-
+		$scope.snippet.related_snippets = relatedList($scope.snippetSetModel);
 
 		c.data.snippet = $scope.snippet;
 		
@@ -541,6 +552,7 @@
 		* Create Snippet Record
 		*
 		*******************/
+		gs.info("actionSnippet "+JSON.stringify(snippet));
 		var t = '';
 		
 		if (snippet.tags) {
@@ -567,6 +579,7 @@
 				rec.tags = t;
 				rec.allow_others_to_edit = snippet.allow_others_to_edit;
 				rec.comments = snippet.add_comments;
+				rec.related_snippets = snippet.related_snippets;
 				action = rec.update();
 				$sp.log(action);
 				
@@ -579,6 +592,7 @@
 			rec.type = snippet.type.value;
 			rec.application = snippet.application.value;
 			rec.allow_others_to_edit = snippet.allow_others_to_edit;
+			rec.related_snippets = snippet.related_snippets;
 			rec.tags = t;
 			action = rec.insert();
 		}
@@ -611,7 +625,7 @@
         <sys_created_on>2017-09-08 15:52:45</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>e974d74edb010300dfa77fcfbf9619a0</sys_id>
-        <sys_mod_count>489</sys_mod_count>
+        <sys_mod_count>500</sys_mod_count>
         <sys_name>SnippetNow Form</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -619,7 +633,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_e974d74edb010300dfa77fcfbf9619a0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-10-29 23:28:57</sys_updated_on>
+        <sys_updated_on>2017-10-30 03:28:22</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
