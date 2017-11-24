@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <client_script><![CDATA[function($scope,$uibModal,spUtil) {
+  /* widget controller */
+  var c = this;
+	console.log(c.data);
+	
+	spUtil.recordWatch($scope, "x_92893_snippetnow_snippetnow_applications", "", function(name, data) {
+		spUtil.update($scope);
+	});
+	spUtil.recordWatch($scope, "x_92893_snippetnow_snippet_type", "", function(name, data) {
+		spUtil.update($scope);
+	});
+	
+	c.openModal = function(tpl,modalData) {
+		$scope.modalData = modalData;
+		$rootScope.modalInstance = $uibModal.open({
+			templateUrl: tpl,
+			scope: $scope
+		});
+	}
+ 
+	c.closeModal = function() {
+		$rootScope.modalInstance.close();
+	}
+	
+	$scope.actionAppType = function(action,type,record) {
+		if(!record) {
+			var record = {};
+		}
+		record.typeName = capitalizeFirstLetter(type);
+		record.typeValue = type;
+		record.action = action;
+				
+		c.openModal('actionAppType',record);	
+	}
+	
+	$scope.insertAppType = function(modalData) {
+		console.log("insertAppType",modalData);
+	}
+	
+	
+	function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+	/*$scope.applicationModel = [];
+	$scope.applicationOptions = c.data.applications;
+	$scope.applicationExtraSettings = {
+		externalIdProp : '',
+		template: '<span>{{option.label}}</span><span class="pull-right badge badge-primary">{{option.count}}</span>'
+	};
+	$scope.applicationCustomText = {'buttonDefaultText':'Applications'}
+	*/
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>
+.panel-default &gt; .panel-heading {
+  background-color: #e7e9eb;
+  border-color: #ccc;
+}
+.row {
+  margin: 10px 0;
+}
+.badge {
+  background-color: darken(#e7e9eb,30%);
+}
+.badge-primary {
+  background-color: $brand-primary;
+}
+.fa-pencil, .fa-plus-circle {
+  visibility: hidden;
+}
+.type-item-header {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.list-group-item:hover {
+  .fa-pencil {
+    visibility: visible;
+  }
+  .fa-plus-circle {
+    visibility: visible;
+  }
+}
+.panel {
+  background-color: transparent !important;
+  border: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.app-items {
+  border-radius: 0px;
+}
+.app-items:last-child {
+  border-bottom: none !important;
+}
+.type-items:first-child {
+  border-radius: 0px;
+}
+.badge-info {
+  border-radius: 4px;
+  margin: 0 2px;
+  background-color: $brand-info;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>snippetnow-controls</id>
+        <internal>false</internal>
+        <link/>
+        <name>SnippetNow Controls</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+
+
+	data.applications = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippetnow_applications','application','x_92893_snippetnow_table');
+	data.types = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippet_type','type','x_92893_snippetnow_table');
+	data.tags = new SnippetNow_DAO().getTagList();
+	
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-22 05:28:57</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>43d4d706db220300dfa77fcfbf9619ef</sys_id>
+        <sys_mod_count>131</sys_mod_count>
+        <sys_name>SnippetNow Controls</sys_name>
+        <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
+        <sys_update_name>sp_widget_43d4d706db220300dfa77fcfbf9619ef</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-11-23 16:27:56</sys_updated_on>
+        <template><![CDATA[<div class="">
+<!-- your widget template -->
+  
+    <div class="row">
+    	<button class="btn btn-success">
+        Create New Snippet
+      </button> 
+      <button class="btn btn-primary">
+        Show All Snippets
+      </button>
+    </div>
+    <div class="row">
+      <div id="menu">
+        <div class="panel list-group">
+         <a href="javascript:void(0)" class="list-group-item" data-toggle="collapse" data-target="#apps" data-parent="#menu">APPLICATIONS <i class="fa fa-plus-circle" aria-hidden="true" ng-click="actionAppType('add','application');$event.stopPropagation();"></i><span class="badge badge-primary pull-right">{{c.data.applications.length}}</span></a>
+         <div id="apps" class="sublinks collapse">
+          <a class="list-group-item app-items small" ng-repeat="app in c.data.applications"><i class="fa fa-circle" style="color:{{app.color}}"></i> {{app.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="actionAppType('edit','application',app); $event.stopPropagation();"></i><span class="badge badge-default pull-right">{{app.count}}</span></a>
+          
+         </div>
+         <a href="javascript:void(0)" class="list-group-item type-item-header" data-toggle="collapse" data-target="#types" data-parent="#menu">TYPES <i class="fa fa-plus-circle" aria-hidden="true" ng-click="actionAppType('add','type');$event.stopPropagation();"></i> <span class="badge badge-primary pull-right">{{c.data.types.length}}</span></a>
+         <div id="types" class="sublinks collapse">
+           <a class="list-group-item type-items small" ng-repeat="type in c.data.types"><i class="fa fa-circle" style="color:{{type.color}}"></i> {{type.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="actionAppType('edit','type',type); $event.stopPropagation();"></i><span class="badge pull-right">{{type.count}}</span></a>
+         </div>
+         
+        </div>
+      </div>
+      <div class="row">
+        <span class="badge badge-info" ng-repeat="tag in c.data.tags">{{tag.text}}</span>
+      </div>
+      <!--<div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#applications">Applications <span class="badge badge-primary pull-right">{{c.data.applications.length}}</span></a>
+              </h4>
+            </div>
+            <div id="applications" class="panel-collapse collapse">
+              <ul class="list-group">
+                <li class="list-group-item" ng-repeat="app in c.data.applications"><i class="fa fa-circle" style="color:{{app.color}}"></i> {{app.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="editThis(app,'app'); $event.stopPropagation();"></i> <span class="badge badge-default pull-right">{{app.count}}</span></li>
+              </ul>
+            </div>
+          </div>
+      	</div>
+      	<div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion" href="#types">Types <span class="badge badge-primary pull-right">{{c.data.types.length}}</span></a>
+            </h4>
+          </div>
+          <div id="types" class="panel-collapse collapse">
+            <ul class="list-group">
+              <li class="list-group-item" ng-repeat="type in c.data.types"><i class="fa fa-circle" style="color:{{type.color}}"></i> {{type.name}} <i ng-id="$index-type-edit" class="fa fa-pencil" ng-click="editThis(type,'type'); $event.stopPropagation();"></i> <span class="badge pull-right">{{type.count}}</span></li>
+            </ul>
+        </div>
+  	</div>-->
+    
+  
+</div>
+  <script type="text/ng-template" id="actionAppType">
+	<div class="panel panel-primary">
+  	<div class="panel-heading">New {{modalData.typeName}}</div>
+    <div class="panel-body">
+    	<form>
+      	<div class="form-group">
+        	<label for="newTitle">Title</label>
+          <input type="text" ng-model="modalData.name" class="form-control">
+        </div>
+        <label>Color</label>
+        <div class="input-group">
+        
+          <input colorpicker ng-model="modalData.color" class="form-control"/>
+          <span class="input-group-addon" colorpicker ng-model="modalData.color" id="basic-addon2"><i class="fa fa-square" aria-hidden="true" style="color:{{modalData.types.color}}"></i></span>
+        </div>
+        <div class="pull-right" style="padding-top: 10px">
+        	
+        	<button class="btn btn-danger" ng-click="c.closeModal()">Cancel</button>
+          <button class="btn btn-success" ng-click="insertAppType(modalData)">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</script>]]></template>
+    </sp_widget>
+</record_update>
