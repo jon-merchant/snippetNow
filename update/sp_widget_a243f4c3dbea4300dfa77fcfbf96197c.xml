@@ -66,7 +66,13 @@
 	$scope.iNeedHelp = function(val) {
 		$scope.openModal('showHelp',val);
 	}
-	
+	c.openModal = function(tpl,modalData) {
+		$scope.modalData = modalData;
+		$rootScope.modalInstance = $uibModal.open({
+			templateUrl: tpl,
+			scope: $scope
+		});
+	}
 	$scope.openModal = function(tpl,topic) {
 		console.log(topic);
 		if (topic) {
@@ -401,7 +407,17 @@
 		
 	}
 	
-	
+	$scope.addAttachment = function(sys_id) {
+		var modalData = {};
+		modalData.sys_id = sys_id;
+		modalData.table = 'x_92893_snippetnow_table';
+		spUtil.get("widget-ticket-attachments", {sys_id:modalData.sys_id,table:modalData.table,record_id: modalData.sys_id,record_table: modalData.table}).then(function(response) {
+			c.attachmentItemWidget = response;
+			c.openModal('addAttachment');
+		});
+		console.log(c.attachmentItemWidget);
+		
+	}
 	
 	String.prototype.escapeSpecialChars = function() {
     return this.replace(/(?:\r\n|\r|\n)/g, "<br>")
@@ -688,7 +704,7 @@
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>43</sys_mod_count>
+        <sys_mod_count>79</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -696,7 +712,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-11-30 22:26:20</sys_updated_on>
+        <sys_updated_on>2017-12-01 22:28:37</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -704,7 +720,7 @@
     <!--<div class="panel-body">-->
   	
       <h3>
-        Snippet
+        Snippet <button class="btn btn-primary pull-right" ng-click="addAttachment(snippet.sys_id)" ng-if="snippet.sys_id">Attachments <i class="fa fa-paperclip" aria-hidden="true"></i></button>
       </h3>
     
       <form>
@@ -822,6 +838,17 @@
      </div>
     </div>
   </div>
+</script>
+<script type="text/ng-template" id="addAttachment">
+	<div class="panel panel-default">
+  	<div class="panel-heading">
+    	Add Attachments
+    </div>
+    <div class="panel-body">
+    	<sp-widget widget="c.attachmentItemWidget"></sp-widget>
+   	</div>
+ </div>
+ 
 </script>]]></template>
     </sp_widget>
 </record_update>

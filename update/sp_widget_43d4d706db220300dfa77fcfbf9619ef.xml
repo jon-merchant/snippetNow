@@ -7,12 +7,16 @@
 	console.log(c.data);
 	
 	spUtil.recordWatch($scope, "x_92893_snippetnow_snippetnow_applications", "", function(name, data) {
+		c.data.func = null;
 		spUtil.update($scope);
+		
 	});
 	spUtil.recordWatch($scope, "x_92893_snippetnow_snippet_type", "", function(name, data) {
+		c.data.func = null;
 		spUtil.update($scope);
 	});
 	spUtil.recordWatch($scope, "x_92893_snippetnow_snippetnow_tags", "", function(name, data) {
+		c.data.func = null;
 		spUtil.update($scope);
 	});
 	
@@ -40,8 +44,26 @@
 		c.openModal('actionAppType',record);	
 	}
 	
-	$scope.insertAppType = function(modalData) {
-		console.log("insertAppType",modalData);
+	$scope.insertAppType = function(modalData,action) {
+		
+		
+		c.data.func = 'insertAppType';
+		c.data.record = modalData;
+		c.data.record.value = modalData.name.replace(/\W+/g, '_').toLowerCase();
+		c.data.action = action;
+		console.log(c.data);
+		c.server.update().then(function(response) {
+			console.log("InsertAppType",response);
+			if (response && response.insertAppType) {
+				$scope.modalData.response = 'success';
+				$timeout(function() {
+					c.closeModal();	
+				},1000);
+				
+			}
+			
+		})
+		
 	}
 	$scope.createNew = function() {
 		$timeout(function() {
@@ -134,10 +156,26 @@
   /* populate the 'data' object */
   /* e.g., data.table = $sp.getValue('table'); */
 
+	if (input && input.func == 'insertAppType') {
+		var record = [];
+		record.push(input.record);
+		console.log(record[0].name);
+		console.log(record[0].value);
+		if (input.action == 'add') {
+			data.insertAppType = new SnippetNow_DAO().saveAppTypes(record,record[0].typeValue);
+		}	
+		if (input.action == 'update') {
+			data.insertAppType = new SnippetNow_DAO().updateAppType(record,record[0].typeValue);
+		}
+	}
 
 	data.applications = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippetnow_applications','application','x_92893_snippetnow_table');
 	data.types = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippet_type','type','x_92893_snippetnow_table');
 	data.tags = new SnippetNow_DAO().getTagList();
+	
+	function getApps() {
+		
+	}
 	
 })();]]></script>
         <servicenow>false</servicenow>
@@ -146,7 +184,7 @@
         <sys_created_on>2017-11-22 05:28:57</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>43d4d706db220300dfa77fcfbf9619ef</sys_id>
-        <sys_mod_count>138</sys_mod_count>
+        <sys_mod_count>159</sys_mod_count>
         <sys_name>SnippetNow Controls</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -154,7 +192,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_43d4d706db220300dfa77fcfbf9619ef</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-11-30 23:28:42</sys_updated_on>
+        <sys_updated_on>2017-12-01 20:53:06</sys_updated_on>
         <template><![CDATA[<div class="">
 <!-- your widget template -->
   
@@ -213,6 +251,7 @@
     
   
 </div>
+  
   <script type="text/ng-template" id="actionAppType">
 	<div class="panel panel-primary">
   	<div class="panel-heading">New {{modalData.typeName}}</div>
@@ -229,9 +268,10 @@
           <span class="input-group-addon" colorpicker ng-model="modalData.color" id="basic-addon2"><i class="fa fa-square" aria-hidden="true" style="color:{{modalData.types.color}}"></i></span>
         </div>
         <div class="pull-right" style="padding-top: 10px">
-        	
+        	<span ng-if="modalData.response == 'success'"><i class="fa fa-check text-success" aria-hidden="true"></i> <span class="text-success">Successful</span></span>
         	<button class="btn btn-danger" ng-click="c.closeModal()">Cancel</button>
-          <button class="btn btn-success" ng-click="insertAppType(modalData)">Update</button>
+          <button ng-if="!modalData.sys_id" class="btn btn-success" ng-click="insertAppType(modalData,'add')">Insert</button>
+          <button ng-if="modalData.sys_id" class="btn btn-success" ng-click="insertAppType(modalData,'update')">Update</button>
         </div>
       </form>
     </div>
