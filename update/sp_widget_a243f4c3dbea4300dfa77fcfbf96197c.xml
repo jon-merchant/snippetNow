@@ -1,0 +1,827 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <client_script><![CDATA[function($scope,spUtil,$timeout,$rootScope,$http,$uibModal) {
+	/* widget controller */
+	var c = this;
+	$scope.snippet = {};
+	$scope.simpleTags = '';	
+	$scope.snippetType = {};
+	$scope.snippetApp = {};
+	console.log("FIRST",$scope.snippet);
+	console.log("FIRST",c.data.snippet);
+	$scope.snippetSetOptions = c.data.related_records;
+	$scope.snippetSetModel = [];
+	$scope.example1model = []; 
+	$scope.example1data = [ {id: 1, label: "David"}, {id: 2, label: "Jhon"}, {id: 3, label: "Danny"} ];
+	$scope.snippetExtraSettings = {externalIdProp : '',scrollable : true, scrollHeight : '400'};
+	
+	var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/sqlserver");
+    editor.getSession().setMode("ace/mode/javascript");
+		editor.getSession().setUseWrapMode(true);
+		editor.setReadOnly(false);
+		editor.setOptions({
+			minLines: 20,
+			maxLines: 50
+		});
+	
+	if (c.data.snippet) {
+		$scope.snippet = c.data.snippet;
+		
+		var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
+		console.log(related_id);
+		if (related_id > -1) {
+				$scope.snippetSetOptions.splice(related_id, 1);
+		}
+		
+		
+		//console.log("Is There a SNippet",c.data.snippet.editor,c.data.snippet.snippet);
+		if (c.data.snippet.editor || c.data.snippet.snippet) {
+			console.log(editor);
+			if (!c.data.snippet.allow_others_to_edit) {
+				//console.log("Hello");
+				editor.setReadOnly();
+			}
+			editor.setReadOnly(false);
+			editor.setValue(c.data.snippet.editor);
+			editor.clearSelection();
+		} else {
+			
+			editor.setValue("//Enter your code here");
+		}
+	
+		$scope.snippetType = {
+			displayValue: c.data.snippet.type.display_value,
+			value: c.data.snippet.type.value,
+			name: 'snippetType'
+		};
+		$scope.snippetApp = {
+			displayValue: c.data.snippet.application.display_value,
+			value: c.data.snippet.application.value,
+			name: 'snippetApp'
+		};
+		
+	}
+	$scope.iNeedHelp = function(val) {
+		$scope.openModal('showHelp',val);
+	}
+	
+	$scope.openModal = function(tpl,topic) {
+		console.log(topic);
+		if (topic) {
+			$scope.modalData = c.data.help[topic];
+		}
+		console.log($scope.modalData,c.data.help);
+		
+		$rootScope.modalInstance = $uibModal.open({
+			templateUrl: tpl,
+			scope: $scope
+		});
+	}
+	
+	$scope.closeModal = function() {
+		//console.log("triggered");
+		$rootScope.modalInstance.close();
+	}
+	
+	
+	
+	/*c.openModal = function(tpl) {
+		c.modalInstance = $uibModal.open({
+			templateUrl: tpl,
+			scope: $scope
+		});
+	}
+ 
+	c.closeModal = function() {
+		c.modalInstance.close();
+	}*/
+	
+	$scope.showCommentBox = false;
+	$scope.showComments = function(val) {
+		console.log("comments",val);
+		//if yes, show the add comments and previous comments
+		if (val) {
+			$scope.showCommentBox = true;
+		} else {
+			$scope.showCommentBox = false;
+		}
+	}
+	
+	$scope.$on('createNew',function(event,data) {
+		console.log(data);
+		$scope.previousSnippet = $scope.snippet;
+		$scope.previousSnippetType = $scope.snippetType;
+		$scope.previousSnippetApp = $scope.snippetApp;
+		$scope.previousSnippetRelatedList = $scope.snippetSetModel;
+
+		if (data) {
+			console.log(editor);
+			$scope.snippet = {};
+			
+			
+			$scope.snippetType = {
+				displayValue: '',
+				value: '',
+				name: 'snippetType'
+			};
+			$scope.snippetApp = {
+				displayValue: '',
+				value: '',
+				name: 'snippetApp'
+			};
+			$scope.snippetSetModel = [];
+			
+		}
+	});
+	$scope.cancelAdd = function() {
+		if ($scope.previousSnippet) {
+			$scope.snippet = $scope.previousSnippet;
+			$scope.snippetType = $scope.previousSnippetType;
+			$scope.snippetApp = $scope.previousSnippetApp;
+			$scope.snippetSetModel = $scope.previousSnippetRelatedList;
+			
+		}
+	}
+	//console.log("Listening");
+	$scope.$on("selectedSnippet",function(event,data) {
+		$timeout(function() {
+			console.log("BOOO",data);
+			if (data) {
+				$scope.comments = {};
+				$scope.comments.show = false;
+				$scope.showCommentBox = false;
+				$scope.snippet = data;
+				console.log($scope.youCanEdit);
+				if (!$scope.canYouEdit()) {
+					editor.setReadOnly(false);
+				} else {
+					editor.setReadOnly(true);
+				}
+				/*if (!$scope.snippet.allow_others_to_edit) {
+					console.log("no edit");
+					editor.setReadOnly(true);
+					$scope.youCanEdit = false;
+				} else {
+					console.log("edit");
+					editor.setReadOnly(false);
+					$scope.youCanEdit = true;
+				}
+				if (c.data.current_user == data.snippet.created_by.sys_id) {
+					editor.setReadOnly(false);
+					$scope.youCanEdit = true;
+				}*/
+				if ($scope.snippet.snippet) {
+					editor.setValue($scope.snippet.snippet);
+					editor.clearSelection();
+				} else {
+					editor.setValue("//Enter Your Code Here");
+				}
+
+				if ($scope.snippet.related_list) {
+					$scope.snippetSetModel = $scope.snippet.related_list;
+				}
+
+				$scope.snippetType = {
+					displayValue: $scope.snippet.type.display_value,
+					value: $scope.snippet.type.sys_id,
+					name: 'snippetType'
+				};
+				
+				$scope.snippetApp = {
+					displayValue: $scope.snippet.application.display_value,
+					value: $scope.snippet.application.sys_id,
+					name: 'snippetApp'
+				};
+				
+				if (data.type && data.type.color) {
+					$scope.snippetType.color = data.type.color;
+				}
+				if (data.application && data.application.color) {
+					$scope.snippetApp.color = data.application.color;
+				}
+				
+				console.log($scope.snippet.sys_id);
+				$scope.snippetSetOptions = $scope.snippetSetOptions.filter(function(el){
+					return el.id !== $scope.snippet.sys_id;
+				});
+				/*var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
+				console.log(related_id);
+				if (related_id > -1) {
+						$scope.snippetSetOptions.splice(related_id, 1);
+				}*/
+				console.log(editor);
+			}
+		},500)
+	})
+	
+	
+	
+	$scope.$on("field.change", function(evt, parms) {
+		/*if (parms.field.name == 'snippetType') {
+			c.data.setSnippetType = parms.newValue;
+		}*/
+		
+		
+		/*c.server.update().then(function(response) {
+			spUtil.update($scope);
+		});*/
+	});
+	
+	$scope.loadTags = function(query) {
+		
+		return c.data.tagList;
+	}
+	
+	function relatedList(list) {
+		console.log(list);
+		var arr = [];
+		if (list) {
+			for(var i=0;i<list.length;i++) {
+				arr.push(list[i].id);
+			}
+		}
+		console.log(arr);
+		arr = arr.join(",");	
+		return arr;
+	}
+	
+	$scope.submit = function(type) {
+		console.log("Snippet",$scope.snippet);
+		//console.log("SnippetType",$scope.snippetType);
+		//console.log("SnippetApp",$scope.snippetApp);
+		
+		$scope.snippet.application = $scope.snippetApp;
+		$scope.snippet.type = $scope.snippetType;
+		$scope.snippet.editor = editor.getValue();
+		//need to get the related list also
+		$scope.snippet.related_snippets = relatedList($scope.snippetSetModel);
+
+		c.data.snippet = $scope.snippet;
+		
+		//console.log("C DATA",c.data.snippet);
+		c.server.update().then(function(response) {
+			//spUtil.update($scope);
+			//console.log("Response",response);
+			$scope.snippet.application.display_value = $scope.snippet.application.displayValue;
+			$scope.snippet.type.display_value = $scope.snippet.type.displayValue;
+			
+			if (response.recordAction && type == 'update') {
+				//console.log("UPDATE Scope",$scope.snippet);
+				
+				$scope.openModal('updatedSnippet');
+				$timeout(function() {
+					$rootScope.$broadcast("newTags",response.tagList);
+					$scope.closeModal();
+					//window.location.reload();
+					//spUtil.update($scope);
+				},1000)
+			}
+			if (response.recordAction && type == 'insert') {
+				$scope.openModal('updatedSnippet');
+				$timeout(function() {
+					
+					//$rootScope.$broadcast('newSnippet',$scope.snippet);
+					//spUtil.update($scope);
+					$scope.closeModal();
+					//window.location.reload();
+					
+				});
+			}
+			
+		})
+		
+		
+	};
+	
+	$scope.whoSaidIt = function(comment,owner) {
+		if (comment == owner) {
+			return 'me-bubble me';
+		}
+		return 'you-bubble you';
+	}
+	
+	$scope.canYouEdit = function() {
+		var creator = '';
+		if ($scope.snippet && $scope.snippet.created_by && $scope.snippet.created_by.sys_id) {
+			creator = $scope.snippet.created_by.sys_id;
+		}
+		if (!$scope.snippet.sys_id) {
+			$scope.youCanEdit = true;
+			return false;
+		} else {
+			
+			if (creator == c.data.current_user) {
+				$scope.youCanEdit = true;
+				return false;
+			} else if (creator != c.data.current_user) {
+				if ($scope.snippet.allow_others_to_edit) {
+					$scope.youCanEdit = true;
+					return true;
+				} else {
+					$scope.youCanEdit = false;
+					return true;
+				}
+			}
+			
+			/*if (c.data.current_user == creator) {
+				console.log("Return False",creator,c.data.current_user);
+				$scope.youCanEdit = true;
+				return false;	
+			} else {
+				if ($scope.snippet.allow_others_to_edit && creator == c.data.current_user) {
+					$scope.youCanEdit = true;
+					return false;
+				} else {
+					//console.log("Return True");
+					$scope.youCanEdit = false;
+					return true;
+				}
+			}*/
+		}
+	}
+	
+	$scope.canEdit = function(val) {
+		var creator = '';
+		if ($scope.snippet && $scope.snippet.created_by && $scope.snippet.created_by.sys_id) {
+			creator = $scope.snippet.created_by.sys_id;
+		}
+		if (!$scope.snippet.sys_id) {
+			$scope.youCanEdit = true;
+		} else {
+		
+			if (val) {
+				//checked
+				//not read only
+				$scope.youCanEdit = true;
+			} else {
+				//not checked
+				if (creator != c.data.current_user) {
+
+					//set to readonly;
+					$scope.youCanEdit = false;
+				} else {
+					//not read only
+					$scope.youCanEdit = true;
+				} 
+
+			}
+		}
+	}
+	
+	$scope.gotoSnippet = function(id) {
+		$scope.modalData = {load_snippet:id};
+		$scope.openModal('loadNewSnippetConfirm');
+		
+		
+	}
+	$scope.loadNewSnippet = function(obj) {
+		console.log(obj);
+		$scope.closeModal();
+
+		$http({
+			method: "POST",
+			headers: {
+				"Accept": "application/json;charset=UTF-8",
+				"Content-Type": "application/json;charset=UTF-8"	
+			},
+			url: "/api/x_92893_snippetnow/snippetnow_api/getSnippet/"+obj.load_snippet
+		})
+		.then(function(response) {
+			console.log("Response",response);
+			if (response && response.data && response.data.result) {
+				$scope.snippet = response.data.result;
+			}
+		}) 
+
+	}
+	
+	$scope.showHelp = function(topic) {
+		
+	}
+	
+	
+	
+	String.prototype.escapeSpecialChars = function() {
+    return this.replace(/(?:\r\n|\r|\n)/g, "<br>")
+               /*.replace(/\\'/g, "\\'")
+               .replace(/\\"/g, '\\"')
+               .replace(/\&/g, "\\&")
+               .replace(/\r/g, "\\r")
+               .replace(/\t/g, "\\t")
+               .replace(/\b/g, "\\b")
+               .replace(/\f/g, "\\f");*/
+	};
+	console.log("Form",$scope);
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>#editor {
+  height: 100%
+}
+.editor-group {
+  /*height: 400px;*/
+  margin-bottom: 40px;
+}
+.editor-new {
+  /*height: 250px;*/
+}
+.editor-existing {
+  /*height: 350px;*/
+}
+
+.avatar-circle {
+  display: block;
+  padding-right: 15px;
+}
+
+.chat {
+    /*width: 400px;*/
+    width: 90%;
+}
+
+.avatar {
+  box-shadow: 0 0 6px #333;
+}
+
+.me-bubble{
+    background-color: $primary;
+    border-radius: 5px;
+    box-shadow: 0 0 6px #B2B2B2;
+    display: inline-block;
+    padding: 10px 18px;
+    position: relative;
+    vertical-align: top;
+  	color: #fff;
+}
+
+.me-bubble::before {
+    background-color: $primary;
+    content: "\00a0";
+    display: block;
+    height: 16px;
+    position: absolute;
+    top: 11px;
+    transform:             rotate( 29deg ) skew( -35deg );
+        -moz-transform:    rotate( 29deg ) skew( -35deg );
+        -ms-transform:     rotate( 29deg ) skew( -35deg );
+        -o-transform:      rotate( 29deg ) skew( -35deg );
+        -webkit-transform: rotate( 29deg ) skew( -35deg );
+    width:  20px;
+  
+}
+
+.you-bubble{
+    background-color: $success;
+    border-radius: 5px;
+    box-shadow: 0 0 6px #B2B2B2;
+    display: inline-block;
+    padding: 10px 18px;
+    position: relative;
+    vertical-align: top;
+  color: #fff;
+  
+}
+
+.you-bubble::before {
+    background-color: $success;
+    content: "\00a0";
+    display: block;
+    height: 16px;
+    position: absolute;
+    top: 11px;
+    transform:             rotate( 29deg ) skew( -35deg );
+        -moz-transform:    rotate( 29deg ) skew( -35deg );
+        -ms-transform:     rotate( 29deg ) skew( -35deg );
+        -o-transform:      rotate( 29deg ) skew( -35deg );
+        -webkit-transform: rotate( 29deg ) skew( -35deg );
+    width:  20px;
+  
+}
+
+.me {
+    float: left;   
+    margin: 5px 45px 5px 20px;         
+}
+
+.me::before {
+    box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
+    left: -9px;           
+}
+
+.you {
+    float: right;    
+    margin: 5px 20px 5px 45px;         
+}
+
+.you::before {
+    box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );
+    right: -9px;    
+}
+
+.related-snip-list {
+  margin-bottom: 10px;
+}
+.btn {
+    margin-right: 5px;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>snippetnow-editor</id>
+        <internal>false</internal>
+        <link/>
+        <name>SnippetNow Editor</name>
+        <option_schema>[{"name":"type","label":"Type","type":"string"}]</option_schema>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+	
+	if (input && input.snippet) {
+		//console.log(input.snippet.simpleTags);
+		var done = actionSnippet(input.snippet);
+		if (done) {
+			data.recordAction = true;
+		} else {
+			data.recordAction = false;
+		}
+	}
+	
+	/*data.snippetType = {};
+	data.snippetType.name = 'Please Select';
+	data.snippetType.value = '';
+	data.snippetApp = {};
+	data.snippetApp.name = 'Please Select';
+	data.snippetApp.value = '';*/
+	
+	
+	var record = {};
+	record.sys_id = $sp.getParameter('sys_id');
+	if (record.sys_id) {
+		data.snippet = getSnippetRecord(record.sys_id);	
+		
+	} else {
+		
+		/*data.snippet = {};
+		data.snippet.application = {};
+		data.snippet.application.display_value = '';
+		data.snippet.application.value = '';
+		data.snippet.type = {};
+		data.snippet.type.display_value = '';
+		data.snippet.type.value = '';*/
+	}
+	
+	data.tagList = new SnippetNow_DAO().getTagList();
+	data.current_user = gs.getUserID();
+	
+	data.help = new SnippetNow_DAO().getHelp();
+	data.related_records = getSnippets(record.sys_id);
+	
+	
+	function getSnippetRecord(sys_id) {
+		/*******************
+		* Get Snippet Record
+		*
+		*******************/
+		var record = {};
+		var rec = new GlideRecord('x_92893_snippetnow_table');
+		rec.addEncodedQuery('sys_id='+sys_id);
+		rec.query();
+		while(rec.next()) {
+			record.application = {};
+			record.application.value = rec.application.toString();
+			record.application.display_value = rec.getDisplayValue('application');
+			record.type = {};
+			record.type.value = rec.type.toString();
+			record.type.display_value = rec.getDisplayValue('type');
+			record.title = rec.getDisplayValue('title');
+			record.description = rec.getDisplayValue('description');
+			record.editor = rec.getValue('snippet');
+			record.sys_id = rec.getUniqueValue();
+			return record
+			
+		}
+	}
+	
+	
+	
+	function actionSnippet(snippet) {
+		/*******************
+		* Create Snippet Record
+		*
+		*******************/
+		gs.info("actionSnippet "+JSON.stringify(snippet));
+		var t = '';
+		
+		if (snippet.tags) {
+			t = new SnippetNow_DAO().checkTags(snippet.tags);
+			
+		}
+		console.log("Tags");
+		console.log(t);
+		
+		var action;
+		var rec = new GlideRecord('x_92893_snippetnow_table');
+		rec.initialize();
+		
+		if (snippet && snippet.sys_id) {
+			//tis update
+			rec.addQuery('sys_id',snippet.sys_id);
+			rec.query();
+			while(rec.next()) {
+				rec.title = snippet.title;
+				rec.description = snippet.description;
+				rec.snippet = snippet.editor;
+				rec.type = snippet.type.value;
+				rec.application = snippet.application.value;
+				rec.tags = t;
+				rec.allow_others_to_edit = snippet.allow_others_to_edit;
+				rec.comments = snippet.add_comments;
+				rec.related_snippets = snippet.related_snippets;
+				action = rec.update();
+				$sp.log(action);
+				
+			}
+		} else {
+			//tis insert
+			rec.title = snippet.title;
+			rec.description = snippet.description;
+			rec.snippet = snippet.editor;
+			rec.type = snippet.type.value;
+			rec.application = snippet.application.value;
+			rec.allow_others_to_edit = snippet.allow_others_to_edit;
+			rec.related_snippets = snippet.related_snippets;
+			rec.tags = t;
+			action = rec.insert();
+		}
+		
+		
+		if (action) {
+			return true
+		}
+		return false;
+		
+	}
+	
+	function getSnippets(id) {
+		var allSnippets = [];
+		var gr = new GlideRecord('x_92893_snippetnow_table');
+		gr.addEncodedQuery('sys_id!='+id);
+		gr.orderBy('title');
+		gr.query();
+		while(gr.next()) {
+			var label = gr.getDisplayValue('title') + " | " + gr.getDisplayValue('application') + " - " +gr.getDisplayValue('type');
+			allSnippets.push({id:gr.getUniqueValue(),label:gr.getDisplayValue('title')});
+		}
+		return allSnippets;
+	}
+	
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2017-11-24 20:16:40</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
+        <sys_mod_count>43</sys_mod_count>
+        <sys_name>SnippetNow Editor</sys_name>
+        <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
+        <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2017-11-30 22:26:20</sys_updated_on>
+        <template><![CDATA[<div>
+<!-- your widget template -->
+  <!--<div class="panel panel-primary">-->
+    <!--<div class="panel-heading">New Snippet</div>-->
+    <!--<div class="panel-body">-->
+  	
+      <h3>
+        Snippet
+      </h3>
+    
+      <form>
+        <div class="form-group">
+          <label for="snippetTitle">Title</label>
+          <div class="small pull-right" >Allow others to edit <input type="checkbox" ng-disabled="canYouEdit()" ng-model="snippet.allow_others_to_edit" ng-change="canEdit(snippet.allow_others_to_edit)" ng-true-value="true" ng-false-value="false"/> <i class="fa fa-info-circle" aria-hidden="true" ng-click="iNeedHelp('allow_others_to_edit')"></i></div>
+          <input type="text" ng-model="snippet.title" class="form-control" ng-readonly="!youCanEdit" id="snippetTitle" placeholder="Snippet Title">
+          <input type="hidden" ng-model="snippet.sys_id">
+        </div>  
+				<div class="form-group">
+          <label for="snippetDescription">Description</label>
+          <textarea class="form-control" ng-model="snippet.description" ng-readonly="!youCanEdit"></textarea>
+        </div>
+        <!-- Need some types, and stuff here -->
+        <div class="form-group">
+          <label for="snippetApp">Snippet Application</label>
+          <div >
+            <sn-record-picker sn-disabled="!youCanEdit" default-query="'active=true'" field="snippetApp" table="'x_92893_snippetnow_snippetnow_applications'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="snippetType">Snippet Type</label>
+          <div >
+            <sn-record-picker sn-disabled="!youCanEdit"  default-query="'active=true'" field="snippetType" table="'x_92893_snippetnow_snippet_type'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
+          </div>
+        </div>
+       <div class="form-group">
+         <label for="tagBUttons">Tags</label>
+         <div ng-if="youCanEdit">
+         	<tags-input ng-model="snippet.tags" add-on-paste="true" ng-disable="!youCanEdit" ng-readonly="!youCanEdit">
+            <auto-complete source="loadTags($query)"></auto-complete>
+          </tags-input>  
+         </div>
+         <div ng-if="!youCanEdit">
+           
+           <button ng-repeat="tag in snippet.tags" class="btn btn-default" ng-disabled="!youCanEdit">
+             {{tag.text}}
+           </button>
+         </div>
+        </div>
+       <div class="form-group editor-group" ng-class="editorHeight()">
+         <label for="snippetHTML">Snippet </label>
+         <div class="small pull-right" ng-if="snippet.sys_id">Show comments <input type="checkbox" ng-model="comments.show" ng-change="showComments(comments.show)" ng-true-value="true" ng-false-value="false"/></div>
+          <div id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
+       </div>
+       <div class="form-group" >
+         
+         <label for="snippetRelated">Related Snippets</label>
+         <div class="related-snip-list">
+           <button ng-repeat="rSnip in snippetSetModel" class="btn btn-default" ng-click="gotoSnippet(rSnip.id)"> {{rSnip.label}} </button>
+         </div>
+         <div ng-dropdown-multiselect="" options="snippetSetOptions" selected-model="snippetSetModel" extra-settings="snippetExtraSettings" disabled="!youCanEdit"></div>
+         <!--<div ng-dropdown-multiselect="" options="example1data" selected-model="example1model" extra-settings="exampleExtraSettings"></div>-->
+        </div>
+        
+        
+        <div ng-if="showCommentBox" class="form-group">
+        	<label for="snippetComments">Add Comment</label>
+          <textarea ng-model="snippet.add_comments" class="form-control"></textarea>
+          
+          <div class="comment-area">
+            <label form="snippetPreviousComments">Previous Comments</label>
+            <div class="chat clearfix">
+              <div ng-repeat="comment in snippet.previous_comments">
+                <div class="" ng-class="whoSaidIt(comment.created_by.sys_id,snippet.created_by.sys_id)">
+                  <span class="avatar-circle pull-left" uib-tooltip="{{comment.created_by.name}}"><sn-avatar class="avatar-small-medium" primary="comment.created_by.sys_id" /></span>
+                  <span class="">{{comment.comment}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+       
+        <div class="form-group">
+          <div class="pull-right">
+            <button ng-if="!snippet.sys_id && !canYouEdit()" class="btn btn-danger" ng-click="cancelAdd()">Cancel</button>
+            <button ng-if="!snippet.sys_id && !canYouEdit()" type="submit" class="btn btn-primary" ng-click="submit('insert')">Submit</button>
+            <button ng-if="snippet.sys_id && !canYouEdit()" type="submit" class="btn btn-success" ng-click="submit('update')">Update</button>
+          </div>
+  		</div>
+      </form>
+      
+    <!--</div>-->
+  <!--</div>-->
+</div>
+<script type="text/ng-template" id="showHelp">
+	<div class="panel panel-info">
+  	<div class="panel panel-heading">
+    	SnippetNOW Help - {{modalData.title}}
+      <i class="fa fa-times fa-2x pull-right" aria-hidden="true" ng-click="closeModal()"></i>
+   </div>
+   <div class="panel panel-body">
+   	<div ng-bind-html="modalData.body"></div>
+   </div>
+  </div>
+
+</script>
+<script type="text/ng-template" id="updatedSnippet">
+	<div ng-show="c.data.recordAction" class="alert alert-success" style="margin-bottom:0px">
+    <strong>Success!</strong> Snippet has been updated!.
+  </div>
+  <div ng-show="c.data.recordAction == false" class="alert alert-danger" style="margin-bottom:0px">
+    <strong>Error!</strong> Snippet did not save, please try again.
+  </div>
+</script>
+<script type="text/ng-template" id="loadNewSnippetConfirm">
+	<div class="panel panel-info">
+  	<div class="panel panel-heading">
+    	Confirm
+    </div>
+    <div class="panel panel-body">
+    	<p>This will load a new Snippet, if you have unsaved work on the current Snippet, please click "Cancel" and save your work, then try this action again. Otherwise click "Ok" and the new Snippet will be loaded.</p>
+      <div class="pull-right">
+      	<button class="btn btn-success" ng-click="loadNewSnippet(modalData)">OK - Load Snippet</button> <button class="btn btn-danger" ng-click="closeModal()">Cancel</button>
+     </div>
+    </div>
+  </div>
+</script>]]></template>
+    </sp_widget>
+</record_update>

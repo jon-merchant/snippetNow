@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
-        <client_script><![CDATA[function($scope,$uibModal,spUtil) {
+        <client_script><![CDATA[function($scope,$uibModal,spUtil,$timeout,$rootScope) {
   /* widget controller */
   var c = this;
 	console.log(c.data);
@@ -12,6 +12,10 @@
 	spUtil.recordWatch($scope, "x_92893_snippetnow_snippet_type", "", function(name, data) {
 		spUtil.update($scope);
 	});
+	spUtil.recordWatch($scope, "x_92893_snippetnow_snippetnow_tags", "", function(name, data) {
+		spUtil.update($scope);
+	});
+	
 	
 	c.openModal = function(tpl,modalData) {
 		$scope.modalData = modalData;
@@ -38,6 +42,16 @@
 	
 	$scope.insertAppType = function(modalData) {
 		console.log("insertAppType",modalData);
+	}
+	$scope.createNew = function() {
+		$timeout(function() {
+			$rootScope.$broadcast('createNew',true);
+		})
+	}
+	$scope.searchRecords = function(val) {
+		$timeout(function() {
+			$rootScope.$broadcast('searchRecords',val)
+		});
 	}
 	
 	
@@ -132,7 +146,7 @@
         <sys_created_on>2017-11-22 05:28:57</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>43d4d706db220300dfa77fcfbf9619ef</sys_id>
-        <sys_mod_count>131</sys_mod_count>
+        <sys_mod_count>138</sys_mod_count>
         <sys_name>SnippetNow Controls</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -140,15 +154,15 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_43d4d706db220300dfa77fcfbf9619ef</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-11-23 16:27:56</sys_updated_on>
+        <sys_updated_on>2017-11-30 23:28:42</sys_updated_on>
         <template><![CDATA[<div class="">
 <!-- your widget template -->
   
     <div class="row">
-    	<button class="btn btn-success">
+    	<button class="btn btn-success" ng-click="createNew()">
         Create New Snippet
       </button> 
-      <button class="btn btn-primary">
+      <button class="btn btn-primary" ng-click="searchRecords()">
         Show All Snippets
       </button>
     </div>
@@ -157,18 +171,18 @@
         <div class="panel list-group">
          <a href="javascript:void(0)" class="list-group-item" data-toggle="collapse" data-target="#apps" data-parent="#menu">APPLICATIONS <i class="fa fa-plus-circle" aria-hidden="true" ng-click="actionAppType('add','application');$event.stopPropagation();"></i><span class="badge badge-primary pull-right">{{c.data.applications.length}}</span></a>
          <div id="apps" class="sublinks collapse">
-          <a class="list-group-item app-items small" ng-repeat="app in c.data.applications"><i class="fa fa-circle" style="color:{{app.color}}"></i> {{app.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="actionAppType('edit','application',app); $event.stopPropagation();"></i><span class="badge badge-default pull-right">{{app.count}}</span></a>
+          <a ng-click="searchRecords(app.name); $event.stopPropagation();" class="list-group-item app-items small" ng-repeat="app in c.data.applications"><i class="fa fa-circle" style="color:{{app.color}}"></i> {{app.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="actionAppType('edit','application',app); $event.stopPropagation();"></i><span class="badge badge-default pull-right">{{app.count}}</span></a>
           
          </div>
          <a href="javascript:void(0)" class="list-group-item type-item-header" data-toggle="collapse" data-target="#types" data-parent="#menu">TYPES <i class="fa fa-plus-circle" aria-hidden="true" ng-click="actionAppType('add','type');$event.stopPropagation();"></i> <span class="badge badge-primary pull-right">{{c.data.types.length}}</span></a>
          <div id="types" class="sublinks collapse">
-           <a class="list-group-item type-items small" ng-repeat="type in c.data.types"><i class="fa fa-circle" style="color:{{type.color}}"></i> {{type.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="actionAppType('edit','type',type); $event.stopPropagation();"></i><span class="badge pull-right">{{type.count}}</span></a>
+           <a ng-click="searchRecords(type.name); $event.stopPropagation();" class="list-group-item type-items small" ng-repeat="type in c.data.types"><i class="fa fa-circle" style="color:{{type.color}}"></i> {{type.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="actionAppType('edit','type',type); $event.stopPropagation();"></i><span class="badge pull-right">{{type.count}}</span></a>
          </div>
          
         </div>
       </div>
       <div class="row">
-        <span class="badge badge-info" ng-repeat="tag in c.data.tags">{{tag.text}}</span>
+        <span class="badge badge-info" ng-repeat="tag in c.data.tags" ng-click="searchRecords(tag.text)">{{tag.text}}</span>
       </div>
       <!--<div class="panel-group" id="accordion">
         <div class="panel panel-default">

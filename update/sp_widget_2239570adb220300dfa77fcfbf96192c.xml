@@ -1,23 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
-        <client_script><![CDATA[function($scope) {
+        <client_script><![CDATA[function($scope,spUtil,$timeout,$rootScope,$filter,$uibModal) {
   /* widget controller */
   var c = this;
-	console.log(c.data.snippet);
+	console.log("Listing",$scope);
+	
+	spUtil.recordWatch($scope, "x_92893_snippetnow_table", "", function(data) {
+		console.log("Something happened",data);
+		/*var record = data.data.record;
+		var title = record.title.display_value;
+		var desc = record.description.display_value;
+		record.title = title;
+		$scope.snippet.records.unshift(record);*/
+		c.server.update().then(function(response){
+			console.log(response);
+			$scope.snippet = response.snippet;
+		});
+		
+		
+	});
+	
+	$scope.$on('searchRecords',function(event,data) {
+		$timeout(function() {
+			$scope.searchRecords = data;
+			
+		});
+	});
+	
+	$scope.$watch('searchRecords',function(newValue,oldValue) {
+		if (newValue) {
+			$scope.showClearAll = true;
+		} else {
+			$scope.showClearAll = false;
+		}
+	});
+	$scope.$watchCollection('filterData',function(newValue,oldValyu) {
+		$timeout(function() {
+			console.log("Watching List",newValue);
+			//set 0 to active
+			if (newValue) {
+				$scope.activeItem = newValue[0];
+			}
+			//need to broadcast
+			$rootScope.$broadcast('selectedSnippet',$scope.activeItem);
+		},500)
+	})
+	$scope.openModal = function(tpl,topic) {
+		console.log(topic);
+		if (topic) {
+			$scope.modalData = c.data.help[topic];
+		}
+		console.log($scope.modalData,c.data.help);
+		
+		$rootScope.modalInstance = $uibModal.open({
+			templateUrl: tpl,
+			scope: $scope
+		});
+	}
+	
+	$scope.closeModal = function() {
+		//console.log("triggered");
+		$rootScope.modalInstance.close();
+	}
+	
+	$scope.setActive = function(record) {
+		console.log("Set Active",record);
+		$scope.modalData = {load_snippet:record};
+		$scope.openModal('loadNewSnippetConfirm');
+		/*$scope.activeItem = record;
+		$rootScope.$broadcast('selectedSnippet',$scope.activeItem);*/
+		//need to boradcast
+	}
+	$scope.loadNewSnippet = function(record) {
+		console.log("loadNewSnippet",record);
+		$scope.closeModal();
+		$scope.activeItem = record.load_snippet;
+		$rootScope.$broadcast('selectedSnippet',$scope.activeItem);
+	}
 	
 	$scope.snippet = c.data.snippet;
 	$scope.totalItems = c.data.snippet.total_count;
 	$scope.itemsPerPage = 6;
 	$scope.currentPage = 1;
 	
+	
 	$scope.setPage = function (pageNo) {
     $scope.currentPage = pageNo;
   };
-
-  $scope.pageChanged = function() {
+	
+	
+  /*$scope.pageChanged = function() {
     console.log('Page changed to: ' + $scope.currentPage);
-  };
+  };*/
+	$scope.displayItems = $scope.totalItems.slice(0, 3);
+	
+	$scope.pageChanged = function() {
+	  var startPos = ($scope.Page - 1) * 3;
+	  //$scope.displayItems = $scope.totalItems.slice(startPos, startPos + 3);
+	  console.log($scope.currentPage);
+	};
 	$scope.needHR = function(record) {
 		var check = [];
 		if (record.application && record.application.display_value) {
@@ -38,6 +120,19 @@
 		return true;
 	}
 	
+	$scope.showClearAll = false;
+	$scope.clearAll = function(val) {
+		if (val) {
+			$scope.showClearAll = true;
+		} else {
+			$scope.showClearAll = false;
+		}
+	}
+	$scope.clearSearch = function() {
+		console.log("ClearSearch clicked");
+		$scope.searchRecords = null;
+		$scope.showClearAll = false;
+	}
 }]]></client_script>
         <controller_as>c</controller_as>
         <css>.snippet-title h2 {
@@ -91,20 +186,45 @@ hr {
         <script><![CDATA[(function() {
   /* populate the 'data' object */
   /* e.g., data.table = $sp.getValue('table'); */
-
-	
-	
-	
-	
 	data.snippet = {};
-	data.snippet.total_count = new SnippetNow_DAO().getCount('x_92893_snippetnow_table',null)
-	data.snippet.applications = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippetnow_applications','application','x_92893_snippetnow_table');
-	data.snippet.types = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippet_type','type','x_92893_snippetnow_table');
+		data.snippet.total_count = getTC();
+		data.snippet.applications = getApps();
+		data.snippet.types = getTypes();
 	
-	data.snippet.records = new SnippetNow_DAO().getSnippetRecords('x_92893_snippetnow_table');
-	data.snippet.tags = new SnippetNow_DAO().getTagList();
+		data.snippet.records = getRecords();
+		data.snippet.tags = getTags();
 	
-	data.help = new SnippetNow_DAO().getHelp();
+		data.help = new SnippetNow_DAO().getHelp();
+	
+	if (input) {
+		data.snippet = {};
+		data.snippet.total_count = getTC();
+		data.snippet.applications = getApps();
+		data.snippet.types = getTypes();
+	
+		data.snippet.records = getRecords();
+		data.snippet.tags = getTags();
+	
+		data.help = new SnippetNow_DAO().getHelp();
+	}
+	
+	function getTC() {
+		return new SnippetNow_DAO().getCount('x_92893_snippetnow_table',null);	
+	}
+	function getApps() {
+		return new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippetnow_applications','application','x_92893_snippetnow_table');
+	}
+	function getTypes() {
+		return new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippet_type','type','x_92893_snippetnow_table');
+	}
+	function getRecords() {
+		return new SnippetNow_DAO().getSnippetRecords('x_92893_snippetnow_table');
+	}
+	function getTags() {
+		return new SnippetNow_DAO().getTagList();
+	}
+	
+
 	
 })();]]></script>
         <servicenow>false</servicenow>
@@ -113,7 +233,7 @@ hr {
         <sys_created_on>2017-11-22 05:47:57</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>2239570adb220300dfa77fcfbf96192c</sys_id>
-        <sys_mod_count>78</sys_mod_count>
+        <sys_mod_count>185</sys_mod_count>
         <sys_name>SnippetNow List</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -121,17 +241,18 @@ hr {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_2239570adb220300dfa77fcfbf96192c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-11-23 03:29:29</sys_updated_on>
+        <sys_updated_on>2017-11-30 23:08:46</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <div class="input-group" style="padding-bottom: 10px;">
-          <input type="text" ng-model="searchRecords" placeholder="Search..." class="form-control"/>
+          <input type="text" ng-model="searchRecords" placeholder="Search..." class="form-control" />
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+            <button class="btn btn-default" type="button"><i ng-if="showClearAll" class="fa fa-times" aria-hidden="true" ng-click="clearSearch()"></i><i ng-if="!showClearAll" class="fa fa-search" aria-hidden="true"></i></button>
           </span>
         </div>
   <div class="list-group">
-    <a ng-repeat="record in snippet.records.slice(((currentPage-1)*itemsPerPage), ((currentPage)*itemsPerPage))" class="list-group-item ">
+    <a ng-repeat="record in filterData = (snippet.records | filter : searchRecords) | limitTo:6:6*(currentPage-1)" class="list-group-item" ng-class="{active : activeItem === record}" ng-click="setActive(record)">
+    <!--<a ng-repeat="record in snippet.records.slice(((currentPage-1)*itemsPerPage), ((currentPage)*itemsPerPage)) | filter:searchRecords as totalItems" class="list-group-item ">-->
       <span class="pull-right" tooltip-placement="left" uib-tooltip="{{record.created_by.displayValue}}"><sn-avatar class="avatar-small-medium" primary="record.created_by.sys_id" /></span>
     	<div class="snippet-title">
         <h2>
@@ -152,8 +273,22 @@ hr {
         <span class="badge badge-success" ng-repeat="rec in record.related_list">{{rec.label}}</span>
       </div>
     </a>
-    <a uib-pagination total-items="totalItems" ng-model="currentPage" max-size="4" ng-change="pageChanged()" boundary-links="true" rotate="true" num-pages="numPages" items-per-page="itemsPerPage"></a>
+    <uib-pagination class="pagination" total-items="filterData.length" ng-model="currentPage" ng-change="pageChanged()" boundary-link-numbers="true" rotate="false" num-pages="numPages" items-per-page="itemsPerPage" max-size="4"></uib-pagination>
+    <!--<a uib-pagination total-items="filteredRecords.length" ng-model="currentPage" max-size="4" ng-change="pageChanged()" boundary-links="true" rotate="false" num-pages="numPages" items-per-page="itemsPerPage"></a>-->
   </div>
-</div>]]></template>
+</div>
+<script type="text/ng-template" id="loadNewSnippetConfirm">
+	<div class="panel panel-info">
+  	<div class="panel panel-heading">
+    	Confirm
+    </div>
+    <div class="panel panel-body">
+    	<p>This will load a new Snippet, if you have unsaved work on the current Snippet, please click "Cancel" and save your work, then try this action again. Otherwise click "Ok" and the new Snippet will be loaded.</p>
+      <div class="pull-right">
+      	<button class="btn btn-success" ng-click="loadNewSnippet(modalData)">OK - Load Snippet</button> <button class="btn btn-danger" ng-click="closeModal()">Cancel</button>
+     </div>
+    </div>
+  </div>
+</script>]]></template>
     </sp_widget>
 </record_update>
