@@ -243,6 +243,25 @@ SnippetNow_DAO.prototype = {
 		 }
 		 return '';
     },
+	
+	getAttachmentList: function(sys_id) {
+		var list = [];
+		var al = new GlideRecord('sys_attachment');
+		al.addEncodedQuery('table_sys_id='+sys_id);
+		al.query();
+		var tc = al.getRowCount();
+		while(al.next()) {
+			list.push({
+				sys_id:al.getUniqueValue(),
+				file_name:al.getDisplayValue('file_name')
+			});
+		}
+		var obj = {
+			total_count:tc,
+			records:list
+		};
+		return obj;
+	},
 
     getSnippetRecord: function(sys_id) {
         var glideRecord = new GlideRecord("x_92893_snippetnow_table");
@@ -372,7 +391,8 @@ SnippetNow_DAO.prototype = {
                 previous_comments: nn,
                 notes: notes,
                 related_snippets: glideRecord.getValue('related_snippets'),
-                related_list: this.getRelatedRecordList(glideRecord.getValue('related_snippets'))
+                related_list: this.getRelatedRecordList(glideRecord.getValue('related_snippets')),
+				attachments: this.getAttachmentList(glideRecord.getUniqueValue())
             });
         }
         return records;
@@ -431,7 +451,7 @@ SnippetNow_DAO.prototype = {
         <sys_created_on>2017-09-10 19:28:15</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>54e89e7edbcd0300dfa77fcfbf96191b</sys_id>
-        <sys_mod_count>128</sys_mod_count>
+        <sys_mod_count>130</sys_mod_count>
         <sys_name>SnippetNow_DAO</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy>read</sys_policy>
@@ -439,6 +459,6 @@ SnippetNow_DAO.prototype = {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_script_include_54e89e7edbcd0300dfa77fcfbf96191b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-12-01 17:22:03</sys_updated_on>
+        <sys_updated_on>2017-12-03 01:05:26</sys_updated_on>
     </sys_script_include>
 </record_update>

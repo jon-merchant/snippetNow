@@ -35,15 +35,18 @@
 			$scope.showClearAll = false;
 		}
 	});
-	$scope.$watchCollection('filterData',function(newValue,oldValyu) {
+	$scope.$watchCollection('filterData',function(newValue,oldValue) {
 		$timeout(function() {
 			console.log("Watching List",newValue);
 			//set 0 to active
 			if (newValue) {
 				$scope.activeItem = newValue[0];
-			}
-			//need to broadcast
-			$rootScope.$broadcast('selectedSnippet',$scope.activeItem);
+				//need to broadcast
+				console.log("Broadcase from Search",$scope.activeItem);
+				$rootScope.$broadcast('selectedSnippet',$scope.activeItem);
+				$rootScope.initialSnippet = $scope.activeItem;
+			} 
+			
 		},500)
 	})
 	$scope.openModal = function(tpl,topic) {
@@ -76,6 +79,8 @@
 		console.log("loadNewSnippet",record);
 		$scope.closeModal();
 		$scope.activeItem = record.load_snippet;
+		console.log("Broadcast from loadNewSnippet");
+		
 		$rootScope.$broadcast('selectedSnippet',$scope.activeItem);
 	}
 	
@@ -233,7 +238,7 @@ hr {
         <sys_created_on>2017-11-22 05:47:57</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>2239570adb220300dfa77fcfbf96192c</sys_id>
-        <sys_mod_count>185</sys_mod_count>
+        <sys_mod_count>190</sys_mod_count>
         <sys_name>SnippetNow List</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -241,7 +246,7 @@ hr {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_2239570adb220300dfa77fcfbf96192c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-11-30 23:08:46</sys_updated_on>
+        <sys_updated_on>2017-12-03 01:36:03</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <div class="input-group" style="padding-bottom: 10px;">

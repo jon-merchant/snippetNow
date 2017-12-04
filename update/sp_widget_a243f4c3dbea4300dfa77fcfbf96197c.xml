@@ -125,7 +125,7 @@
 		if (data) {
 			console.log(editor);
 			$scope.snippet = {};
-			
+			editor.setValue("//Enter Your Code Here");
 			
 			$scope.snippetType = {
 				displayValue: '',
@@ -139,7 +139,7 @@
 			};
 			$scope.snippetSetModel = [];
 			
-		}
+		} 
 	});
 	$scope.cancelAdd = function() {
 		if ($scope.previousSnippet) {
@@ -147,13 +147,95 @@
 			$scope.snippetType = $scope.previousSnippetType;
 			$scope.snippetApp = $scope.previousSnippetApp;
 			$scope.snippetSetModel = $scope.previousSnippetRelatedList;
-			
+			editor.setValue($scope.snippet.snippet);
+			editor.clearSelection();
 		}
 	}
 	//console.log("Listening");
+	if ($rootScope.initialSnippet && $rootScope.initialSnippet.sys_id) {
+		$scope.snippet = $rootScope.initialSnippet;
+		$scope.comments = {};
+				$scope.comments.show = false;
+				$scope.showCommentBox = false;
+				//$scope.snippet = data;
+				//console.log($scope.youCanEdit);
+				/*if (!$scope.canYouEdit()) {
+					editor.setReadOnly(false);
+				} else {
+					editor.setReadOnly(true);
+				}*/
+				/*if (!$scope.snippet.allow_others_to_edit) {
+					console.log("no edit");
+					editor.setReadOnly(true);
+					$scope.youCanEdit = false;
+				} else {
+					console.log("edit");
+					editor.setReadOnly(false);
+					$scope.youCanEdit = true;
+				}
+				if (c.data.current_user == data.snippet.created_by.sys_id) {
+					editor.setReadOnly(false);
+					$scope.youCanEdit = true;
+				}*/
+				if ($scope.snippet.snippet) {
+					editor.setValue($scope.snippet.snippet);
+					editor.clearSelection();
+				} else {
+					editor.setValue("//Enter Your Code Here");
+				}
+
+				$scope.snippetSetModel = [];
+				if ($scope.snippet.related_list) {
+					$scope.snippetSetModel = $scope.snippet.related_list;
+				} 
+
+				$scope.snippetType = {
+					displayValue: $scope.snippet.type.display_value,
+					value: $scope.snippet.type.sys_id,
+					name: 'snippetType'
+				};
+				
+				$scope.snippetApp = {
+					displayValue: $scope.snippet.application.display_value,
+					value: $scope.snippet.application.sys_id,
+					name: 'snippetApp'
+				};
+				
+				if ($scope.snippet.type && $scope.snippet.type.color) {
+					$scope.snippetType.color = $scope.snippet.type.color;
+				}
+				if ($scope.snippet.application && $scope.snippet.application.color) {
+					$scope.snippetApp.color = $scope.snippet.application.color;
+				}
+			
+				c.data.getSetOptions = true;
+				c.data.getSetOptions_ID = $scope.snippet.sys_id;
+				c.server.update().then(function(response) {
+					console.log("Looking to get new option list",response);
+					$scope.snippetSetOptions = response.freshSetOptions;
+					c.data.getSetOptions = false;
+					c.data.getSetOptions_ID = null;
+				});
+				
+				//console.log($scope.snippet.sys_id);
+				$scope.snippetSetOptions = $scope.snippetSetOptions.filter(function(el){
+					return el.id !== $scope.snippet.sys_id;
+				});
+				/*var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
+				console.log(related_id);
+				if (related_id > -1) {
+						$scope.snippetSetOptions.splice(related_id, 1);
+				}*/
+				//console.log(editor);
+
+		//console.log("IntialSNippet",$rootScope.initialSnippet);
+		$rootScope.initialSnippet = null;
+	}
 	$scope.$on("selectedSnippet",function(event,data) {
+		console.log("Before the boo");
 		$timeout(function() {
 			console.log("BOOO",data);
+			//might need to grab a fresh list of records for related list
 			if (data) {
 				$scope.comments = {};
 				$scope.comments.show = false;
@@ -185,9 +267,10 @@
 					editor.setValue("//Enter Your Code Here");
 				}
 
+				$scope.snippetSetModel = [];
 				if ($scope.snippet.related_list) {
 					$scope.snippetSetModel = $scope.snippet.related_list;
-				}
+				} 
 
 				$scope.snippetType = {
 					displayValue: $scope.snippet.type.display_value,
@@ -207,8 +290,17 @@
 				if (data.application && data.application.color) {
 					$scope.snippetApp.color = data.application.color;
 				}
+			
+				c.data.getSetOptions = true;
+				c.data.getSetOptions_ID = $scope.snippet.sys_id;
+				c.server.update().then(function(response) {
+					console.log("Looking to get new option list",response);
+					$scope.snippetSetOptions = response.freshSetOptions;
+					c.data.getSetOptions = false;
+					c.data.getSetOptions_ID = null;
+				});
 				
-				console.log($scope.snippet.sys_id);
+				//console.log($scope.snippet.sys_id);
 				$scope.snippetSetOptions = $scope.snippetSetOptions.filter(function(el){
 					return el.id !== $scope.snippet.sys_id;
 				});
@@ -217,9 +309,9 @@
 				if (related_id > -1) {
 						$scope.snippetSetOptions.splice(related_id, 1);
 				}*/
-				console.log(editor);
+				//console.log(editor);
 			}
-		},500)
+		},500);
 	})
 	
 	
@@ -429,7 +521,7 @@
                .replace(/\b/g, "\\b")
                .replace(/\f/g, "\\f");*/
 	};
-	console.log("Form",$scope);
+	console.log("Form",$scope,$rootScope);
 }]]></client_script>
         <controller_as>c</controller_as>
         <css>#editor {
@@ -455,7 +547,9 @@
     /*width: 400px;*/
     width: 90%;
 }
-
+.attachment-pills {
+	background-color: #666;  
+}
 .avatar {
   box-shadow: 0 0 6px #333;
 }
@@ -566,6 +660,9 @@
 		} else {
 			data.recordAction = false;
 		}
+	}
+	if (input && input.getSetOptions) {
+		data.freshSetOptions = getSnippets(input.getSetOptions_ID);
 	}
 	
 	/*data.snippetType = {};
@@ -704,7 +801,7 @@
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>79</sys_mod_count>
+        <sys_mod_count>110</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -712,7 +809,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-12-01 22:28:37</sys_updated_on>
+        <sys_updated_on>2017-12-04 23:39:25</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -722,7 +819,11 @@
       <h3>
         Snippet <button class="btn btn-primary pull-right" ng-click="addAttachment(snippet.sys_id)" ng-if="snippet.sys_id">Attachments <i class="fa fa-paperclip" aria-hidden="true"></i></button>
       </h3>
-    
+    	<!--<div class="clearfix">
+      	<div class="pull-left">
+          <span class="attachment-pills label" ng-repeat="attachment in snippet.attachments.records">{{attachment.file_name}}</span>
+        </div> 
+  		</div>-->
       <form>
         <div class="form-group">
           <label for="snippetTitle">Title</label>
@@ -842,7 +943,7 @@
 <script type="text/ng-template" id="addAttachment">
 	<div class="panel panel-default">
   	<div class="panel-heading">
-    	Add Attachments
+    	<h4>Add Attachments <span class="pull-right"><i class="fa fa-times" aria-hidden="true" ng-click="closeModal()"></i></span></h4>
     </div>
     <div class="panel-body">
     	<sp-widget widget="c.attachmentItemWidget"></sp-widget>

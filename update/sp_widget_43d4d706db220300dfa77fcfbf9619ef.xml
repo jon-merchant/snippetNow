@@ -67,7 +67,9 @@
 	}
 	$scope.createNew = function() {
 		$timeout(function() {
+			$rootScope.initialSnippet = null;
 			$rootScope.$broadcast('createNew',true);
+			
 		})
 	}
 	$scope.searchRecords = function(val) {
@@ -90,54 +92,56 @@
 	*/
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css>
-.panel-default &gt; .panel-heading {
-  background-color: #e7e9eb;
-  border-color: #ccc;
-}
-.row {
-  margin: 10px 0;
-}
-.badge {
-  background-color: darken(#e7e9eb,30%);
-}
-.badge-primary {
-  background-color: $brand-primary;
-}
-.fa-pencil, .fa-plus-circle {
-  visibility: hidden;
-}
-.type-item-header {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-}
-.list-group-item:hover {
-  .fa-pencil {
-    visibility: visible;
-  }
-  .fa-plus-circle {
-    visibility: visible;
-  }
-}
-.panel {
-  background-color: transparent !important;
-  border: none;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-.app-items {
-  border-radius: 0px;
-}
-.app-items:last-child {
-  border-bottom: none !important;
-}
-.type-items:first-child {
-  border-radius: 0px;
-}
-.badge-info {
-  border-radius: 4px;
-  margin: 0 2px;
-  background-color: $brand-info;
+        <css>.panel-default &gt; .panel-heading {&#13;
+  background-color: #e7e9eb;&#13;
+  border-color: #ccc;&#13;
+}&#13;
+.row {&#13;
+  margin: 10px 0;&#13;
+}&#13;
+.badge {&#13;
+  background-color: darken(#e7e9eb,30%);&#13;
+}&#13;
+.badge-primary {&#13;
+  background-color: $brand-primary;&#13;
+}&#13;
+.fa-pencil, .fa-plus-circle {&#13;
+  visibility: hidden;&#13;
+}&#13;
+.type-item-header {&#13;
+  border-bottom-left-radius: 4px;&#13;
+  border-bottom-right-radius: 4px;&#13;
+}&#13;
+.list-group-item:hover {&#13;
+  .fa-pencil {&#13;
+    visibility: visible;&#13;
+  }&#13;
+  .fa-plus-circle {&#13;
+    visibility: visible;&#13;
+  }&#13;
+}&#13;
+.panel {&#13;
+  background-color: transparent !important;&#13;
+  border: none;&#13;
+  -webkit-box-shadow: none;&#13;
+  box-shadow: none;&#13;
+}&#13;
+.app-items {&#13;
+  border-radius: 0px;&#13;
+}&#13;
+.app-items:last-child {&#13;
+  border-bottom: none !important;&#13;
+}&#13;
+.type-items:first-child {&#13;
+  border-radius: 0px;&#13;
+}&#13;
+.badge-info {&#13;
+  border-radius: 4px;&#13;
+  margin: 0 2px;&#13;
+  background-color: $brand-info;&#13;
+}&#13;
+.show-circle {&#13;
+  visibility: visible;&#13;
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -184,7 +188,7 @@
         <sys_created_on>2017-11-22 05:28:57</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>43d4d706db220300dfa77fcfbf9619ef</sys_id>
-        <sys_mod_count>159</sys_mod_count>
+        <sys_mod_count>165</sys_mod_count>
         <sys_name>SnippetNow Controls</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -192,16 +196,16 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_43d4d706db220300dfa77fcfbf9619ef</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-12-01 20:53:06</sys_updated_on>
+        <sys_updated_on>2017-12-04 23:36:38</sys_updated_on>
         <template><![CDATA[<div class="">
 <!-- your widget template -->
   
     <div class="row">
     	<button class="btn btn-success" ng-click="createNew()">
-        Create New Snippet
+        New <i class="fa fa-plus-circle show-circle" aria-hidden="true"></i>
       </button> 
       <button class="btn btn-primary" ng-click="searchRecords()">
-        Show All Snippets
+        All <i class="fa fa-times-circle" aria-hidden="true"></i>
       </button>
     </div>
     <div class="row">
