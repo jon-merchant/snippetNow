@@ -371,6 +371,7 @@
 				$scope.openModal('updatedSnippet');
 				$timeout(function() {
 					$rootScope.$broadcast("newTags",response.tagList);
+					delete c.data.snippet;
 					$scope.closeModal();
 					//window.location.reload();
 					//spUtil.update($scope);
@@ -379,7 +380,7 @@
 			if (response.recordAction && type == 'insert') {
 				$scope.openModal('updatedSnippet');
 				$timeout(function() {
-					
+					delete c.data.snippet;
 					//$rootScope.$broadcast('newSnippet',$scope.snippet);
 					//spUtil.update($scope);
 					$scope.closeModal();
@@ -653,7 +654,8 @@
   /* e.g., data.table = $sp.getValue('table'); */
 	
 	if (input && input.snippet) {
-		//console.log(input.snippet.simpleTags);
+		console.log("Keeps Running");
+		console.log(input.snippet.sys_id);
 		var done = actionSnippet(input.snippet);
 		if (done) {
 			data.recordAction = true;
@@ -801,7 +803,7 @@
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>110</sys_mod_count>
+        <sys_mod_count>113</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -809,7 +811,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-12-04 23:39:25</sys_updated_on>
+        <sys_updated_on>2017-12-05 16:41:12</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
