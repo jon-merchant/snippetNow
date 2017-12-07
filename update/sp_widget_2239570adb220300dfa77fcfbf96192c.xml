@@ -119,6 +119,18 @@
 		if (record.related_list && record.related_list.length > 0) {
 			check.push('t');
 		} 
+		if (record.allows_others_to_edit) {
+			check.push('t');
+		}
+		if (record.previous_comments.length > 0) {
+			check.push('t');
+		}
+		if (record.attachments.records.length > 0) {
+			check.push('t');
+		}
+		if (record.related_list.list > 0) {
+			check.push('t');
+		}
 		if (check.indexOf('t')) {
 			return false;
 		} 
@@ -137,6 +149,12 @@
 		console.log("ClearSearch clicked");
 		$scope.searchRecords = null;
 		$scope.showClearAll = false;
+	}
+	$scope.filterBy = function(val) {
+		$scope.searchRecords = val;
+	}
+	$scope.returnFirst = function(str) {
+		return str.charAt(0).toUpperCase();
 	}
 }]]></client_script>
         <controller_as>c</controller_as>
@@ -174,7 +192,32 @@
 hr {
   margin-top: 10px;
   margin-bottom: 10px;
-}</css>
+}
+.editable-label {
+  background-color: transparentize($brand-success, 0.75);
+  
+}
+.not-editable-label {
+  background-color: transparentize($brand-warning, 0.75);
+  
+}
+.tag-square {
+  color: $brand-info;
+}
+
+.snippet-info {
+  font-size: 10px;
+}
+.option-square {
+  color: lighten(#4B4B4B,15%);
+}
+.option-square-i {
+  color: #fff;
+}
+.avatar {
+	box-shadow: 0 0 6px #333;
+}
+</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
         <description/>
@@ -238,7 +281,7 @@ hr {
         <sys_created_on>2017-11-22 05:47:57</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>2239570adb220300dfa77fcfbf96192c</sys_id>
-        <sys_mod_count>190</sys_mod_count>
+        <sys_mod_count>334</sys_mod_count>
         <sys_name>SnippetNow List</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -246,7 +289,7 @@ hr {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_2239570adb220300dfa77fcfbf96192c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-12-03 01:36:03</sys_updated_on>
+        <sys_updated_on>2017-12-07 17:57:52</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <div class="input-group" style="padding-bottom: 10px;">
@@ -256,9 +299,12 @@ hr {
           </span>
         </div>
   <div class="list-group">
-    <a ng-repeat="record in filterData = (snippet.records | filter : searchRecords) | limitTo:6:6*(currentPage-1)" class="list-group-item" ng-class="{active : activeItem === record}" ng-click="setActive(record)">
+    <a class="snippet" ng-repeat="record in filterData = (snippet.records | filter : searchRecords) | limitTo:6:6*(currentPage-1)" class="list-group-item" ng-class="{active : activeItem === record}" ng-click="setActive(record)">
     <!--<a ng-repeat="record in snippet.records.slice(((currentPage-1)*itemsPerPage), ((currentPage)*itemsPerPage)) | filter:searchRecords as totalItems" class="list-group-item ">-->
-      <span class="pull-right" tooltip-placement="left" uib-tooltip="{{record.created_by.displayValue}}"><sn-avatar class="avatar-small-medium" primary="record.created_by.sys_id" /></span>
+      <div class="pull-right">
+      	<div><sn-avatar class="avatar-small-medium" primary="record.created_by.sys_id" /></div>  
+      </div>
+      
     	<div class="snippet-title">
         <h2>
         	{{record.title}} 
@@ -269,16 +315,51 @@ hr {
       </div>
       <span ng-if="needHR(record)"><hr/></span>
       <div class="snippet-info">
-        <span class="badge" style="background-color:{{record.application.color}}">{{record.application.display_value}}</span>
+        <span ng-if="record.application.display_value" class="fa-stack" style="color:{{record.application.color}}" uib-tooltip="Application: {{record.application.display_value}}" ng-click="filterBy(record.application.display_value);$event.stopPropagation();">
+          <i class="fa fa-circle fa-stack-2x"></i>
+          <strong class="fa-stack-1x fa-stack-text fa-inverse">{{returnFirst(record.application.display_value)}}</strong>
+        </span>
+        <span ng-if="record.type.display_value" class="fa-stack" style="color:{{record.type.color}}" uib-tooltip="Type: {{record.type.display_value}}" ng-click="filterBy(record.type.display_value);$event.stopPropagation();">
+          <i class="fa fa-circle fa-stack-2x"></i>
+          <strong class="fa-stack-1x fa-stack-text fa-inverse">{{returnFirst(record.type.display_value)}}</strong>
+        </span>
+        
+        <span class="vertical-seperator" ng-if="record.tags.length > 0"> | </span>
+        <span ng-if="record.tags.length > 0" class="fa-stack" uib-tooltip="Tag: {{tag.text}}" ng-repeat="tag in record.tags" ng-click="filterBy(tag.text);$event.stopPropagation();">
+          <i class="fa fa-square fa-stack-2x tag-square"></i>
+          <strong class="fa-stack-1x fa-stack-text fa-inverse">{{returnFirst(tag.text)}}</strong>
+        </span>
+        <span class="vertical-seperator" ng-if="(record.application.display_value || record.type.display_value || record.tags.length > 0) && (record.allow_others_to_edit || record.previous_comments.length > 0)"> | </span>
+        <span ng-if="record.attachments.records.length > 0" class="fa-stack" uib-tooltip="Has attachments">
+          <i class="fa fa-square fa-stack-2x option-square"></i>
+        	<i class="fa fa-paperclip fa-stack-1x option-square-i" aria-hidden="true" ></i>
+        </span>
+        
+        <span ng-if="record.allow_others_to_edit" class="fa-stack" uib-tooltip="Editalbe by others">
+        	<i class="fa fa-square fa-stack-2x option-square" aria-hidden="true"></i>	
+          <i class="fa fa-pencil fa-stack-1x option-square-i" aria-hidden="true"></i>
+        </span>
+        <span ng-if="record.related_list.length > 0" class="fa-stack" uib-tooltip="Has related records">
+          <i class="fa fa-square fa-stack-2x option-square"></i>
+        	<i class="fa fa-list-ol fa-stack-1x option-square-i" aria-hidden="true" ></i>
+        </span>
+        <span ng-if="record.previous_comments.length > 0" class="fa-stack" uib-tooltip="Has comments">
+          <i class="fa fa-square fa-stack-2x option-square"></i>
+        	<i class="fa fa-comments fa-stack-1x option-square-i" aria-hidden="true" ></i>
+        </span>
+        
+        
+        
+        <!--<span uib-tooltip="{{record.application.color}}" class="badge" style="background-color:{{record.application.color}}">{{record.application.display_value}}</span>
         <span class="badge" style="background-color:{{record.type.color}}">{{record.type.display_value}}</span>
         <span class="vertical-seperator" ng-if="record.tags.length > 0"> | </span>
-        <span class="badge badge-info" ng-repeat="tag in record.tags">{{tag.text}}</span>
+        <span class="badge badge-info" ng-repeat="tag in record.tags">{{tag.text}}</span>-->
       </div>
-      <div class="related-list">
+      <!--<div class="related-list">
         <span class="badge badge-success" ng-repeat="rec in record.related_list">{{rec.label}}</span>
-      </div>
+      </div>-->
     </a>
-    <uib-pagination class="pagination" total-items="filterData.length" ng-model="currentPage" ng-change="pageChanged()" boundary-link-numbers="true" rotate="false" num-pages="numPages" items-per-page="itemsPerPage" max-size="4"></uib-pagination>
+    <uib-pagination class="pagination" total-items="filterData.length" ng-model="currentPage" ng-change="pageChanged()" boundary-link-numbers="true" rotate="false" num-pages="numPages" items-per-page="itemsPerPage" max-size="3"></uib-pagination>
     <!--<a uib-pagination total-items="filteredRecords.length" ng-model="currentPage" max-size="4" ng-change="pageChanged()" boundary-links="true" rotate="false" num-pages="numPages" items-per-page="itemsPerPage"></a>-->
   </div>
 </div>

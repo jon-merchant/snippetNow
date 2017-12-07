@@ -803,7 +803,7 @@
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>113</sys_mod_count>
+        <sys_mod_count>116</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -811,7 +811,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-12-05 16:41:12</sys_updated_on>
+        <sys_updated_on>2017-12-07 04:28:33</sys_updated_on>
         <template><![CDATA[<div>
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -819,7 +819,7 @@
     <!--<div class="panel-body">-->
   	
       <h3>
-        Snippet <button class="btn btn-primary pull-right" ng-click="addAttachment(snippet.sys_id)" ng-if="snippet.sys_id">Attachments <i class="fa fa-paperclip" aria-hidden="true"></i></button>
+        Snippet <button class="btn btn-primary pull-right" ng-click="addAttachment(snippet.sys_id)" ng-if="snippet.sys_id && !canYouEdit()">Attachments <i class="fa fa-paperclip" aria-hidden="true"></i></button>
       </h3>
     	<!--<div class="clearfix">
       	<div class="pull-left">
@@ -901,7 +901,7 @@
           <div class="pull-right">
             <button ng-if="!snippet.sys_id && !canYouEdit()" class="btn btn-danger" ng-click="cancelAdd()">Cancel</button>
             <button ng-if="!snippet.sys_id && !canYouEdit()" type="submit" class="btn btn-primary" ng-click="submit('insert')">Submit</button>
-            <button ng-if="snippet.sys_id && !canYouEdit()" type="submit" class="btn btn-success" ng-click="submit('update')">Update</button>
+            <button ng-if="snippet.sys_id && !canYouEdit() || snippet.add_comments" type="submit" class="btn btn-success" ng-click="submit('update')">Update</button>
           </div>
   		</div>
       </form>
