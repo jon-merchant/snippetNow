@@ -145,7 +145,7 @@ SnippetNow_DAO.prototype = {
         for (var j = 0; j < nList.length; j++) {
             if (nList[j].sys_id == null) {
                 //needs to be added
-                gs.info("SnippetNow add tag " + nList[j].tag);
+                //gs.info("SnippetNow add tag " + nList[j].tag);
                 var sys_id = this.addTag(nList[j].tag);
                 nList[j].sys_id = sys_id;
             }
@@ -287,6 +287,7 @@ SnippetNow_DAO.prototype = {
                 t = '';
             }
             var notes = glideRecord.comments.getJournalEntry(-1);
+			//gs.info("SnippetNow Comments "+notes);
             var na = notes.split("\n\n");
             var nn = [];
             for (var m = 0; m < na.length; m++) {
@@ -301,7 +302,7 @@ SnippetNow_DAO.prototype = {
             } else {
                 oe = false;
             }
-            gs.info("SnippetNOW tags " + t);
+            //gs.info("SnippetNOW tags " + t);
             var record = [];
             record.push({
                 created_by: cb,
@@ -362,6 +363,7 @@ SnippetNow_DAO.prototype = {
                 t = '';
             }
             var notes = glideRecord.comments.getJournalEntry(-1);
+			//gs.info("SnippetNOW Comments "+notes);
             var na = notes.split("\n\n");
             var nn = [];
             for (var m = 0; m < na.length; m++) {
@@ -376,7 +378,7 @@ SnippetNow_DAO.prototype = {
             } else {
                 oe = false;
             }
-            gs.info("SnippetNOW tags " + t);
+            //gs.info("SnippetNOW tags " + t);
             records.push({
                 created_by: cb,
                 sys_id: glideRecord.sys_id.toString(),
@@ -398,15 +400,16 @@ SnippetNow_DAO.prototype = {
         return records;
     },
     getUserFromJournal: function(line) {
+		
         var note = {};
         //(?<=\- )(.*?)(?= \()
         var pattern = new RegExp(/\- (.*?)\(/);
         if (line) {
             var un = line.match(pattern).pop();
-            gs.info("SnippetNow " + JSON.stringify(un));
-
+            gs.info("SnippetNow getUserFromJournal " + line + " | " + JSON.stringify(un));
             var gu = new GlideRecord('sys_user');
-            gu.addEncodedQuery("name=" + un);
+            gu.addEncodedQuery("nameLIKE" + un);
+			gs.info("SnippetNow getUserFromJournal "+ gu.getEncodedQuery());
             gu.query();
             if (gu.next()) {
                 note.comment = line;
@@ -415,6 +418,7 @@ SnippetNow_DAO.prototype = {
                     name: gu.getDisplayValue('name')
                 }
             }
+			gs.info("SnippetNow getUserFromJournal "+JSON.stringify(note));
             return note;
 
 
@@ -443,6 +447,20 @@ SnippetNow_DAO.prototype = {
         return updated;
 
     },
+	
+	checkRoles: function(user_id) {
+		var hasRole = false;
+		var gr = new GlideRecord('sys_user_has_role');
+		gr.addEncodedQuery('user='+user_id);
+		gr.query();
+		while(gr.next()) {
+			var role = gr.getDisplayValue('role');
+			if (role == 'x_92893_snippetnow.user') {
+				hasRole = true;
+			}
+		}  
+		return hasRole;
+	},
 
     type: 'SnippetNow_DAO'
 };]]></script>
@@ -451,7 +469,7 @@ SnippetNow_DAO.prototype = {
         <sys_created_on>2017-09-10 19:28:15</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>54e89e7edbcd0300dfa77fcfbf96191b</sys_id>
-        <sys_mod_count>130</sys_mod_count>
+        <sys_mod_count>143</sys_mod_count>
         <sys_name>SnippetNow_DAO</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy>read</sys_policy>
@@ -459,6 +477,6 @@ SnippetNow_DAO.prototype = {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_script_include_54e89e7edbcd0300dfa77fcfbf96191b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-12-03 01:05:26</sys_updated_on>
+        <sys_updated_on>2018-02-03 03:44:39</sys_updated_on>
     </sys_script_include>
 </record_update>

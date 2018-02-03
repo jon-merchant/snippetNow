@@ -4,6 +4,7 @@
         <client_script><![CDATA[function($scope,spUtil,$timeout,$rootScope,$http,$uibModal) {
 	/* widget controller */
 	var c = this;
+	console.log("FIRST",c.data);
 	$scope.snippet = {};
 	$scope.simpleTags = '';	
 	$scope.snippetType = {};
@@ -693,6 +694,8 @@
 	
 	data.tagList = new SnippetNow_DAO().getTagList();
 	data.current_user = gs.getUserID();
+	data.hasRole = new SnippetNow_DAO().checkRoles(data.current_user);
+	$sp.log(data.hasRole);
 	
 	data.help = new SnippetNow_DAO().getHelp();
 	data.related_records = getSnippets(record.sys_id);
@@ -803,7 +806,7 @@
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>116</sys_mod_count>
+        <sys_mod_count>132</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -811,8 +814,8 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2017-12-07 04:28:33</sys_updated_on>
-        <template><![CDATA[<div>
+        <sys_updated_on>2018-02-03 03:51:10</sys_updated_on>
+        <template><![CDATA[<div ng-show="data.hasRole">
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
     <!--<div class="panel-heading">New Snippet</div>-->
@@ -897,7 +900,7 @@
           </div>
         </div>
        
-        <div class="form-group">
+        <div class="form-group clearfix" style="margin-bottom: 40px;">
           <div class="pull-right">
             <button ng-if="!snippet.sys_id && !canYouEdit()" class="btn btn-danger" ng-click="cancelAdd()">Cancel</button>
             <button ng-if="!snippet.sys_id && !canYouEdit()" type="submit" class="btn btn-primary" ng-click="submit('insert')">Submit</button>

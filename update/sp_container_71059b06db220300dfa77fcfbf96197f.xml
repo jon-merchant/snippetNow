@@ -9,7 +9,7 @@
         <container_class_name/>
         <name>SnippetNow - Container 1</name>
         <order>1</order>
-        <sp_page display_value="snippetnow_v2">078493c2db220300dfa77fcfbf96191d</sp_page>
+        <sp_page display_value="snippetnow">078493c2db220300dfa77fcfbf96191d</sp_page>
         <subheader>false</subheader>
         <sys_class_name>sp_container</sys_class_name>
         <sys_created_by>admin</sys_created_by>
