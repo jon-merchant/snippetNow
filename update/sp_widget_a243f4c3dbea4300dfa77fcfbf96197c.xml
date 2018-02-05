@@ -356,13 +356,14 @@
 		$scope.snippet.editor = editor.getValue();
 		//need to get the related list also
 		$scope.snippet.related_snippets = relatedList($scope.snippetSetModel);
+		//$scope.snippet.previous_comments.unshift($scope.snippet.add_comments);
 
 		c.data.snippet = $scope.snippet;
 		
 		//console.log("C DATA",c.data.snippet);
 		c.server.update().then(function(response) {
 			//spUtil.update($scope);
-			//console.log("Response",response);
+			console.log("Response",response);
 			$scope.snippet.application.display_value = $scope.snippet.application.displayValue;
 			$scope.snippet.type.display_value = $scope.snippet.type.displayValue;
 			
@@ -373,6 +374,7 @@
 				$timeout(function() {
 					$rootScope.$broadcast("newTags",response.tagList);
 					delete c.data.snippet;
+					$scope.snippet = response.snippet;
 					$scope.closeModal();
 					//window.location.reload();
 					//spUtil.update($scope);
@@ -526,116 +528,116 @@
 	console.log("Form",$scope,$rootScope);
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css>#editor {
-  height: 100%
-}
-.editor-group {
-  /*height: 400px;*/
-  margin-bottom: 40px;
-}
-.editor-new {
-  /*height: 250px;*/
-}
-.editor-existing {
-  /*height: 350px;*/
-}
-
-.avatar-circle {
-  display: block;
-  padding-right: 15px;
-}
-
-.chat {
-    /*width: 400px;*/
-    width: 90%;
-}
-.attachment-pills {
-	background-color: #666;  
-}
-.avatar {
-  box-shadow: 0 0 6px #333;
-}
-
-.me-bubble{
-    background-color: $primary;
-    border-radius: 5px;
-    box-shadow: 0 0 6px #B2B2B2;
-    display: inline-block;
-    padding: 10px 18px;
-    position: relative;
-    vertical-align: top;
-  	color: #fff;
-}
-
-.me-bubble::before {
-    background-color: $primary;
-    content: "\00a0";
-    display: block;
-    height: 16px;
-    position: absolute;
-    top: 11px;
-    transform:             rotate( 29deg ) skew( -35deg );
-        -moz-transform:    rotate( 29deg ) skew( -35deg );
-        -ms-transform:     rotate( 29deg ) skew( -35deg );
-        -o-transform:      rotate( 29deg ) skew( -35deg );
-        -webkit-transform: rotate( 29deg ) skew( -35deg );
-    width:  20px;
-  
-}
-
-.you-bubble{
-    background-color: $success;
-    border-radius: 5px;
-    box-shadow: 0 0 6px #B2B2B2;
-    display: inline-block;
-    padding: 10px 18px;
-    position: relative;
-    vertical-align: top;
-  color: #fff;
-  
-}
-
-.you-bubble::before {
-    background-color: $success;
-    content: "\00a0";
-    display: block;
-    height: 16px;
-    position: absolute;
-    top: 11px;
-    transform:             rotate( 29deg ) skew( -35deg );
-        -moz-transform:    rotate( 29deg ) skew( -35deg );
-        -ms-transform:     rotate( 29deg ) skew( -35deg );
-        -o-transform:      rotate( 29deg ) skew( -35deg );
-        -webkit-transform: rotate( 29deg ) skew( -35deg );
-    width:  20px;
-  
-}
-
-.me {
-    float: left;   
-    margin: 5px 45px 5px 20px;         
-}
-
-.me::before {
-    box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
-    left: -9px;           
-}
-
-.you {
-    float: right;    
-    margin: 5px 20px 5px 45px;         
-}
-
-.you::before {
-    box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );
-    right: -9px;    
-}
-
-.related-snip-list {
-  margin-bottom: 10px;
-}
-.btn {
-    margin-right: 5px;
+        <css>#editor {&#13;
+  height: 100%&#13;
+}&#13;
+.editor-group {&#13;
+  /*height: 400px;*/&#13;
+  margin-bottom: 40px;&#13;
+}&#13;
+.editor-new {&#13;
+  /*height: 250px;*/&#13;
+}&#13;
+.editor-existing {&#13;
+  /*height: 350px;*/&#13;
+}&#13;
+&#13;
+.avatar-circle {&#13;
+  display: block;&#13;
+  padding-right: 15px;&#13;
+}&#13;
+&#13;
+.chat {&#13;
+    /*width: 400px;*/&#13;
+    width: 90%;&#13;
+}&#13;
+.attachment-pills {&#13;
+	background-color: #666;  &#13;
+}&#13;
+.avatar {&#13;
+  box-shadow: 0 0 6px #333;&#13;
+}&#13;
+&#13;
+.me-bubble{&#13;
+    background-color: $primary;&#13;
+    border-radius: 5px;&#13;
+    box-shadow: 0 0 6px #B2B2B2;&#13;
+    display: inline-block;&#13;
+    padding: 10px 18px;&#13;
+    position: relative;&#13;
+    vertical-align: top;&#13;
+  	color: #fff;&#13;
+}&#13;
+&#13;
+.me-bubble::before {&#13;
+    background-color: $primary;&#13;
+    content: "\00a0";&#13;
+    display: block;&#13;
+    height: 16px;&#13;
+    position: absolute;&#13;
+    top: 11px;&#13;
+    transform:             rotate( 29deg ) skew( -35deg );&#13;
+        -moz-transform:    rotate( 29deg ) skew( -35deg );&#13;
+        -ms-transform:     rotate( 29deg ) skew( -35deg );&#13;
+        -o-transform:      rotate( 29deg ) skew( -35deg );&#13;
+        -webkit-transform: rotate( 29deg ) skew( -35deg );&#13;
+    width:  20px;&#13;
+  &#13;
+}&#13;
+&#13;
+.you-bubble{&#13;
+    background-color: $success;&#13;
+    border-radius: 5px;&#13;
+    box-shadow: 0 0 6px #B2B2B2;&#13;
+    display: inline-block;&#13;
+    padding: 10px 18px;&#13;
+    position: relative;&#13;
+    vertical-align: top;&#13;
+  color: #fff;&#13;
+  &#13;
+}&#13;
+&#13;
+.you-bubble::before {&#13;
+    background-color: $success;&#13;
+    content: "\00a0";&#13;
+    display: block;&#13;
+    height: 16px;&#13;
+    position: absolute;&#13;
+    top: 11px;&#13;
+    transform:             rotate( 29deg ) skew( -35deg );&#13;
+        -moz-transform:    rotate( 29deg ) skew( -35deg );&#13;
+        -ms-transform:     rotate( 29deg ) skew( -35deg );&#13;
+        -o-transform:      rotate( 29deg ) skew( -35deg );&#13;
+        -webkit-transform: rotate( 29deg ) skew( -35deg );&#13;
+    width:  20px;&#13;
+  &#13;
+}&#13;
+&#13;
+.me {&#13;
+    float: left;   &#13;
+    margin: 5px 20% 5px 20px;         &#13;
+}&#13;
+&#13;
+.me::before {&#13;
+    box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );&#13;
+    left: -9px;           &#13;
+}&#13;
+&#13;
+.you {&#13;
+    float: right;    &#13;
+    margin: 5px 20px 5px 45px;         &#13;
+}&#13;
+&#13;
+.you::before {&#13;
+    box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );&#13;
+    right: -9px;    &#13;
+}&#13;
+&#13;
+.related-snip-list {&#13;
+  margin-bottom: 10px;&#13;
+}&#13;
+.btn {&#13;
+    margin-right: 5px;&#13;
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -663,6 +665,7 @@
 		} else {
 			data.recordAction = false;
 		}
+		data.snippet = new SnippetNow_DAO().getSnippetRecord(input.snippet.sys_id);
 	}
 	if (input && input.getSetOptions) {
 		data.freshSetOptions = getSnippets(input.getSetOptions_ID);
@@ -679,7 +682,8 @@
 	var record = {};
 	record.sys_id = $sp.getParameter('sys_id');
 	if (record.sys_id) {
-		data.snippet = getSnippetRecord(record.sys_id);	
+		//data.snippet = getSnippetRecord(record.sys_id);	
+		data.snippet = new SnippetNow_DAO().getSnippetRecord(record.sys_id);
 		
 	} else {
 		
@@ -806,7 +810,7 @@
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>132</sys_mod_count>
+        <sys_mod_count>143</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -814,7 +818,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-02-03 03:51:10</sys_updated_on>
+        <sys_updated_on>2018-02-05 21:55:22</sys_updated_on>
         <template><![CDATA[<div ng-show="data.hasRole">
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -891,10 +895,12 @@
             <label form="snippetPreviousComments">Previous Comments</label>
             <div class="chat clearfix">
               <div ng-repeat="comment in snippet.previous_comments">
-                <div class="" ng-class="whoSaidIt(comment.created_by.sys_id,snippet.created_by.sys_id)">
-                  <span class="avatar-circle pull-left" uib-tooltip="{{comment.created_by.name}}"><sn-avatar class="avatar-small-medium" primary="comment.created_by.sys_id" /></span>
-                  <span class="">{{comment.comment}}</span>
-                </div>
+                
+                  <div class="" ng-class="whoSaidIt(comment.created_by.sys_id,snippet.created_by.sys_id)">
+                    <span class="avatar-circle pull-left" uib-tooltip="{{comment.created_by.name}}"><sn-avatar class="avatar-small-medium" primary="comment.created_by.sys_id" /></span>
+                    <span class="">{{comment.comment}}</span>
+                  </div>
+                
               </div>
             </div>
           </div>
