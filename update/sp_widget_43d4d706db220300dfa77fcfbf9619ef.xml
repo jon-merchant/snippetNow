@@ -190,7 +190,7 @@
         <sys_created_on>2017-11-22 05:28:57</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>43d4d706db220300dfa77fcfbf9619ef</sys_id>
-        <sys_mod_count>168</sys_mod_count>
+        <sys_mod_count>172</sys_mod_count>
         <sys_name>SnippetNow Controls</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -198,7 +198,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_43d4d706db220300dfa77fcfbf9619ef</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-23 15:41:54</sys_updated_on>
+        <sys_updated_on>2018-07-23 18:36:59</sys_updated_on>
         <template><![CDATA[<div class="" ng-if="c.data.hasRole">
 <!-- your widget template -->
   
@@ -262,10 +262,15 @@
 	<div class="panel panel-primary">
   	<div class="panel-heading">New {{modalData.typeName}}</div>
     <div class="panel-body">
+      <!--{{modalData}}-->
     	<form>
       	<div class="form-group">
         	<label for="newTitle">Title</label>
           <input type="text" ng-model="modalData.name" class="form-control">
+        </div>
+        <div ng-if="modalData.typeValue == 'type'" class="form-group">
+          <label>Language</label>
+          <sn-record-picker field="modalData.language" table="'x_92893_snippetnow_snippetnow_editor_mode'" display-field="'mode_name'" value-field="'sys_id'" search-fields="'mode_name'" page-size="100" ></sn-record-picker>
         </div>
         <label>Color</label>
         <div class="input-group">

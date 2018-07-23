@@ -1,544 +1,598 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
-        <client_script><![CDATA[function($scope,spUtil,$timeout,$rootScope,$http,$uibModal) {
-	/* widget controller */
-	var c = this;
-	console.log("FIRST",c.data);
-	$scope.snippet = {};
-	$scope.simpleTags = '';	
-	$scope.snippetType = {};
-	$scope.snippetApp = {};
-	console.log("FIRST",$scope.snippet);
-	console.log("FIRST",c.data.snippet);
-	$scope.snippetSetOptions = c.data.related_records;
-	$scope.snippetSetModel = [];
-	$scope.example1model = []; 
-	$scope.example1data = [ {id: 1, label: "David"}, {id: 2, label: "Jhon"}, {id: 3, label: "Danny"} ];
-	$scope.snippetExtraSettings = {externalIdProp : '',scrollable : true, scrollHeight : '400'};
-	
-	var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/sqlserver");
-    editor.getSession().setMode("ace/mode/javascript");
-		editor.getSession().setUseWrapMode(true);
-		editor.setReadOnly(false);
-		editor.setOptions({
-			minLines: 20,
-			maxLines: 50
-		});
-	
-	if (c.data.snippet) {
-		$scope.snippet = c.data.snippet;
-		
-		var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
-		console.log(related_id);
-		if (related_id > -1) {
-				$scope.snippetSetOptions.splice(related_id, 1);
-		}
-		
-		
-		//console.log("Is There a SNippet",c.data.snippet.editor,c.data.snippet.snippet);
-		if (c.data.snippet.editor || c.data.snippet.snippet) {
-			console.log(editor);
-			if (!c.data.snippet.allow_others_to_edit) {
-				//console.log("Hello");
-				editor.setReadOnly();
-			}
-			editor.setReadOnly(false);
-			editor.setValue(c.data.snippet.editor);
-			editor.clearSelection();
-		} else {
-			
-			editor.setValue("//Enter your code here");
-		}
-	
-		$scope.snippetType = {
-			displayValue: c.data.snippet.type.display_value,
-			value: c.data.snippet.type.value,
-			name: 'snippetType'
-		};
-		$scope.snippetApp = {
-			displayValue: c.data.snippet.application.display_value,
-			value: c.data.snippet.application.value,
-			name: 'snippetApp'
-		};
-		
-	}
-	$scope.iNeedHelp = function(val) {
+        <client_script><![CDATA[function($scope, spUtil, $timeout, $rootScope, $http, $uibModal) {
+    /* widget controller */
+    var c = this;
+    console.log("FIRST", c.data);
+    $scope.types = c.data.types;
+    $scope.snippet = {};
+    $scope.simpleTags = '';
+    $scope.snippetType = {};
+    $scope.snippetType.name = 'snippetType';
+    $scope.snippetApp = {};
+    console.log("FIRST", $scope.snippet);
+    console.log("FIRST", c.data.snippet);
+    $scope.snippetSetOptions = c.data.related_records;
+    $scope.snippetSetModel = [];
+    $scope.example1model = [];
+    $scope.example1data = [{
+        id: 1,
+        label: "David"
+    }, {
+        id: 2,
+        label: "Jhon"
+    }, {
+        id: 3,
+        label: "Danny"
+    }];
+    $scope.snippetExtraSettings = {
+        externalIdProp: '',
+        scrollable: true,
+        scrollHeight: '400'
+    };
 
-		$scope.openModal('showHelp',val);
-	}
-	c.openModal = function(tpl,modalData) {
-		$scope.modalData = modalData;
-		$rootScope.modalInstance = $uibModal.open({
-			templateUrl: tpl,
-			scope: $scope
-		});
-	}
-	$scope.openModal = function(tpl,topic) {
-		console.log(topic);
-		if (topic) {
-			var idx = findWithAttr(c.data.help,'topic',topic);
-			$scope.modalData = c.data.help[idx];
-		}
-		console.log($scope.modalData,c.data.help);
-		
-		$rootScope.modalInstance = $uibModal.open({
-			templateUrl: tpl,
-			scope: $scope
-		});
-	}
-	
-	$scope.closeModal = function() {
-		//console.log("triggered");
-		$rootScope.modalInstance.close();
-	}
-	
-	
-	
-	/*c.openModal = function(tpl) {
-		c.modalInstance = $uibModal.open({
-			templateUrl: tpl,
-			scope: $scope
-		});
-	}
+    $scope.editorMode = 'plain_text';
+    if ($scope.snippet.type && $scope.snippet.type.language.value.length > 0) {
+        $scope.editorMode = $scope.snippet.type.language.value;
+    }
+
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/chrome");
+    editor.getSession().setMode("ace/mode/" + $scope.editorMode);
+    //editor.getSession().setMode("ace/mode/javascript");
+    editor.getSession().setUseWrapMode(true);
+    editor.setReadOnly(false);
+    editor.setOptions({
+        minLines: 20,
+        maxLines: 50
+    });
+
+    $scope.$watch('editorMode',function(newValue,oldValue) {
+    	console.log(newValue);
+    	if (newValue) {
+    		editor.getSession().setMode("ace/mode/"+newValue);
+    	}
+    })
+
+
+    if (c.data.snippet) {
+        $scope.snippet = c.data.snippet;
+
+        var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
+        console.log(related_id);
+        if (related_id > -1) {
+            $scope.snippetSetOptions.splice(related_id, 1);
+        }
+
+
+        //console.log("Is There a SNippet",c.data.snippet.editor,c.data.snippet.snippet);
+        if (c.data.snippet.editor || c.data.snippet.snippet) {
+            console.log(editor);
+            if (!c.data.snippet.allow_others_to_edit) {
+                //console.log("Hello");
+                editor.setReadOnly();
+            }
+            editor.setReadOnly(false);
+            editor.setValue(c.data.snippet.editor);
+            editor.clearSelection();
+        } else {
+
+            editor.setValue("//Enter your code here");
+        }
+
+        $scope.snippetType = {
+            displayValue: c.data.snippet.type.display_value,
+            value: c.data.snippet.type.value,
+            language: c.data.snippet.type.language.value,
+            name: 'snippetType'
+        };
+        $scope.snippetApp = {
+            displayValue: c.data.snippet.application.display_value,
+            value: c.data.snippet.application.value,
+            name: 'snippetApp'
+        };
+
+    }
+    $scope.iNeedHelp = function(val) {
+
+        $scope.openModal('showHelp', val);
+    }
+    c.openModal = function(tpl, modalData) {
+        $scope.modalData = modalData;
+        $rootScope.modalInstance = $uibModal.open({
+            templateUrl: tpl,
+            scope: $scope
+        });
+    }
+    $scope.openModal = function(tpl, topic) {
+        console.log(topic);
+        if (topic) {
+            var idx = findWithAttr(c.data.help, 'topic', topic);
+            $scope.modalData = c.data.help[idx];
+        }
+        console.log($scope.modalData, c.data.help);
+
+        $rootScope.modalInstance = $uibModal.open({
+            templateUrl: tpl,
+            scope: $scope
+        });
+    }
+
+    $scope.closeModal = function() {
+        //console.log("triggered");
+        $rootScope.modalInstance.close();
+    }
+
+
+
+    /*c.openModal = function(tpl) {
+    	c.modalInstance = $uibModal.open({
+    		templateUrl: tpl,
+    		scope: $scope
+    	});
+    }
  
-	c.closeModal = function() {
-		c.modalInstance.close();
-	}*/
-	
-	$scope.showCommentBox = false;
-	$scope.showComments = function(val) {
-		console.log("comments",val);
-		//if yes, show the add comments and previous comments
-		if (val) {
-			$scope.showCommentBox = true;
-		} else {
-			$scope.showCommentBox = false;
-		}
-	}
-	
-	$scope.$on('createNew',function(event,data) {
-		console.log(data);
-		$scope.previousSnippet = $scope.snippet;
-		$scope.previousSnippetType = $scope.snippetType;
-		$scope.previousSnippetApp = $scope.snippetApp;
-		$scope.previousSnippetRelatedList = $scope.snippetSetModel;
+    c.closeModal = function() {
+    	c.modalInstance.close();
+    }*/
 
-		if (data) {
-			console.log(editor);
-			$scope.snippet = {};
-			editor.setValue("//Enter Your Code Here");
-			
-			$scope.snippetType = {
-				displayValue: '',
-				value: '',
-				name: 'snippetType'
-			};
-			$scope.snippetApp = {
-				displayValue: '',
-				value: '',
-				name: 'snippetApp'
-			};
-			$scope.snippetSetModel = [];
-			
-		} 
-	});
-	$scope.cancelAdd = function() {
-		if ($scope.previousSnippet) {
-			$scope.snippet = $scope.previousSnippet;
-			$scope.snippetType = $scope.previousSnippetType;
-			$scope.snippetApp = $scope.previousSnippetApp;
-			$scope.snippetSetModel = $scope.previousSnippetRelatedList;
-			editor.setValue($scope.snippet.snippet);
-			editor.clearSelection();
-		}
-	}
-	//console.log("Listening");
-	if ($rootScope.initialSnippet && $rootScope.initialSnippet.sys_id) {
-		$scope.snippet = $rootScope.initialSnippet;
-		$scope.comments = {};
-				$scope.comments.show = false;
-				$scope.showCommentBox = false;
-				//$scope.snippet = data;
-				//console.log($scope.youCanEdit);
-				/*if (!$scope.canYouEdit()) {
-					editor.setReadOnly(false);
-				} else {
-					editor.setReadOnly(true);
-				}*/
-				/*if (!$scope.snippet.allow_others_to_edit) {
-					console.log("no edit");
-					editor.setReadOnly(true);
-					$scope.youCanEdit = false;
-				} else {
-					console.log("edit");
-					editor.setReadOnly(false);
-					$scope.youCanEdit = true;
-				}
-				if (c.data.current_user == data.snippet.created_by.sys_id) {
-					editor.setReadOnly(false);
-					$scope.youCanEdit = true;
-				}*/
-				if ($scope.snippet.snippet) {
-					editor.setValue($scope.snippet.snippet);
-					editor.clearSelection();
-				} else {
-					editor.setValue("//Enter Your Code Here");
-				}
+    $scope.showCommentBox = false;
+    $scope.showComments = function(val) {
+        console.log("comments", val);
+        //if yes, show the add comments and previous comments
+        if (val) {
+            $scope.showCommentBox = true;
+        } else {
+            $scope.showCommentBox = false;
+        }
+    }
 
-				$scope.snippetSetModel = [];
-				if ($scope.snippet.related_list) {
-					$scope.snippetSetModel = $scope.snippet.related_list;
-				} 
+    $scope.$on('createNew', function(event, data) {
+        console.log(data);
+        $scope.previousSnippet = $scope.snippet;
+        $scope.previousSnippetType = $scope.snippetType;
+        $scope.previousSnippetApp = $scope.snippetApp;
+        $scope.previousSnippetRelatedList = $scope.snippetSetModel;
 
-				$scope.snippetType = {
-					displayValue: $scope.snippet.type.display_value,
-					value: $scope.snippet.type.sys_id,
-					name: 'snippetType'
-				};
-				
-				$scope.snippetApp = {
-					displayValue: $scope.snippet.application.display_value,
-					value: $scope.snippet.application.sys_id,
-					name: 'snippetApp'
-				};
-				
-				if ($scope.snippet.type && $scope.snippet.type.color) {
-					$scope.snippetType.color = $scope.snippet.type.color;
-				}
-				if ($scope.snippet.application && $scope.snippet.application.color) {
-					$scope.snippetApp.color = $scope.snippet.application.color;
-				}
-			
-				c.data.getSetOptions = true;
-				c.data.getSetOptions_ID = $scope.snippet.sys_id;
-				c.server.update().then(function(response) {
-					console.log("Looking to get new option list",response);
-					$scope.snippetSetOptions = response.freshSetOptions;
-					c.data.getSetOptions = false;
-					c.data.getSetOptions_ID = null;
-				});
-				
-				//console.log($scope.snippet.sys_id);
-				$scope.snippetSetOptions = $scope.snippetSetOptions.filter(function(el){
-					return el.id !== $scope.snippet.sys_id;
-				});
-				/*var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
-				console.log(related_id);
-				if (related_id > -1) {
-						$scope.snippetSetOptions.splice(related_id, 1);
-				}*/
-				//console.log(editor);
+        if (data) {
+            console.log(editor);
+            $scope.snippet = {};
+            editor.setValue("//Enter Your Code Here");
 
-		//console.log("IntialSNippet",$rootScope.initialSnippet);
-		$rootScope.initialSnippet = null;
-	}
-	$scope.$on("selectedSnippet",function(event,data) {
-		console.log("Before the boo");
-		$timeout(function() {
-			console.log("BOOO",data);
-			//might need to grab a fresh list of records for related list
-			if (data) {
-				$scope.comments = {};
-				$scope.comments.show = false;
-				$scope.showCommentBox = false;
-				$scope.snippet = data;
-				console.log($scope.youCanEdit);
-				if (!$scope.canYouEdit()) {
-					editor.setReadOnly(false);
-				} else {
-					editor.setReadOnly(true);
-				}
-				/*if (!$scope.snippet.allow_others_to_edit) {
-					console.log("no edit");
-					editor.setReadOnly(true);
-					$scope.youCanEdit = false;
-				} else {
-					console.log("edit");
-					editor.setReadOnly(false);
-					$scope.youCanEdit = true;
-				}
-				if (c.data.current_user == data.snippet.created_by.sys_id) {
-					editor.setReadOnly(false);
-					$scope.youCanEdit = true;
-				}*/
-				if ($scope.snippet.snippet) {
-					editor.setValue($scope.snippet.snippet);
-					editor.clearSelection();
-				} else {
-					editor.setValue("//Enter Your Code Here");
-				}
+            $scope.snippetType = {
+                displayValue: '',
+                value: '',
+                name: 'snippetType'
+            };
+            $scope.snippetApp = {
+                displayValue: '',
+                value: '',
+                name: 'snippetApp'
+            };
+            $scope.snippetSetModel = [];
 
-				$scope.snippetSetModel = [];
-				if ($scope.snippet.related_list) {
-					$scope.snippetSetModel = $scope.snippet.related_list;
-				} 
+        }
+    });
+    $scope.cancelAdd = function() {
+            if ($scope.previousSnippet) {
+                $scope.snippet = $scope.previousSnippet;
+                $scope.snippetType = $scope.previousSnippetType;
+                $scope.snippetApp = $scope.previousSnippetApp;
+                $scope.snippetSetModel = $scope.previousSnippetRelatedList;
+                editor.setValue($scope.snippet.snippet);
+                editor.clearSelection();
+            }
+        }
+        //console.log("Listening");
+    if ($rootScope.initialSnippet && $rootScope.initialSnippet.sys_id) {
+        $scope.snippet = $rootScope.initialSnippet;
+        $scope.comments = {};
+        $scope.comments.show = false;
+        $scope.showCommentBox = false;
+        //$scope.snippet = data;
+        //console.log($scope.youCanEdit);
+        /*if (!$scope.canYouEdit()) {
+        	editor.setReadOnly(false);
+        } else {
+        	editor.setReadOnly(true);
+        }*/
+        /*if (!$scope.snippet.allow_others_to_edit) {
+        	console.log("no edit");
+        	editor.setReadOnly(true);
+        	$scope.youCanEdit = false;
+        } else {
+        	console.log("edit");
+        	editor.setReadOnly(false);
+        	$scope.youCanEdit = true;
+        }
+        if (c.data.current_user == data.snippet.created_by.sys_id) {
+        	editor.setReadOnly(false);
+        	$scope.youCanEdit = true;
+        }*/
+        if ($scope.snippet.snippet) {
+            editor.setValue($scope.snippet.snippet);
+            editor.clearSelection();
+        } else {
+            editor.setValue("//Enter Your Code Here");
+        }
 
-				$scope.snippetType = {
-					displayValue: $scope.snippet.type.display_value,
-					value: $scope.snippet.type.sys_id,
-					name: 'snippetType'
-				};
-				
-				$scope.snippetApp = {
-					displayValue: $scope.snippet.application.display_value,
-					value: $scope.snippet.application.sys_id,
-					name: 'snippetApp'
-				};
-				
-				if (data.type && data.type.color) {
-					$scope.snippetType.color = data.type.color;
-				}
-				if (data.application && data.application.color) {
-					$scope.snippetApp.color = data.application.color;
-				}
-			
-				c.data.getSetOptions = true;
-				c.data.getSetOptions_ID = $scope.snippet.sys_id;
-				c.server.update().then(function(response) {
-					console.log("Looking to get new option list",response);
-					$scope.snippetSetOptions = response.freshSetOptions;
-					c.data.getSetOptions = false;
-					c.data.getSetOptions_ID = null;
-				});
-				
-				//console.log($scope.snippet.sys_id);
-				$scope.snippetSetOptions = $scope.snippetSetOptions.filter(function(el){
-					return el.id !== $scope.snippet.sys_id;
-				});
-				/*var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
-				console.log(related_id);
-				if (related_id > -1) {
-						$scope.snippetSetOptions.splice(related_id, 1);
-				}*/
-				//console.log(editor);
-			}
-		},500);
-	})
-	
-	
-	
-	$scope.$on("field.change", function(evt, parms) {
-		/*if (parms.field.name == 'snippetType') {
-			c.data.setSnippetType = parms.newValue;
-		}*/
-		
-		
-		/*c.server.update().then(function(response) {
-			spUtil.update($scope);
-		});*/
-	});
-	
-	$scope.loadTags = function(query) {
-		
-		return c.data.tagList;
-	}
-	
-	function relatedList(list) {
-		console.log(list);
-		var arr = [];
-		if (list) {
-			for(var i=0;i<list.length;i++) {
-				arr.push(list[i].id);
-			}
-		}
-		console.log(arr);
-		arr = arr.join(",");	
-		return arr;
-	}
-	
-	$scope.submit = function(type) {
-		console.log("Snippet",$scope.snippet);
-		//console.log("SnippetType",$scope.snippetType);
-		//console.log("SnippetApp",$scope.snippetApp);
-		
-		$scope.snippet.application = $scope.snippetApp;
-		$scope.snippet.type = $scope.snippetType;
-		$scope.snippet.editor = editor.getValue();
-		//need to get the related list also
-		$scope.snippet.related_snippets = relatedList($scope.snippetSetModel);
-		//$scope.snippet.previous_comments.unshift($scope.snippet.add_comments);
+        $scope.snippetSetModel = [];
+        if ($scope.snippet.related_list) {
+            $scope.snippetSetModel = $scope.snippet.related_list;
+        }
 
-		c.data.snippet = $scope.snippet;
-		
-		//console.log("C DATA",c.data.snippet);
-		c.server.update().then(function(response) {
-			//spUtil.update($scope);
-			console.log("Response",response);
-			$scope.snippet.application.display_value = $scope.snippet.application.displayValue;
-			$scope.snippet.type.display_value = $scope.snippet.type.displayValue;
-			
-			if (response.recordAction && type == 'update') {
-				//console.log("UPDATE Scope",$scope.snippet);
-				
-				$scope.openModal('updatedSnippet');
-				$timeout(function() {
-					$rootScope.$broadcast("newTags",response.tagList);
-					$rootScope.$broadcast("updatedSnippet",response.snippet);
-					delete c.data.snippet;
-					$scope.snippet = response.snippet;
-					$scope.closeModal();
-					//window.location.reload();
-					//spUtil.update($scope);
-				},1000)
-			}
-			if (response.recordAction && type == 'insert') {
-				$scope.openModal('updatedSnippet');
-				$timeout(function() {
-					delete c.data.snippet;
-					$rootScope.$broadcast('newAddedSnippet',response.snippet);
-					$scope.snippet = response.snippet;
-					//$rootScope.$broadcast('newSnippet',$scope.snippet);
-					//spUtil.update($scope);
-					$scope.closeModal();
-					//window.location.reload();
-					
-				});
-			}
-			
-		})
-		
-		
-	};
-	
-	$scope.whoSaidIt = function(comment,owner) {
-		if (comment == owner) {
-			return 'me-bubble me';
-		}
-		return 'you-bubble you';
-	}
-	
-	$scope.canYouEdit = function() {
-		var creator = '';
-		if ($scope.snippet && $scope.snippet.created_by && $scope.snippet.created_by.sys_id) {
-			creator = $scope.snippet.created_by.sys_id;
-		}
-		if (!$scope.snippet.sys_id) {
-			$scope.youCanEdit = true;
-			return false;
-		} else {
-			
-			if (creator == c.data.current_user) {
-				$scope.youCanEdit = true;
-				return false;
-			} else if (creator != c.data.current_user) {
-				if ($scope.snippet.allow_others_to_edit) {
-					$scope.youCanEdit = true;
-					return true;
-				} else {
-					$scope.youCanEdit = false;
-					return true;
-				}
-			}
-			
-			/*if (c.data.current_user == creator) {
-				console.log("Return False",creator,c.data.current_user);
-				$scope.youCanEdit = true;
-				return false;	
-			} else {
-				if ($scope.snippet.allow_others_to_edit && creator == c.data.current_user) {
-					$scope.youCanEdit = true;
-					return false;
-				} else {
-					//console.log("Return True");
-					$scope.youCanEdit = false;
-					return true;
-				}
-			}*/
-		}
-	}
-	
-	$scope.canEdit = function(val) {
-		var creator = '';
-		if ($scope.snippet && $scope.snippet.created_by && $scope.snippet.created_by.sys_id) {
-			creator = $scope.snippet.created_by.sys_id;
-		}
-		if (!$scope.snippet.sys_id) {
-			$scope.youCanEdit = true;
-		} else {
-		
-			if (val) {
-				//checked
-				//not read only
-				$scope.youCanEdit = true;
-			} else {
-				//not checked
-				if (creator != c.data.current_user) {
+        $scope.snippetType = {
+            displayValue: $scope.snippet.type.display_value,
+            value: $scope.snippet.type.sys_id,
+            name: 'snippetType'
+        };
 
-					//set to readonly;
-					$scope.youCanEdit = false;
-				} else {
-					//not read only
-					$scope.youCanEdit = true;
-				} 
+        $scope.snippetApp = {
+            displayValue: $scope.snippet.application.display_value,
+            value: $scope.snippet.application.sys_id,
+            name: 'snippetApp'
+        };
 
-			}
-		}
-	}
-	
-	$scope.gotoSnippet = function(id) {
-		$scope.modalData = {load_snippet:id};
-		$scope.openModal('loadNewSnippetConfirm');
-		
-		
-	}
-	$scope.loadNewSnippet = function(obj) {
-		console.log(obj);
-		$scope.closeModal();
+        if ($scope.snippet.type && $scope.snippet.type.color) {
+            $scope.snippetType.color = $scope.snippet.type.color;
+        }
+        if ($scope.snippet.application && $scope.snippet.application.color) {
+            $scope.snippetApp.color = $scope.snippet.application.color;
+        }
 
-		$http({
-			method: "POST",
-			headers: {
-				"Accept": "application/json;charset=UTF-8",
-				"Content-Type": "application/json;charset=UTF-8"	
-			},
-			url: "/api/x_92893_snippetnow/snippetnow_api/getSnippet/"+obj.load_snippet
-		})
-		.then(function(response) {
-			console.log("Response",response);
-			if (response && response.data && response.data.result) {
-				$scope.snippet = response.data.result;
-			}
-		}) 
+        c.data.getSetOptions = true;
+        c.data.getSetOptions_ID = $scope.snippet.sys_id;
+        c.server.update().then(function(response) {
+            console.log("Looking to get new option list", response);
+            $scope.snippetSetOptions = response.freshSetOptions;
+            c.data.getSetOptions = false;
+            c.data.getSetOptions_ID = null;
+        });
 
-	}
-	
-	$scope.showHelp = function(topic) {
-		
-	}
-	
-	$scope.addAttachment = function(sys_id) {
-		var modalData = {};
-		modalData.sys_id = sys_id;
-		modalData.table = 'x_92893_snippetnow_table';
-		spUtil.get("widget-ticket-attachments", {sys_id:modalData.sys_id,table:modalData.table,record_id: modalData.sys_id,record_table: modalData.table}).then(function(response) {
-			c.attachmentItemWidget = response;
-			c.openModal('addAttachment');
-		});
-		console.log(c.attachmentItemWidget);
-		
-	}
-	
-	String.prototype.escapeSpecialChars = function() {
-    return this.replace(/(?:\r\n|\r|\n)/g, "<br>")
-               /*.replace(/\\'/g, "\\'")
-               .replace(/\\"/g, '\\"')
-               .replace(/\&/g, "\\&")
-               .replace(/\r/g, "\\r")
-               .replace(/\t/g, "\\t")
-               .replace(/\b/g, "\\b")
-               .replace(/\f/g, "\\f");*/
-	};
-	function findWithAttr(array, attr, value) {
+        //console.log($scope.snippet.sys_id);
+        $scope.snippetSetOptions = $scope.snippetSetOptions.filter(function(el) {
+            return el.id !== $scope.snippet.sys_id;
+        });
+        /*var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
+        console.log(related_id);
+        if (related_id > -1) {
+        		$scope.snippetSetOptions.splice(related_id, 1);
+        }*/
+        //console.log(editor);
+
+        //console.log("IntialSNippet",$rootScope.initialSnippet);
+        $rootScope.initialSnippet = null;
+    }
+    $scope.$on("selectedSnippet", function(event, data) {
+        console.log("Before the boo");
+        $timeout(function() {
+            console.log("BOOO", data);
+            //might need to grab a fresh list of records for related list
+            if (data) {
+                $scope.comments = {};
+                $scope.comments.show = false;
+                $scope.showCommentBox = false;
+                $scope.snippet = data;
+                console.log($scope.youCanEdit);
+                if (!$scope.canYouEdit()) {
+                    editor.setReadOnly(false);
+                } else {
+                    editor.setReadOnly(true);
+                }
+                /*if (!$scope.snippet.allow_others_to_edit) {
+                	console.log("no edit");
+                	editor.setReadOnly(true);
+                	$scope.youCanEdit = false;
+                } else {
+                	console.log("edit");
+                	editor.setReadOnly(false);
+                	$scope.youCanEdit = true;
+                }
+                if (c.data.current_user == data.snippet.created_by.sys_id) {
+                	editor.setReadOnly(false);
+                	$scope.youCanEdit = true;
+                }*/
+                if ($scope.snippet.snippet) {
+                    editor.setValue($scope.snippet.snippet);
+                    editor.clearSelection();
+                } else {
+                    editor.setValue("//Enter Your Code Here");
+                }
+
+                if ($scope.snippet.type && $scope.snippet.type.language && $scope.snippet.type.language.value.length > 0) {
+                    editor.getSession().setMode("ace/mode/" + $scope.snippet.type.language.value);
+                    $scope.editorMode = $scope.snippet.type.language.value;
+                } else {
+                    editor.getSession().setMode("ace/mode/plain_text");
+                }
+                console.log("Editor", editor);
+
+                $scope.snippetSetModel = [];
+                if ($scope.snippet.related_list) {
+                    $scope.snippetSetModel = $scope.snippet.related_list;
+                }
+
+                $scope.snippetType = {
+                    displayValue: $scope.snippet.type.display_value,
+                    value: $scope.snippet.type.sys_id,
+                    name: 'snippetType'
+                };
+
+                $scope.snippetApp = {
+                    displayValue: $scope.snippet.application.display_value,
+                    value: $scope.snippet.application.sys_id,
+                    name: 'snippetApp'
+                };
+
+                if (data.type && data.type.color) {
+                    $scope.snippetType.color = data.type.color;
+                }
+                if (data.application && data.application.color) {
+                    $scope.snippetApp.color = data.application.color;
+                }
+
+                c.data.getSetOptions = true;
+                c.data.getSetOptions_ID = $scope.snippet.sys_id;
+                c.server.update().then(function(response) {
+                    console.log("Looking to get new option list", response);
+                    $scope.snippetSetOptions = response.freshSetOptions;
+                    c.data.getSetOptions = false;
+                    c.data.getSetOptions_ID = null;
+                });
+
+                //console.log($scope.snippet.sys_id);
+                $scope.snippetSetOptions = $scope.snippetSetOptions.filter(function(el) {
+                    return el.id !== $scope.snippet.sys_id;
+                });
+                /*var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
+                console.log(related_id);
+                if (related_id > -1) {
+                		$scope.snippetSetOptions.splice(related_id, 1);
+                }*/
+                //console.log(editor);
+            }
+        }, 500);
+    })
+
+
+
+    $scope.$on("field.change", function(evt, parms) {
+    	console.log("Field Change",parms.value);
+        if (parms.field.name == 'snippetType') {
+        	//c.data.setSnippetType = parms.newValue;
+
+        	var idx = findWithAttr($scope.types,'sys_id',parms.field.value);
+        	console.log("idx",idx);
+        	if (idx >= 0) {
+        		$scope.editorMode = $scope.types[idx].language.value;
+        	}
+        }
+
+
+        /*c.server.update().then(function(response) {
+        	spUtil.update($scope);
+        });*/
+    });
+
+    $scope.loadTags = function(query) {
+
+        return c.data.tagList;
+    }
+
+    function relatedList(list) {
+        console.log(list);
+        var arr = [];
+        if (list) {
+            for (var i = 0; i < list.length; i++) {
+                arr.push(list[i].id);
+            }
+        }
+        console.log(arr);
+        arr = arr.join(",");
+        return arr;
+    }
+
+    $scope.submit = function(type) {
+        console.log("Snippet", $scope.snippet);
+        //console.log("SnippetType",$scope.snippetType);
+        //console.log("SnippetApp",$scope.snippetApp);
+
+        $scope.snippet.application = $scope.snippetApp;
+        $scope.snippet.type = $scope.snippetType;
+        $scope.snippet.editor = editor.getValue();
+        //need to get the related list also
+        $scope.snippet.related_snippets = relatedList($scope.snippetSetModel);
+        //$scope.snippet.previous_comments.unshift($scope.snippet.add_comments);
+
+        c.data.snippet = $scope.snippet;
+
+        //console.log("C DATA",c.data.snippet);
+        c.server.update().then(function(response) {
+            //spUtil.update($scope);
+            console.log("Response", response);
+            $scope.snippet.application.display_value = $scope.snippet.application.displayValue;
+            $scope.snippet.type.display_value = $scope.snippet.type.displayValue;
+
+            if (response.recordAction && type == 'update') {
+                //console.log("UPDATE Scope",$scope.snippet);
+
+                $scope.openModal('updatedSnippet');
+                $timeout(function() {
+                    $rootScope.$broadcast("newTags", response.tagList);
+                    $rootScope.$broadcast("updatedSnippet", response.snippet);
+                    delete c.data.snippet;
+                    $scope.snippet = response.snippet;
+                    $scope.closeModal();
+                    //window.location.reload();
+                    //spUtil.update($scope);
+                }, 1000)
+            }
+            if (response.recordAction && type == 'insert') {
+                $scope.openModal('updatedSnippet');
+                $timeout(function() {
+                    delete c.data.snippet;
+                    $rootScope.$broadcast('newAddedSnippet', response.snippet);
+                    $scope.snippet = response.snippet;
+                    //$rootScope.$broadcast('newSnippet',$scope.snippet);
+                    //spUtil.update($scope);
+                    $scope.closeModal();
+                    //window.location.reload();
+
+                });
+            }
+
+        })
+
+
+    };
+
+    $scope.whoSaidIt = function(comment, owner) {
+        if (comment == owner) {
+            return 'me-bubble me';
+        }
+        return 'you-bubble you';
+    }
+
+    $scope.canYouEdit = function() {
+        var creator = '';
+        if ($scope.snippet && $scope.snippet.created_by && $scope.snippet.created_by.sys_id) {
+            creator = $scope.snippet.created_by.sys_id;
+        }
+        if (!$scope.snippet.sys_id) {
+            $scope.youCanEdit = true;
+            return false;
+        } else {
+
+            if (creator == c.data.current_user) {
+                $scope.youCanEdit = true;
+                return false;
+            } else if (creator != c.data.current_user) {
+                if ($scope.snippet.allow_others_to_edit) {
+                    $scope.youCanEdit = true;
+                    return true;
+                } else {
+                    $scope.youCanEdit = false;
+                    return true;
+                }
+            }
+
+            /*if (c.data.current_user == creator) {
+            	console.log("Return False",creator,c.data.current_user);
+            	$scope.youCanEdit = true;
+            	return false;	
+            } else {
+            	if ($scope.snippet.allow_others_to_edit && creator == c.data.current_user) {
+            		$scope.youCanEdit = true;
+            		return false;
+            	} else {
+            		//console.log("Return True");
+            		$scope.youCanEdit = false;
+            		return true;
+            	}
+            }*/
+        }
+    }
+
+    $scope.canEdit = function(val) {
+        var creator = '';
+        if ($scope.snippet && $scope.snippet.created_by && $scope.snippet.created_by.sys_id) {
+            creator = $scope.snippet.created_by.sys_id;
+        }
+        if (!$scope.snippet.sys_id) {
+            $scope.youCanEdit = true;
+        } else {
+
+            if (val) {
+                //checked
+                //not read only
+                $scope.youCanEdit = true;
+            } else {
+                //not checked
+                if (creator != c.data.current_user) {
+
+                    //set to readonly;
+                    $scope.youCanEdit = false;
+                } else {
+                    //not read only
+                    $scope.youCanEdit = true;
+                }
+
+            }
+        }
+    }
+
+    $scope.gotoSnippet = function(id) {
+        $scope.modalData = {
+            load_snippet: id
+        };
+        $scope.openModal('loadNewSnippetConfirm');
+
+
+    }
+    $scope.loadNewSnippet = function(obj) {
+        console.log(obj);
+        $scope.closeModal();
+
+        $http({
+                method: "POST",
+                headers: {
+                    "Accept": "application/json;charset=UTF-8",
+                    "Content-Type": "application/json;charset=UTF-8"
+                },
+                url: "/api/x_92893_snippetnow/snippetnow_api/getSnippet/" + obj.load_snippet
+            })
+            .then(function(response) {
+                console.log("Response", response);
+                if (response && response.data && response.data.result) {
+                    $scope.snippet = response.data.result;
+                }
+            })
+
+    }
+
+    $scope.showHelp = function(topic) {
+
+    }
+
+    $scope.addAttachment = function(sys_id) {
+        var modalData = {};
+        modalData.sys_id = sys_id;
+        modalData.table = 'x_92893_snippetnow_table';
+        spUtil.get("widget-ticket-attachments", {
+            sys_id: modalData.sys_id,
+            table: modalData.table,
+            record_id: modalData.sys_id,
+            record_table: modalData.table
+        }).then(function(response) {
+            c.attachmentItemWidget = response;
+            c.openModal('addAttachment');
+        });
+        console.log(c.attachmentItemWidget);
+
+    }
+
+    String.prototype.escapeSpecialChars = function() {
+        return this.replace(/(?:\r\n|\r|\n)/g, "<br>")
+            /*.replace(/\\'/g, "\\'")
+            .replace(/\\"/g, '\\"')
+            .replace(/\&/g, "\\&")
+            .replace(/\r/g, "\\r")
+            .replace(/\t/g, "\\t")
+            .replace(/\b/g, "\\b")
+            .replace(/\f/g, "\\f");*/
+    };
+
+    function findWithAttr(array, attr, value) {
         for (var i = 0; i < array.length; i += 1) {
+        	console.log(array[i][attr]+ " | "+value);
             if (array[i][attr] === value) {
                 return i;
             }
         }
         return -1;
     }
-	console.log("Form",$scope,$rootScope);
+    console.log("Form", $scope, $rootScope);
 }]]></client_script>
         <controller_as>c</controller_as>
         <css>#editor {&#13;
@@ -723,7 +777,7 @@
 	$sp.log(data.hasRole);
 	
 	data.help = new SnippetNow_DAO().getHelp();
-	
+	data.types = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippet_type','type','x_92893_snippetnow_table');
 	data.related_records = getSnippets(record.sys_id);
 	
 	
@@ -833,7 +887,7 @@
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>164</sys_mod_count>
+        <sys_mod_count>192</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -841,7 +895,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-23 15:46:24</sys_updated_on>
+        <sys_updated_on>2018-07-23 20:23:05</sys_updated_on>
         <template><![CDATA[<div ng-show="data.hasRole">
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -896,7 +950,7 @@
          </div>
         </div>
        <div class="form-group editor-group" ng-class="editorHeight()">
-         <label for="snippetHTML">Snippet </label>
+         <label for="snippetHTML">Snippet <span class="small muted">(<i>{{editorMode}}</i>)</span></label>
          <div class="small pull-right" ng-if="snippet.sys_id">Show comments <input type="checkbox" ng-model="comments.show" ng-change="showComments(comments.show)" ng-true-value="true" ng-false-value="false"/></div>
           <div id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
        </div>

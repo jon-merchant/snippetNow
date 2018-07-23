@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="SnippetNow Editor Mode" max_length="40" name="x_92893_snippetnow_snippetnow_editor_mode" type="collection">
+        <element label="Active" max_length="40" name="active" type="boolean"/>
+        <element display="true" label="Mode Name" max_length="40" name="mode_name" type="string"/>
+        <element label="Mode Value" max_length="40" name="mode_value" type="string"/>
+        <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>
+    </element>
+</database>

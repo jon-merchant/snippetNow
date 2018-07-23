@@ -2,10 +2,14 @@
 <database>
     <element label="SnippetNow Types" max_length="40" name="x_92893_snippetnow_snippet_type" type="collection">
         <element label="Active" max_length="40" name="active" type="boolean"/>
-        <element label="Color" max_length="40" name="color" type="color"/>
+        <element default="#6BA28C" label="Color" max_length="40" name="color" type="color"/>
+        <element label="Language" max_length="32" name="language" reference="x_92893_snippetnow_snippetnow_editor_mode" type="reference"/>
         <element attributes="edge_encryption_enabled=true" label="Name" max_length="40" name="name" type="string"/>
         <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>
         <element default="javascript:current.getTableName();" dynamic_default_value="b5cb83a85f220100a9ad2572f2b4773c" label="Class" max_length="80" name="sys_class_name" type="sys_class_name" use_dynamic_default="true"/>
         <element attributes="edge_encryption_enabled=true" label="Value" max_length="40" name="value" type="string"/>
+        <index name="index">
+            <element name="language"/>
+        </index>
     </element>
 </database>
