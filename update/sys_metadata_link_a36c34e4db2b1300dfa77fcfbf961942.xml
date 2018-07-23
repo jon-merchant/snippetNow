@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_metadata_link">
+    <sys_metadata_link action="INSERT_OR_UPDATE">
+        <directory>update</directory>
+        <documentkey>120c7cacdb2b1300dfa77fcfbf96197d</documentkey>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;record_update table="x_92893_snippetnow_snippetnow_help"&gt;
+    &lt;x_92893_snippetnow_snippetnow_help action="INSERT_OR_UPDATE"&gt;
+        &lt;active&gt;true&lt;/active&gt;
+        &lt;help&gt;&lt;![CDATA[&lt;p style="box-sizing: border-box; margin: 0px 0px 10px; color: #717171; font-family: SourceSansPro, Helvetica, Arial, sans-serif; font-size: 14px;"&gt;The Snippet Type allows grouping based on type, things such as a script language name, or the type of ServiceNow script can be used here.&lt;/p&gt;
+&lt;p style="box-sizing: border-box; margin: 0px 0px 10px; color: #717171; font-family: SourceSansPro, Helvetica, Arial, sans-serif; font-size: 14px;"&gt;If you do not see the application you want in this list, add it on the left side by clicking the &amp;#34;&amp;#43;&amp;#34; next to Applications when hovering over the words. Then it should show up in this list once it&amp;#39;s saved.&lt;/p&gt;]]&gt;&lt;/help&gt;
+        &lt;number&gt;SNHelp0001002&lt;/number&gt;
+        &lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+        &lt;sys_created_on&gt;2018-07-23 15:45:16&lt;/sys_created_on&gt;
+        &lt;sys_id&gt;120c7cacdb2b1300dfa77fcfbf96197d&lt;/sys_id&gt;
+        &lt;sys_mod_count&gt;2&lt;/sys_mod_count&gt;
+        &lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+        &lt;sys_updated_on&gt;2018-07-23 15:47:45&lt;/sys_updated_on&gt;
+        &lt;title&gt;Snippet Type&lt;/title&gt;
+        &lt;topic&gt;snippet_type&lt;/topic&gt;
+    &lt;/x_92893_snippetnow_snippetnow_help&gt;
+&lt;/record_update&gt;
+</payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-07-23 15:45:45</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>a36c34e4db2b1300dfa77fcfbf961942</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>SNHelp0001002</sys_name>
+        <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
+        <sys_update_name>sys_metadata_link_a36c34e4db2b1300dfa77fcfbf961942</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-07-23 15:48:04</sys_updated_on>
+        <tablename>x_92893_snippetnow_snippetnow_help</tablename>
+    </sys_metadata_link>
+</record_update>

@@ -190,7 +190,7 @@
         <sys_created_on>2017-11-22 05:28:57</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>43d4d706db220300dfa77fcfbf9619ef</sys_id>
-        <sys_mod_count>166</sys_mod_count>
+        <sys_mod_count>168</sys_mod_count>
         <sys_name>SnippetNow Controls</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -198,16 +198,16 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_43d4d706db220300dfa77fcfbf9619ef</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-02-03 03:15:15</sys_updated_on>
+        <sys_updated_on>2018-07-23 15:41:54</sys_updated_on>
         <template><![CDATA[<div class="" ng-if="c.data.hasRole">
 <!-- your widget template -->
   
     <div class="row">
     	<button class="btn btn-success" ng-click="createNew()">
-        New <i class="fa fa-plus-circle show-circle" aria-hidden="true"></i>
+        Create New <i class="fa fa-plus-circle show-circle" aria-hidden="true"></i>
       </button> 
-      <button class="btn btn-primary" ng-click="searchRecords()">
-        All <i class="fa fa-times-circle" aria-hidden="true"></i>
+      <button class="btn btn-danger" ng-click="searchRecords()">
+        Show All <i class="fa fa-times-circle" aria-hidden="true"></i>
       </button>
     </div>
     <div class="row">
