@@ -65,6 +65,7 @@
 		
 	}
 	$scope.iNeedHelp = function(val) {
+
 		$scope.openModal('showHelp',val);
 	}
 	c.openModal = function(tpl,modalData) {
@@ -77,7 +78,8 @@
 	$scope.openModal = function(tpl,topic) {
 		console.log(topic);
 		if (topic) {
-			$scope.modalData = c.data.help[topic];
+			var idx = findWithAttr(c.data.help,'topic',topic);
+			$scope.modalData = c.data.help[idx];
 		}
 		console.log($scope.modalData,c.data.help);
 		
@@ -528,6 +530,14 @@
                .replace(/\b/g, "\\b")
                .replace(/\f/g, "\\f");*/
 	};
+	function findWithAttr(array, attr, value) {
+        for (var i = 0; i < array.length; i += 1) {
+            if (array[i][attr] === value) {
+                return i;
+            }
+        }
+        return -1;
+    }
 	console.log("Form",$scope,$rootScope);
 }]]></client_script>
         <controller_as>c</controller_as>
@@ -713,6 +723,7 @@
 	$sp.log(data.hasRole);
 	
 	data.help = new SnippetNow_DAO().getHelp();
+	
 	data.related_records = getSnippets(record.sys_id);
 	
 	
@@ -822,7 +833,7 @@
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>153</sys_mod_count>
+        <sys_mod_count>163</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -830,7 +841,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-23 03:38:28</sys_updated_on>
+        <sys_updated_on>2018-07-23 15:06:15</sys_updated_on>
         <template><![CDATA[<div ng-show="data.hasRole">
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -840,6 +851,7 @@
       <h3>
         Snippet <button class="btn btn-primary pull-right" ng-click="addAttachment(snippet.sys_id)" ng-if="snippet.sys_id && !canYouEdit()">Attachments <i class="fa fa-paperclip" aria-hidden="true"></i></button>
       </h3>
+      
     	<!--<div class="clearfix">
       	<div class="pull-left">
           <span class="attachment-pills label" ng-repeat="attachment in snippet.attachments.records">{{attachment.file_name}}</span>
@@ -858,7 +870,7 @@
         </div>
         <!-- Need some types, and stuff here -->
         <div class="form-group">
-          <label for="snippetApp">Snippet Application</label>
+          <label for="snippetApp">Snippet Application <i class="fa fa-info-circle" aria-hidden="true" ng-click="iNeedHelp('snippet_application')"></i></label>
           <div >
             <sn-record-picker sn-disabled="!youCanEdit" default-query="'active=true'" field="snippetApp" table="'x_92893_snippetnow_snippetnow_applications'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
           </div>

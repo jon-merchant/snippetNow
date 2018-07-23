@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_metadata_link">
+    <sys_metadata_link action="INSERT_OR_UPDATE">
+        <directory>update</directory>
+        <documentkey>313e6c24db2b1300dfa77fcfbf961911</documentkey>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;record_update table="x_92893_snippetnow_snippetnow_help"&gt;
+    &lt;x_92893_snippetnow_snippetnow_help action="INSERT_OR_UPDATE"&gt;
+        &lt;active&gt;true&lt;/active&gt;
+        &lt;help&gt;&lt;![CDATA[&lt;p&gt;The Snippet Application allows grouping based on application type, things such as Platform UI, Service Portal, even something as abstract as Databases.&lt;/p&gt;
+&lt;p&gt;If you do not see the application you want in this list, add it on the left side by clicking the &amp;#34;&amp;#43;&amp;#34; next to Applications when hovering over the words. Then it should show up in this list once it&amp;#39;s saved.&lt;/p&gt;]]&gt;&lt;/help&gt;
+        &lt;number&gt;SNHelp0001001&lt;/number&gt;
+        &lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+        &lt;sys_created_on&gt;2018-07-23 14:45:51&lt;/sys_created_on&gt;
+        &lt;sys_id&gt;313e6c24db2b1300dfa77fcfbf961911&lt;/sys_id&gt;
+        &lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+        &lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+        &lt;sys_updated_on&gt;2018-07-23 14:45:51&lt;/sys_updated_on&gt;
+        &lt;title&gt;Snippet Application&lt;/title&gt;
+        &lt;topic&gt;snippet_application&lt;/topic&gt;
+    &lt;/x_92893_snippetnow_snippetnow_help&gt;
+&lt;/record_update&gt;
+</payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-07-23 15:07:36</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>38b37864db2b1300dfa77fcfbf9619d4</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SNHelp0001001</sys_name>
+        <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
+        <sys_update_name>sys_metadata_link_38b37864db2b1300dfa77fcfbf9619d4</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-07-23 15:07:36</sys_updated_on>
+        <tablename>x_92893_snippetnow_snippetnow_help</tablename>
+    </sys_metadata_link>
+</record_update>
