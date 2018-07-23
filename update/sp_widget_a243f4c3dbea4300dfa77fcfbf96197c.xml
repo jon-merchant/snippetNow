@@ -373,6 +373,7 @@
 				$scope.openModal('updatedSnippet');
 				$timeout(function() {
 					$rootScope.$broadcast("newTags",response.tagList);
+					$rootScope.$broadcast("updatedSnippet",response.snippet);
 					delete c.data.snippet;
 					$scope.snippet = response.snippet;
 					$scope.closeModal();
@@ -384,6 +385,7 @@
 				$scope.openModal('updatedSnippet');
 				$timeout(function() {
 					delete c.data.snippet;
+					$rootScope.$broadcast('newAddedSnippet',response.snippet);
 					//$rootScope.$broadcast('newSnippet',$scope.snippet);
 					//spUtil.update($scope);
 					$scope.closeModal();
@@ -660,12 +662,20 @@
 		console.log("Keeps Running");
 		console.log(input.snippet.sys_id);
 		var done = actionSnippet(input.snippet);
-		if (done) {
+		var sys_id;
+		if (input.snippet.sys_id) {
+			sys_id = input.snippet.sys_id;
+		}
+		
+		$sp.log("Inserted "+done);
+		if (done != false) {
 			data.recordAction = true;
+			sys_id = done;
 		} else {
 			data.recordAction = false;
 		}
-		data.snippet = new SnippetNow_DAO().getSnippetRecord(input.snippet.sys_id);
+
+		data.snippet = new SnippetNow_DAO().getSnippetRecord(sys_id);
 	}
 	if (input && input.getSetOptions) {
 		data.freshSetOptions = getSnippets(input.getSetOptions_ID);
@@ -784,7 +794,8 @@
 		
 		
 		if (action) {
-			return true
+			//return true
+			return action.toString();
 		}
 		return false;
 		
@@ -810,7 +821,7 @@
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>143</sys_mod_count>
+        <sys_mod_count>152</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -818,7 +829,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-02-05 21:55:22</sys_updated_on>
+        <sys_updated_on>2018-07-23 03:06:12</sys_updated_on>
         <template><![CDATA[<div ng-show="data.hasRole">
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->

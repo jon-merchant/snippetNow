@@ -1,151 +1,180 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
-        <client_script><![CDATA[function($scope,spUtil,$timeout,$rootScope,$filter,$uibModal) {
-  /* widget controller */
-  var c = this;
-	console.log("Listing",$scope);
-	
-	
-	
-	$scope.$on('searchRecords',function(event,data) {
-		$timeout(function() {
-			
-			$scope.searchRecords = data;
-			
-			
-		});
-	});
-	
-	$scope.$watch('searchRecords',function(newValue,oldValue) {
-		if (newValue) {
-			$scope.showClearAll = true;
-		} else {
-			$scope.showClearAll = false;
-		}
-	});
-	$scope.$watchCollection('filterData',function(newValue,oldValue) {
-		console.log("boom");
-		$timeout(function() {
-			console.log("Watching List",newValue);
-			//set 0 to active
-			if (newValue) {
-				$scope.activeItem = newValue[0];
-				//need to broadcast
-				console.log("Broadcase from Search",$scope.activeItem);
-				$rootScope.$broadcast('selectedSnippet',$scope.activeItem);
-				$rootScope.initialSnippet = $scope.activeItem;
-			} 
-			
-		},500)
-	})
-	$scope.openModal = function(tpl,topic) {
-		console.log(topic);
-		if (topic) {
-			$scope.modalData = c.data.help[topic];
-		}
-		console.log($scope.modalData,c.data.help);
-		
-		$rootScope.modalInstance = $uibModal.open({
-			templateUrl: tpl,
-			scope: $scope
-		});
-	}
-	
-	$scope.closeModal = function() {
-		//console.log("triggered");
-		$rootScope.modalInstance.close();
-	}
-	
-	$scope.setActive = function(record) {
-		console.log("Set Active",record);
-		$scope.modalData = {load_snippet:record};
-		$scope.openModal('loadNewSnippetConfirm');
-		/*$scope.activeItem = record;
-		$rootScope.$broadcast('selectedSnippet',$scope.activeItem);*/
-		//need to boradcast
-	}
-	$scope.loadNewSnippet = function(record) {
-		console.log("loadNewSnippet",record);
-		$scope.closeModal();
-		$scope.activeItem = record.load_snippet;
-		console.log("Broadcast from loadNewSnippet");
-		
-		$rootScope.$broadcast('selectedSnippet',$scope.activeItem);
-	}
-	
-	$scope.snippet = c.data.snippet;
-	$scope.totalItems = c.data.snippet.total_count;
-	$scope.itemsPerPage = 6;
-	$scope.currentPage = 1;
-	
-	
-	$scope.setPage = function (pageNo) {
-    $scope.currentPage = pageNo;
-  };
-	
-	
-  /*$scope.pageChanged = function() {
-    console.log('Page changed to: ' + $scope.currentPage);
-  };*/
-	$scope.displayItems = $scope.totalItems.slice(0, 3);
-	
-	$scope.pageChanged = function() {
-	  var startPos = ($scope.Page - 1) * 3;
-	  //$scope.displayItems = $scope.totalItems.slice(startPos, startPos + 3);
-	  console.log($scope.currentPage);
-	};
-	$scope.needHR = function(record) {
-		var check = [];
-		if (record.application && record.application.display_value) {
-			check.push('t');
-		}
-		if (record.type && record.type.display_value) {
-			check.push('t');
-		}
-		if (record.tags && record.tags.length > 0) {
-			check.push('t');
-		} 
-		if (record.related_list && record.related_list.length > 0) {
-			check.push('t');
-		} 
-		if (record.allows_others_to_edit) {
-			check.push('t');
-		}
-		if (record.previous_comments.length > 0) {
-			check.push('t');
-		}
-		if (record.attachments.records.length > 0) {
-			check.push('t');
-		}
-		if (record.related_list.list > 0) {
-			check.push('t');
-		}
-		if (check.indexOf('t')) {
-			return false;
-		} 
-		return true;
-	}
-	
-	$scope.showClearAll = false;
-	$scope.clearAll = function(val) {
-		if (val) {
-			$scope.showClearAll = true;
-		} else {
-			$scope.showClearAll = false;
-		}
-	}
-	$scope.clearSearch = function() {
-		console.log("ClearSearch clicked");
-		$scope.searchRecords = null;
-		$scope.showClearAll = false;
-	}
-	$scope.filterBy = function(val) {
-		$scope.searchRecords = val;
-	}
-	$scope.returnFirst = function(str) {
-		return str.charAt(0).toUpperCase();
-	}
+        <client_script><![CDATA[function($scope, spUtil, $timeout, $rootScope, $filter, $uibModal) {
+    /* widget controller */
+    var c = this;
+    console.log("Listing", $scope);
+
+    $scope.$on('newAddedSnippet', function(event, data) {
+        $timeout(function() {
+            console.log("newAddedSnippet", data);
+            $scope.snippet.records.unshift(data);
+            //$scope.snippet.records.push(data);
+            console.log($scope.snippet);
+        });
+    });
+    $scope.$on('updatedSnippet', function(event, data) {
+        $timeout(function() {
+            var idx = findWithAttr($scope.snippet.records,'sys_id', data.sys_id);
+            if (idx >= 0) {
+            	$scope.snippet.records[idx] = data;
+            }
+        })
+    })
+
+    $scope.$on('searchRecords', function(event, data) {
+        $timeout(function() {
+
+            $scope.searchRecords = data;
+
+
+        });
+    });
+
+    $scope.$watch('searchRecords', function(newValue, oldValue) {
+        if (newValue) {
+            $scope.showClearAll = true;
+        } else {
+            $scope.showClearAll = false;
+        }
+    });
+    $scope.$watchCollection('filterData', function(newValue, oldValue) {
+        console.log("boom");
+        $timeout(function() {
+            console.log("Watching List", newValue);
+            //set 0 to active
+            if (newValue) {
+                $scope.activeItem = newValue[0];
+                //need to broadcast
+                console.log("Broadcase from Search", $scope.activeItem);
+                $rootScope.$broadcast('selectedSnippet', $scope.activeItem);
+                $rootScope.initialSnippet = $scope.activeItem;
+            }
+
+        }, 500)
+    })
+    $scope.openModal = function(tpl, topic) {
+        console.log(topic);
+        if (topic) {
+            $scope.modalData = c.data.help[topic];
+        }
+        console.log($scope.modalData, c.data.help);
+
+        $rootScope.modalInstance = $uibModal.open({
+            templateUrl: tpl,
+            scope: $scope
+        });
+    }
+
+    $scope.closeModal = function() {
+        //console.log("triggered");
+        $rootScope.modalInstance.close();
+    }
+
+    $scope.setActive = function(record) {
+        console.log("Set Active", record);
+        $scope.modalData = {
+            load_snippet: record
+        };
+        $scope.openModal('loadNewSnippetConfirm');
+        /*$scope.activeItem = record;
+        $rootScope.$broadcast('selectedSnippet',$scope.activeItem);*/
+        //need to boradcast
+    }
+    $scope.loadNewSnippet = function(record) {
+        console.log("loadNewSnippet", record);
+        $scope.closeModal();
+        $scope.activeItem = record.load_snippet;
+        console.log("Broadcast from loadNewSnippet");
+
+        $rootScope.$broadcast('selectedSnippet', $scope.activeItem);
+    }
+
+    $scope.snippet = c.data.snippet;
+    $scope.totalItems = c.data.snippet.total_count;
+    $scope.itemsPerPage = 6;
+    $scope.currentPage = 1;
+
+
+    $scope.setPage = function(pageNo) {
+        $scope.currentPage = pageNo;
+    };
+
+
+    /*$scope.pageChanged = function() {
+      console.log('Page changed to: ' + $scope.currentPage);
+    };*/
+    $scope.displayItems = $scope.totalItems.slice(0, 3);
+
+    $scope.pageChanged = function() {
+        var startPos = ($scope.Page - 1) * 3;
+        //$scope.displayItems = $scope.totalItems.slice(startPos, startPos + 3);
+        console.log($scope.currentPage);
+    };
+    $scope.needHR = function(record) {
+        if (typeof record !== 'undefined') {
+            var check = [];
+            if (record.application && record.application.display_value) {
+                check.push('t');
+            }
+            if (record.type && record.type.display_value) {
+                check.push('t');
+            }
+            if (record.tags && record.tags.length > 0) {
+                check.push('t');
+            }
+            if (record.related_list && record.related_list.length > 0) {
+                check.push('t');
+            }
+            if (record.allows_others_to_edit) {
+                check.push('t');
+            }
+            if (record.previous_comments && record.previous_comments.length > 0) {
+                check.push('t');
+            }
+            if (record.attachments && record.attachments.records.length > 0) {
+                check.push('t');
+            }
+            if (record.related_list && record.related_list.list > 0) {
+                check.push('t');
+            }
+            if (check.indexOf('t')) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    $scope.showClearAll = false;
+    $scope.clearAll = function(val) {
+        if (val) {
+            $scope.showClearAll = true;
+        } else {
+            $scope.showClearAll = false;
+        }
+    }
+    $scope.clearSearch = function() {
+        console.log("ClearSearch clicked");
+        $scope.searchRecords = null;
+        $scope.showClearAll = false;
+    }
+    $scope.filterBy = function(val) {
+        $scope.searchRecords = val;
+    }
+    $scope.returnFirst = function(str) {
+        return str.charAt(0).toUpperCase();
+    }
+
+    function findWithAttr(array, attr, value) {
+        for (var i = 0; i < array.length; i += 1) {
+            if (array[i][attr] === value) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 }]]></client_script>
         <controller_as>c</controller_as>
         <css>.snippet-title h2 {
@@ -207,6 +236,7 @@ hr {
 .avatar {
 	box-shadow: 0 0 6px #333;
 }
+
 </css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -273,7 +303,7 @@ hr {
         <sys_created_on>2017-11-22 05:47:57</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>2239570adb220300dfa77fcfbf96192c</sys_id>
-        <sys_mod_count>347</sys_mod_count>
+        <sys_mod_count>377</sys_mod_count>
         <sys_name>SnippetNow List</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -281,7 +311,7 @@ hr {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_2239570adb220300dfa77fcfbf96192c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-02-05 23:11:19</sys_updated_on>
+        <sys_updated_on>2018-07-23 03:12:56</sys_updated_on>
         <template><![CDATA[<div ng-if="c.data.hasRole">
 <!-- your widget template -->
   <div class="input-group" style="padding-bottom: 10px;">
@@ -307,11 +337,11 @@ hr {
       </div>
       <span ng-if="needHR(record)"><hr/></span>
       <div class="snippet-info">
-        <span ng-if="record.application.display_value" class="fa-stack" style="color:{{record.application.color}}" uib-tooltip="Application: {{record.application.display_value}}" ng-click="filterBy(record.application.display_value);$event.stopPropagation();">
+        <span ng-if="record.application.display_value" class="fa-stack" style="color:{{record.application.color}}" uib-tooltip="Application: {{record.application.display_value}}" tooltip-placement="top-left" ng-click="filterBy(record.application.display_value);$event.stopPropagation();">
           <i class="fa fa-circle fa-stack-2x"></i>
           <strong class="fa-stack-1x fa-stack-text fa-inverse">{{returnFirst(record.application.display_value)}}</strong>
         </span>
-        <span ng-if="record.type.display_value" class="fa-stack" style="color:{{record.type.color}}" uib-tooltip="Type: {{record.type.display_value}}" ng-click="filterBy(record.type.display_value);$event.stopPropagation();">
+        <span ng-if="record.type.display_value" class="fa-stack" style="color:{{record.type.color}}" uib-tooltip="Type: {{record.type.display_value}}" tooltip-placement="top-left" ng-click="filterBy(record.type.display_value);$event.stopPropagation();">
           <i class="fa fa-circle fa-stack-2x"></i>
           <strong class="fa-stack-1x fa-stack-text fa-inverse">{{returnFirst(record.type.display_value)}}</strong>
         </span>
