@@ -55,6 +55,29 @@
     	}
     })
 
+    spUtil.recordWatch($scope, "x_92893_snippetnow_snippet_type", "", function(name, data) {
+    	if (name.data && name.data.action == 'entry') {
+    		console.log(name);
+    		$scope.types.push({
+    			color: name.data.record.color.value,
+    			count: "0",
+    			language: {
+    				display_value:name.data.record.language.display_value,
+    				displayValue:name.data.record.language.display_value,
+    				value:name.data.record.language.display_value.replace(/\s+/g, '_').toLowerCase()
+    			},
+    			name:name.data.record.name.display_value,
+    			sys_id:name.data.sys_id,
+    			value:name.data.record.value.display_value
+    		});
+
+    	}
+    	console.log("new List",$scope.types);
+		/*$scope.types = null;
+		spUtil.update($scope);*/
+		
+	});
+
 
     if (c.data.snippet) {
         $scope.snippet = c.data.snippet;
@@ -894,7 +917,7 @@
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>205</sys_mod_count>
+        <sys_mod_count>214</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -902,7 +925,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-23 23:03:46</sys_updated_on>
+        <sys_updated_on>2018-07-23 23:48:20</sys_updated_on>
         <template><![CDATA[<div ng-show="data.hasRole">
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->

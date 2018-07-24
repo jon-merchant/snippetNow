@@ -67,7 +67,7 @@ SnippetNow_DAO.prototype = {
          * Add new Applications or Types
          * return true/false
          ******************/
-        gs.info("SnippetNow called saveAppTypes");
+        gs.info("SnippetNow called saveAppTypes "+JSON.stringify(record));
         var table;
         if (type == 'app' || type == 'application') {
             table = 'x_92893_snippetnow_snippetnow_applications';
@@ -81,6 +81,9 @@ SnippetNow_DAO.prototype = {
         ir.name = record[0].name;
         ir.value = record[0].value;
         ir.color = record[0].color;
+        if (type != 'app' || type != 'application') {
+            ir.language = record[0].language.value;
+        }
         var inserted = ir.insert();
         return inserted;
     },
@@ -101,6 +104,9 @@ SnippetNow_DAO.prototype = {
         gs.info("SnippetNow Update AppType " + ur.getEncodedQuery());
         ur.query();
         while (ur.next()) {
+            if (type != 'app' || type != 'application') {
+                ur.language = record[0].language.value;
+            }
             ur.name = record[0].name;
             ur.value = record[0].value;
             ur.color = decodeURIComponent(record[0].color);
@@ -505,7 +511,7 @@ SnippetNow_DAO.prototype = {
         <sys_created_on>2017-09-10 19:28:15</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>54e89e7edbcd0300dfa77fcfbf96191b</sys_id>
-        <sys_mod_count>158</sys_mod_count>
+        <sys_mod_count>162</sys_mod_count>
         <sys_name>SnippetNow_DAO</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy>read</sys_policy>
@@ -513,6 +519,6 @@ SnippetNow_DAO.prototype = {
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_script_include_54e89e7edbcd0300dfa77fcfbf96191b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-23 18:33:33</sys_updated_on>
+        <sys_updated_on>2018-07-23 23:24:30</sys_updated_on>
     </sys_script_include>
 </record_update>
