@@ -48,40 +48,41 @@
         maxLines: 50
     });
 
-    $scope.$watch('editorMode',function(newValue,oldValue) {
-    	console.log(newValue);
-    	if (newValue) {
-    		editor.getSession().setMode("ace/mode/"+newValue);
-    	}
+    $scope.$watch('editorMode', function(newValue, oldValue) {
+        console.log(newValue);
+        if (newValue) {
+            editor.getSession().setMode("ace/mode/" + newValue);
+        }
     })
 
     spUtil.recordWatch($scope, "x_92893_snippetnow_snippet_type", "", function(name, data) {
-    	if (name.data && name.data.action == 'entry') {
-    		console.log(name);
-    		$scope.types.push({
-    			color: name.data.record.color.value,
-    			count: "0",
-    			language: {
-    				display_value:name.data.record.language.display_value,
-    				displayValue:name.data.record.language.display_value,
-    				value:name.data.record.language.display_value.replace(/\s+/g, '_').toLowerCase()
-    			},
-    			name:name.data.record.name.display_value,
-    			sys_id:name.data.sys_id,
-    			value:name.data.record.value.display_value
-    		});
+        if (name.data && name.data.action == 'entry') {
+            console.log(name);
+            $scope.types.push({
+                color: name.data.record.color.value,
+                count: "0",
+                language: {
+                    display_value: name.data.record.language.display_value,
+                    displayValue: name.data.record.language.display_value,
+                    value: name.data.record.language.display_value.replace(/\s+/g, '_').toLowerCase()
+                },
+                name: name.data.record.name.display_value,
+                sys_id: name.data.sys_id,
+                value: name.data.record.value.display_value
+            });
 
-    	}
-    	console.log("new List",$scope.types);
-		/*$scope.types = null;
-		spUtil.update($scope);*/
-		
-	});
+        }
+        console.log("new List", $scope.types);
+        /*$scope.types = null;
+        spUtil.update($scope);*/
 
-    var loadTime = 10000;
+    });
+
+
+    var loadTime = 1000000;
     var errorCount = 0;
     var loadPromise;
-    
+
     var getData = function() {
         $http({
                 method: "POST",
@@ -89,26 +90,26 @@
                     "Accept": "application/json;charset=UTF-8",
                     "Content-Type": "application/json;charset=UTF-8"
                 },
-                url: "/api/x_92893_snippetnow/snippetnow_api/getSnippet/"+$scope.snippet.sys_id
+                url: "/api/x_92893_snippetnow/snippetnow_api/getSnippet/" + $scope.snippet.sys_id
             })
             .success(function(response) {
                 console.log("Success", response);
                 //need to check comments
-                    oldComm = $scope.oldSnippet.previous_comments;
-                    newComm = response.result.previous_comments;
-                    var eq = true;
-                    if (oldComm.length != newComm.length) {
-                        eq = false;
+                oldComm = $scope.oldSnippet.previous_comments;
+                newComm = response.result.previous_comments;
+                var eq = true;
+                if (oldComm.length != newComm.length) {
+                    eq = false;
+                }
+                console.log("are they equal", eq, oldComm, newComm);
+                if (!eq) {
+                    $scope.snippet.previous_comments = response.result.previous_comments;
+
+                    if (c.data.current_user != response.result.previous_comments[0].created_by.sys_id) {
+                        spUtil.addInfoMessage("A new comment has been added!");
                     }
-                    console.log("are they equal",eq,oldComm,newComm);
-                    if (!eq) {
-                        $scope.snippet.previous_comments = response.result.previous_comments;
-                        
-                        if (c.data.current_user != response.result.previous_comments[0].created_by.sys_id) {
-                            spUtil.addInfoMessage("A new comment has been added!");  
-                        }
-                        //$scope.apply();
-                    }
+                    //$scope.apply();
+                }
                 //$scope.snippet = response.result;
                 errorCount = 0;
                 nextLoad();
@@ -118,7 +119,7 @@
             .error(function(response) {
                 //$scope.isInSchedule = false;
                 //gs.info("Power Up Portal: Chat Queue Polling Error Communication "+JSON.stringify(response));
-                console.log("Cannot update snippet",response);
+                console.log("Cannot update snippet", response);
                 nextLoad(++errorCount * 2 * loadTime);
             });
 
@@ -136,12 +137,6 @@
     };
 
 
-    //Start polling the data from the server
-    console.log($scope.snippet);
-    if (c.data.snippe) {
-        getData();
-    }
-    
 
 
     //Always clear the timeout when the view is destroyed, otherwise it will keep polling
@@ -447,7 +442,37 @@
                 //console.log(editor);
 
                 $scope.oldSnippet = data;
-                getData();
+                //getData();
+
+
+                var query = "name=x_92893_snippetnow_table^element_id=" + $scope.snippet.sys_id;
+                console.log("query", query);
+
+                spUtil.recordWatch($scope, "sys_journal_field", "name=x_92893_snippetnow_table^element_id=" + $scope.snippet.sys_id, function(name, data) {
+                    console.log("i saw that comment", name);
+                    if (name && name.data && name.data.action == 'entry') {
+                        c.data.snippet = null;
+                        c.data.setOptions = null;
+                        c.data.updateAction = 'get_user_sys_id_from_user_id';
+                        c.data.updateValue = {  
+                            userID:name.data.record.sys_created_by.value
+                        }
+                        console.log("Getting the user",c.data);
+                        c.server.update().then(function(response) {
+                            console.log("Got User Response",response);
+                            if (response && response.updateValue) {
+                                var comment = {
+                                    comment: name.data.record.sys_created_on.display_value + " - " + response.updateValue.user.name + " (Comments) \n " + name.data.record.value.display_value,
+                                    created_by: response.updateValue.user
+                                }
+                            }
+                            console.log("built new comment",comment);
+                            $scope.snippet.previous_comments.unshift(comment);
+                        })
+                        var comment = {};
+
+                    }
+                })
             }
         }, 500);
     })
@@ -455,15 +480,15 @@
 
 
     $scope.$on("field.change", function(evt, parms) {
-    	console.log("Field Change",parms.value);
+        console.log("Field Change", parms.value);
         if (parms.field.name == 'snippetType') {
-        	//c.data.setSnippetType = parms.newValue;
+            //c.data.setSnippetType = parms.newValue;
 
-        	var idx = findWithAttr($scope.types,'sys_id',parms.field.value);
-        	console.log("idx",idx);
-        	if (idx >= 0) {
-        		$scope.editorMode = $scope.types[idx].language.value;
-        	}
+            var idx = findWithAttr($scope.types, 'sys_id', parms.field.value);
+            console.log("idx", idx);
+            if (idx >= 0) {
+                $scope.editorMode = $scope.types[idx].language.value;
+            }
         }
 
 
@@ -544,6 +569,38 @@
 
     };
 
+
+    $scope.chatCSS = function(comment, owner, style) {
+
+        $scope.stylePrefix = 'you';
+        if (comment === owner) {
+            $scope.stylePrefix = "me"
+        }
+
+        if (style == 'container') {
+            return $scope.stylePrefix + "-container clearfix";
+        } else if (style == 'bubble') {
+            return $scope.stylePrefix + "-bubble " + stylePrefix
+        } else if (style == 'avatar-left') {
+            if ($scope.stylePrefix == 'me') {
+                return true;
+            }
+            return false;
+        } else if (style == 'avatar-right') {
+            if ($scope.stylePrefix == 'you') {
+                return true;
+            }
+            return false;
+        }
+
+    }
+
+    $scope.chatContainer = function(comment, owner) {
+        if (comment == owner) {
+            return 'me-container';
+        }
+        return 'you-container';
+    }
     $scope.whoSaidIt = function(comment, owner) {
         if (comment == owner) {
             return 'me-bubble me';
@@ -670,10 +727,10 @@
     }
 
     $scope.removeUS = function(str) {
-    	console.log(str);
-    	var nStr = str.replace(/_/," ");
-    	console.log(nStr);
-    	return nStr;
+        console.log(str);
+        var nStr = str.replace(/_/, " ");
+        console.log(nStr);
+        return nStr;
     }
 
     String.prototype.escapeSpecialChars = function() {
@@ -689,7 +746,7 @@
 
     function findWithAttr(array, attr, value) {
         for (var i = 0; i < array.length; i += 1) {
-        	console.log(array[i][attr]+ " | "+value);
+            console.log(array[i][attr] + " | " + value);
             if (array[i][attr] === value) {
                 return i;
             }
@@ -699,179 +756,198 @@
 
     function isEqual(value, other) {
 
-    // Get the value type
-    var type = Object.prototype.toString.call(value);
+        // Get the value type
+        var type = Object.prototype.toString.call(value);
 
-    // If the two objects are not the same type, return false
-    if (type !== Object.prototype.toString.call(other)) return false;
+        // If the two objects are not the same type, return false
+        if (type !== Object.prototype.toString.call(other)) return false;
 
-    // If items are not an object or array, return false
-    if (['[object Array]', '[object Object]'].indexOf(type) < 0) return false;
+        // If items are not an object or array, return false
+        if (['[object Array]', '[object Object]'].indexOf(type) < 0) return false;
 
-    // Compare the length of the length of the two items
-    var valueLen = type === '[object Array]' ? value.length : Object.keys(value).length;
-    var otherLen = type === '[object Array]' ? other.length : Object.keys(other).length;
-    if (valueLen !== otherLen) return false;
+        // Compare the length of the length of the two items
+        var valueLen = type === '[object Array]' ? value.length : Object.keys(value).length;
+        var otherLen = type === '[object Array]' ? other.length : Object.keys(other).length;
+        if (valueLen !== otherLen) return false;
 
-    // Compare two items
-    var compare = function (item1, item2) {
+        // Compare two items
+        var compare = function(item1, item2) {
 
-        // Get the object type
-        var itemType = Object.prototype.toString.call(item1);
+            // Get the object type
+            var itemType = Object.prototype.toString.call(item1);
 
-        // If an object or array, compare recursively
-        if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
-            if (!isEqual(item1, item2)) return false;
-        }
-
-        // Otherwise, do a simple comparison
-        else {
-
-            // If the two items are not the same type, return false
-            if (itemType !== Object.prototype.toString.call(item2)) return false;
-
-            // Else if it's a function, convert to a string and compare
-            // Otherwise, just compare
-            if (itemType === '[object Function]') {
-                if (item1.toString() !== item2.toString()) return false;
-            } else {
-                if (item1 !== item2) return false;
+            // If an object or array, compare recursively
+            if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
+                if (!isEqual(item1, item2)) return false;
             }
 
+            // Otherwise, do a simple comparison
+            else {
+
+                // If the two items are not the same type, return false
+                if (itemType !== Object.prototype.toString.call(item2)) return false;
+
+                // Else if it's a function, convert to a string and compare
+                // Otherwise, just compare
+                if (itemType === '[object Function]') {
+                    if (item1.toString() !== item2.toString()) return false;
+                } else {
+                    if (item1 !== item2) return false;
+                }
+
+            }
+        };
+
+        // Compare properties
+        if (type === '[object Array]') {
+            for (var i = 0; i < valueLen; i++) {
+                if (compare(value[i], other[i]) === false) return false;
+            }
+        } else {
+            for (var key in value) {
+                if (value.hasOwnProperty(key)) {
+                    if (compare(value[key], other[key]) === false) return false;
+                }
+            }
         }
+
+        // If nothing failed, return true
+        return true;
+
     };
-
-    // Compare properties
-    if (type === '[object Array]') {
-        for (var i = 0; i < valueLen; i++) {
-            if (compare(value[i], other[i]) === false) return false;
-        }
-    } else {
-        for (var key in value) {
-            if (value.hasOwnProperty(key)) {
-                if (compare(value[key], other[key]) === false) return false;
-            }
-        }
-    }
-
-    // If nothing failed, return true
-    return true;
-
-};
 
     console.log("Form", $scope, $rootScope);
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css>#editor {&#13;
-  height: 100%&#13;
-}&#13;
-.editor-group {&#13;
-  /*height: 400px;*/&#13;
-  margin-bottom: 40px;&#13;
-}&#13;
-.editor-new {&#13;
-  /*height: 250px;*/&#13;
-}&#13;
-.editor-existing {&#13;
-  /*height: 350px;*/&#13;
-}&#13;
-&#13;
-.avatar-circle {&#13;
-  display: block;&#13;
-  padding-right: 15px;&#13;
-}&#13;
-&#13;
-.chat {&#13;
-    /*width: 400px;*/&#13;
-    width: 90%;&#13;
-}&#13;
-.attachment-pills {&#13;
-	background-color: #666;  &#13;
-}&#13;
-.avatar {&#13;
-  box-shadow: 0 0 6px #333;&#13;
-}&#13;
-&#13;
-.me-bubble{&#13;
-    background-color: $primary;&#13;
-    border-radius: 5px;&#13;
-    box-shadow: 0 0 6px #B2B2B2;&#13;
-    display: inline-block;&#13;
-    padding: 10px 18px;&#13;
-    position: relative;&#13;
-    vertical-align: top;&#13;
-  	color: #fff;&#13;
-}&#13;
-&#13;
-.me-bubble::before {&#13;
-    background-color: $primary;&#13;
-    content: "\00a0";&#13;
-    display: block;&#13;
-    height: 16px;&#13;
-    position: absolute;&#13;
-    top: 11px;&#13;
-    transform:             rotate( 29deg ) skew( -35deg );&#13;
-        -moz-transform:    rotate( 29deg ) skew( -35deg );&#13;
-        -ms-transform:     rotate( 29deg ) skew( -35deg );&#13;
-        -o-transform:      rotate( 29deg ) skew( -35deg );&#13;
-        -webkit-transform: rotate( 29deg ) skew( -35deg );&#13;
-    width:  20px;&#13;
-  &#13;
-}&#13;
-&#13;
-.you-bubble{&#13;
-    background-color: $success;&#13;
-    border-radius: 5px;&#13;
-    box-shadow: 0 0 6px #B2B2B2;&#13;
-    display: inline-block;&#13;
-    padding: 10px 18px;&#13;
-    position: relative;&#13;
-    vertical-align: top;&#13;
-  color: #fff;&#13;
-  &#13;
-}&#13;
-&#13;
-.you-bubble::before {&#13;
-    background-color: $success;&#13;
-    content: "\00a0";&#13;
-    display: block;&#13;
-    height: 16px;&#13;
-    position: absolute;&#13;
-    top: 11px;&#13;
-    transform:             rotate( 29deg ) skew( -35deg );&#13;
-        -moz-transform:    rotate( 29deg ) skew( -35deg );&#13;
-        -ms-transform:     rotate( 29deg ) skew( -35deg );&#13;
-        -o-transform:      rotate( 29deg ) skew( -35deg );&#13;
-        -webkit-transform: rotate( 29deg ) skew( -35deg );&#13;
-    width:  20px;&#13;
-  &#13;
-}&#13;
-&#13;
-.me {&#13;
-    float: left;   &#13;
-    margin: 5px 20% 5px 20px;         &#13;
-}&#13;
-&#13;
-.me::before {&#13;
-    box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );&#13;
-    left: -9px;           &#13;
-}&#13;
-&#13;
-.you {&#13;
-    float: right;    &#13;
-    margin: 5px 20px 5px 45px;         &#13;
-}&#13;
-&#13;
-.you::before {&#13;
-    box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );&#13;
-    right: -9px;    &#13;
-}&#13;
-&#13;
-.related-snip-list {&#13;
-  margin-bottom: 10px;&#13;
-}&#13;
-.btn {&#13;
-    margin-right: 5px;&#13;
+        <css>#editor {
+  height: 100%
+}
+.editor-group {
+  /*height: 400px;*/
+  margin-bottom: 40px;
+}
+.editor-new {
+  /*height: 250px;*/
+}
+.editor-existing {
+  /*height: 350px;*/
+}
+
+.avatar-circle {
+  display: block;
+  padding-right: 15px;
+}
+
+.chat {
+    /*width: 400px;*/
+    width: 90%;
+}
+.attachment-pills {
+	background-color: #666;  
+}
+.avatar {
+  box-shadow: 0 0 6px #333;
+}
+
+.chat-avatar {
+    position: relative;
+    top: 5px;
+}
+
+.me-bubble{
+    background-color: $primary;
+    border-radius: 5px;
+    box-shadow: 0 0 6px #B2B2B2;
+    display: inline-block;
+    padding: 10px 18px;
+    position: relative;
+    vertical-align: top;
+  	color: #fff;
+    left: 20px;
+}
+
+.me-bubble::before {
+    background-color: $primary;
+    content: "\00a0";
+    display: block;
+    height: 16px;
+    position: absolute;
+    top: 11px;
+    transform:             rotate( 29deg ) skew( -35deg );
+        -moz-transform:    rotate( 29deg ) skew( -35deg );
+        -ms-transform:     rotate( 29deg ) skew( -35deg );
+        -o-transform:      rotate( 29deg ) skew( -35deg );
+        -webkit-transform: rotate( 29deg ) skew( -35deg );
+    width:  20px;
+  
+}
+
+.you-container {
+
+}
+.you-bubble{
+    background-color: $success;
+    border-radius: 5px;
+    box-shadow: 0 0 6px #B2B2B2;
+    display: inline-block;
+    padding: 10px 18px;
+    position: relative;
+    vertical-align: top;
+  color: #fff;
+  
+}
+
+.you-bubble::before {
+    background-color: $success;
+    content: "\00a0";
+    display: block;
+    height: 16px;
+    position: absolute;
+    top: 11px;
+    transform:             rotate( 29deg ) skew( -35deg );
+        -moz-transform:    rotate( 29deg ) skew( -35deg );
+        -ms-transform:     rotate( 29deg ) skew( -35deg );
+        -o-transform:      rotate( 29deg ) skew( -35deg );
+        -webkit-transform: rotate( 29deg ) skew( -35deg );
+    width:  20px;
+    
+}
+
+.me {
+    position: relative;
+    float: left;   
+    /*margin: 5px 20% 5px 20px; */
+    max-width: 75%;
+    left: 20px;
+    margin-bottom: 10px;
+
+}
+
+.me::before {
+    box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
+    left: -9px;           
+}
+
+.you {
+    position: relative;
+    float: right;    
+    /*margin: 5px 20px 5px 45px;  */
+    right: 40px ;
+    max-width: 75%;    
+    margin-bottom: 10px;  
+    text-align: right; 
+}
+
+.you::before {
+    box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );
+    right: -9px;    
+}
+
+.related-snip-list {
+  margin-bottom: 10px;
+}
+.btn {
+    margin-right: 5px;
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -911,6 +987,17 @@
 	}
 	if (input && input.getSetOptions) {
 		data.freshSetOptions = getSnippets(input.getSetOptions_ID);
+	}
+
+	if (input && input.updateAction) {
+		
+		if (input.updateAction == 'get_user_sys_id_from_user_id') {
+			var user = new SnippetNow_DAO().getCreatedBy(input.updateValue.userID);
+			data.updateValue = {
+				user:user
+			}
+		}
+		
 	}
 	
 	/*data.snippetType = {};
@@ -1054,7 +1141,7 @@
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>246</sys_mod_count>
+        <sys_mod_count>315</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
@@ -1062,7 +1149,7 @@
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-28 18:31:41</sys_updated_on>
+        <sys_updated_on>2018-07-30 22:38:33</sys_updated_on>
         <template><![CDATA[<div ng-show="data.hasRole">
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -1110,32 +1197,26 @@
         </div>
 
 
-
-       <div class="form-group">
-         <label for="tagBUttons">Tags</label>
-         <div ng-if="youCanEdit">
-         	<tags-input ng-model="snippet.tags" add-on-paste="true" ng-disable="!youCanEdit" ng-readonly="!youCanEdit">
-            <auto-complete source="loadTags($query)"></auto-complete>
-          </tags-input>  
-         </div>
-         <div ng-if="!youCanEdit">
-           
-           <button ng-repeat="tag in snippet.tags" class="btn btn-default" ng-disabled="!youCanEdit">
-             {{tag.text}}
-           </button>
-         </div>
-        </div>
-       <div class="form-group editor-group" ng-class="editorHeight()">
-         <label for="snippetHTML">Snippet </label>
-         <div class="small pull-right" ng-if="snippet.sys_id">Show comments <input type="checkbox" ng-model="comments.show" ng-change="showComments(comments.show)" ng-true-value="true" ng-false-value="false"/></div>
-          <div id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
-          <div class="pull-right"><span class="small muted">[mode: {{editorMode.replace('_', ' ')}}]</span></div>
-       </div>
-       <div class="row">
+      <div class="row">
         <div class="col-lg-6">
-
-         <div class="form-group" >
-           
+         <div class="form-group">
+           <label for="tagBUttons">Tags</label>
+           <div ng-if="youCanEdit">
+           	<tags-input ng-model="snippet.tags" add-on-paste="true" ng-disable="!youCanEdit" ng-readonly="!youCanEdit">
+              <auto-complete source="loadTags($query)"></auto-complete>
+            </tags-input>  
+           </div>
+           <div ng-if="!youCanEdit">
+             
+             <button ng-repeat="tag in snippet.tags" class="btn btn-default" ng-disabled="!youCanEdit">
+               {{tag.text}}
+             </button>
+           </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-group" >
+         
            <label for="snippetRelated">Related Snippets</label>
            <div class="related-snip-list">
              <button ng-repeat="rSnip in snippetSetModel" class="btn btn-default" ng-click="gotoSnippet(rSnip.id)"> {{rSnip.label}} </button>
@@ -1144,16 +1225,25 @@
            <!--<div ng-dropdown-multiselect="" options="example1data" selected-model="example1model" extra-settings="exampleExtraSettings"></div>-->
           </div>
         </div>
-        <div class="col-lg-6">
-          <div class="form-group clearfix" style="margin-bottom: 40px;">
-            <div class="pull-right">
-              <button ng-if="!snippet.sys_id && !canYouEdit()" class="btn btn-danger" ng-click="cancelAdd()">Cancel</button>
-              <button ng-if="!snippet.sys_id && !canYouEdit()" type="submit" class="btn btn-primary" ng-click="submit('insert')">Submit</button>
-              <button ng-if="snippet.sys_id && !canYouEdit() || snippet.add_comments" type="submit" class="btn btn-success" ng-click="submit('update')">Update</button>
-            </div>
-          </div>
-        </div>
       </div>
+
+
+
+       <div class="form-group editor-group" ng-class="editorHeight()">
+         <label for="snippetHTML">Snippet </label>
+         <div class="small pull-right" ng-if="snippet.sys_id">Show comments <input type="checkbox" ng-model="comments.show" ng-change="showComments(comments.show)" ng-true-value="true" ng-false-value="false"/></div>
+          <div id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
+          <div class="pull-right"><span class="small muted">[mode: {{editorMode.replace('_', ' ')}}]</span></div>
+       </div>
+       <div class="form-group clearfix" style="margin-bottom: 40px;">
+          <div class="pull-right">
+            <button ng-if="!snippet.sys_id && !canYouEdit()" class="btn btn-danger" ng-click="cancelAdd()">Cancel</button>
+            <button ng-if="!snippet.sys_id && !canYouEdit()" type="submit" class="btn btn-primary" ng-click="submit('insert')">Submit</button>
+            <button ng-if="snippet.sys_id && !canYouEdit() || snippet.add_comments" type="submit" class="btn btn-success" ng-click="submit('update')">Update</button>
+          </div>
+      </div>
+       
+        
         
         <div ng-if="showCommentBox" class="form-group">
         	<label for="snippetComments">Add Comment</label>
@@ -1164,11 +1254,20 @@
             <div class="chat clearfix">
               <div ng-repeat="comment in snippet.previous_comments">
                 
-                  <div class="" ng-class="whoSaidIt(comment.created_by.sys_id,snippet.created_by.sys_id)">
-                    <span class="avatar-circle pull-left" uib-tooltip="{{comment.created_by.name}}"><sn-avatar class="avatar-small-medium" primary="comment.created_by.sys_id" /></span>
-                    <span class="">{{comment.comment}}</span>
-                  </div>
-                
+                <!--<div ng-class="chatContainer(comment.created_by.sys_id,snippet.created_by.sys_id)">-->
+                  <div ng-class="chatCSS(comment.created_by.sys_id,snippet.created_by.sys_id,'container')">
+                  
+                    <div ng-if="chatCSS(comment.created_by.sys_id,snippet.created_by.sys_id,'avatar-left')" class="left-avatar chat-avatar pull-left"><span class="avatar-circle" uib-tooltip="{{comment.created_by.name}}"><sn-avatar class="avatar-small-medium" primary="comment.created_by.sys_id" /></span></div>
+
+                    <div ng-if="chatCSS(comment.created_by.sys_id,snippet.created_by.sys_id,'avatar-right')" class="right-avatar chat-avatar pull-right"><span class="avatar-circle" uib-tooltip="{{comment.created_by.name}}"><sn-avatar class="avatar-small-medium" primary="comment.created_by.sys_id" /></span></div>
+
+
+                    <div class="" ng-class="whoSaidIt(comment.created_by.sys_id,snippet.created_by.sys_id)">
+                      <span class="">{{comment.comment}}</span>
+                    </div>
+                  
+                  
+                </div>
               </div>
             </div>
           </div>
