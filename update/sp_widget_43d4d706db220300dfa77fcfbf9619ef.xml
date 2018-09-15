@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sp_widget">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
+        <category/>
         <client_script><![CDATA[function($scope,$uibModal,spUtil,$timeout,$rootScope) {
   /* widget controller */
   var c = this;
-	console.log(c.data);
+	console.log("Control",c.data);
 	
 	spUtil.recordWatch($scope, "x_92893_snippetnow_snippetnow_applications", "", function(name, data) {
 		c.data.func = null;
@@ -188,17 +188,15 @@
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-11-22 05:28:57</sys_created_on>
-        <sys_customer_update>false</sys_customer_update>
         <sys_id>43d4d706db220300dfa77fcfbf9619ef</sys_id>
-        <sys_mod_count>172</sys_mod_count>
+        <sys_mod_count>173</sys_mod_count>
         <sys_name>SnippetNow Controls</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
-        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_43d4d706db220300dfa77fcfbf9619ef</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-23 18:36:59</sys_updated_on>
+        <sys_updated_on>2018-09-15 01:39:42</sys_updated_on>
         <template><![CDATA[<div class="" ng-if="c.data.hasRole">
 <!-- your widget template -->
   

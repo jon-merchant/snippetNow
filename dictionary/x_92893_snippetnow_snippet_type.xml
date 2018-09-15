@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<database>
+<?xml version="1.0" encoding="UTF-8"?><database>
     <element label="SnippetNow Types" max_length="40" name="x_92893_snippetnow_snippet_type" type="collection">
         <element label="Active" max_length="40" name="active" type="boolean"/>
         <element default="#6BA28C" label="Color" max_length="40" name="color" type="color"/>
@@ -10,6 +9,9 @@
         <element attributes="edge_encryption_enabled=true" label="Value" max_length="40" name="value" type="string"/>
         <index name="index">
             <element name="language"/>
+        </index>
+        <index name="index2">
+            <element name="sys_class_name"/>
         </index>
     </element>
 </database>

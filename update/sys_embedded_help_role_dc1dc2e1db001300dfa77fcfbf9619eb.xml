@@ -1,18 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sys_embedded_help_role">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_embedded_help_role">
     <sys_embedded_help_role action="INSERT_OR_UPDATE">
         <order>10</order>
         <role display_value="x_92893_snippetnow.admin" name="x_92893_snippetnow.admin">77fc86e1db001300dfa77fcfbf9619cd</role>
         <sys_class_name>sys_embedded_help_role</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-02-03 00:32:13</sys_created_on>
-        <sys_customer_update>false</sys_customer_update>
         <sys_id>dc1dc2e1db001300dfa77fcfbf9619eb</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>77fc86e1db001300dfa77fcfbf9619cd</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
-        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_embedded_help_role_dc1dc2e1db001300dfa77fcfbf9619eb</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
