@@ -78,6 +78,28 @@
 
     });
 
+    spUtil.recordWatch($scope, "x_92893_snippetnow_table", "", function(name, data) {
+        console.log("New Snippet Added");
+        if (name && name.data && name.data.record) {
+            console.log("add this one", name, $scope);
+
+            delete(c.data.snippet);
+            c.data.getSetOptions = true;
+            c.data.getSetOptions_ID = name.data.sys_id;
+            c.server.update().then(function(response) {
+                console.log("Response for the masses",response);
+
+                if (response.current_user != response.snippet.created_by.sys_id) {
+                    console.log("Is this running?");
+                    $scope.snippetSetOptions = response.related_records;
+                }
+            });
+
+
+
+            
+        }
+    });
 
     var loadTime = 1000000;
     var errorCount = 0;
@@ -197,8 +219,8 @@
     $scope.openModal = function(tpl, topic) {
         console.log(topic);
         if (topic) {
-            var idx = findWithAttr(c.data.help, 'topic', topic);
-            $scope.modalData = c.data.help[idx];
+            //var idx = findWithAttr(c.data.help, 'topic', topic);
+            $scope.modalData = c.data.help[topic];
         }
         console.log($scope.modalData, c.data.help);
 
@@ -337,6 +359,8 @@
             $scope.snippetSetOptions = response.freshSetOptions;
             c.data.getSetOptions = false;
             c.data.getSetOptions_ID = null;
+
+
         });
 
         //console.log($scope.snippet.sys_id);
@@ -454,19 +478,19 @@
                         c.data.snippet = null;
                         c.data.setOptions = null;
                         c.data.updateAction = 'get_user_sys_id_from_user_id';
-                        c.data.updateValue = {  
-                            userID:name.data.record.sys_created_by.value
+                        c.data.updateValue = {
+                            userID: name.data.record.sys_created_by.value
                         }
-                        console.log("Getting the user",c.data);
+                        console.log("Getting the user", c.data);
                         c.server.update().then(function(response) {
-                            console.log("Got User Response",response);
+                            console.log("Got User Response", response);
                             if (response && response.updateValue) {
                                 var comment = {
                                     comment: name.data.record.sys_created_on.display_value + " - " + response.updateValue.user.name + " (Comments) \n " + name.data.record.value.display_value,
                                     created_by: response.updateValue.user
                                 }
                             }
-                            console.log("built new comment",comment);
+                            console.log("built new comment", comment);
                             $scope.snippet.previous_comments.unshift(comment);
                         })
                         var comment = {};
@@ -548,6 +572,9 @@
                     $scope.closeModal();
                     //window.location.reload();
                     //spUtil.update($scope);
+                    //might need to broadcast what the app/type was to update counts
+                    $rootScope.$broadcast("checkAppCount", $scope.snippetApp);
+                    $rootScope.$broadcast("checkTypeCount", $scope.snippetType);
                 }, 1000)
             }
             if (response.recordAction && type == 'insert') {
@@ -948,7 +975,9 @@
 }
 .btn {
     margin-right: 5px;
-}</css>
+}
+
+</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
         <description/>
@@ -966,7 +995,7 @@
   /* populate the 'data' object */
   /* e.g., data.table = $sp.getValue('table'); */
 	
-	if (input && input.snippet) {
+  	if (input && input.snippet) {
 		console.log("Keeps Running");
 		console.log(input.snippet.sys_id);
 		var done = actionSnippet(input.snippet);
@@ -986,6 +1015,7 @@
 		data.snippet = new SnippetNow_DAO().getSnippetRecord(sys_id);
 	}
 	if (input && input.getSetOptions) {
+		console.log("getsetoptions");
 		data.freshSetOptions = getSnippets(input.getSetOptions_ID);
 		
 		data.snippet = new SnippetNow_DAO().getSnippetRecord(input.getSetOptions_ID);
@@ -1000,6 +1030,9 @@
 			}
 		}
 		
+	}
+	if (input && input.recordWatcherSnippet) {
+		data.recordWatcherSnippet = new SnippetNow_DAO().getSnippetRecord(input.recordWatcherSnippet);
 	}
 	
 	/*data.snippetType = {};
@@ -1032,7 +1065,7 @@
 	data.hasRole = new SnippetNow_DAO().checkRoles(data.current_user);
 	$sp.log(data.hasRole);
 	
-	data.help = new SnippetNow_DAO().getHelp();
+	data.help = new SnippetNow_DAO().getAssocHelp();
 	data.types = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippet_type','type','x_92893_snippetnow_table');
 	data.related_records = getSnippets(record.sys_id);
 	
@@ -1142,14 +1175,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>322</sys_mod_count>
+        <sys_mod_count>365</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-09-15 01:10:07</sys_updated_on>
+        <sys_updated_on>2018-09-17 03:01:03</sys_updated_on>
         <template><![CDATA[<div ng-show="data.hasRole">
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->

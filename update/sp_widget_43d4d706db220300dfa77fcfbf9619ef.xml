@@ -19,10 +19,16 @@
 		c.data.func = null;
 		spUtil.update($scope);
 	});
+
+
+	$scope.$on("checkTypeCount", function(event,data) {
+		console.log("Check Type count",data);
+	});
 	
 	
-	c.openModal = function(tpl,modalData) {
+	c.openModal = function(tpl,modalData) {	
 		$scope.modalData = modalData;
+		console.log("Open Modal",modalData);
 		$rootScope.modalInstance = $uibModal.open({
 			templateUrl: tpl,
 			scope: $scope
@@ -32,10 +38,14 @@
 	c.closeModal = function() {
 		$rootScope.modalInstance.close();
 	}
+	$scope.closeModal = function() {
+        //console.log("triggered");
+        $rootScope.modalInstance.close();
+    }
 	
 	$scope.actionAppType = function(action,type,record) {
 		if(!record) {
-			var record = {};
+			record = {};
 		}
 		record.typeName = capitalizeFirstLetter(type);
 		record.typeValue = type;
@@ -65,6 +75,7 @@
 		})
 		
 	}
+	
 	$scope.createNew = function() {
 		$timeout(function() {
 			$rootScope.initialSnippet = null;
@@ -74,14 +85,69 @@
 	}
 	$scope.searchRecords = function(val) {
 		$timeout(function() {
+			console.log("Searchfor1: ",val);
 			$rootScope.$broadcast('searchRecords',val)
 		});
 	}
-	
-	
+
+	$scope.showNewsAndSuggestions = function(topic) {
+		
+		console.log("News",c.data.help[topic]);
+		var obj = c.data.help[topic];
+		obj.topic = topic;
+		c.openModal('showHelpControls',obj);
+
+	}
+
+	$scope.saving = {};
+	$scope.saving.spinner = false;
+	$scope.saving.saved = "Saved Successfully. Thank you for your suggestion!";
+	$scope.saving.error = "Error Saving, please try again.";
+	$scope.saving.required = "A Suggestion is required before sumitting.";
+	$scope.saving.showSaved = false;
+	$scope.saving.showError = false;
+	$scope.submitDisabled = false;
+	$scope.saveSuggestion = function(data) {
+
+		$scope.submitDisabled = true;
+		$scope.saving.spinner = true;
+		var o = {};
+		o.current_user = c.data.current_user;
+		o.data = data;
+		console.log(o);
+
+		c.data.suggestion = o;
+		c.server.update().then(function(response) {
+			console.log("Response",response);
+			if (response.suggestion.response == true) {
+				$scope.saving.spinner = false;
+				$scope.saving.showSaved = true;
+				$timeout(function() {
+					$scope.submitDisabled = false;
+					c.closeModal();
+				},2000);
+			} else {
+				$scope.saving.spinner = false;
+				$scope.saving.showError = true;
+				$scope.submitDisabled = false;
+			}
+			//$scope.saving.spinner = false;
+		});
+	}
+
+		
 	function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 	}
+	function findWithAttr(array, attr, value) {
+        for (var i = 0; i < array.length; i += 1) {
+            console.log(array[i][attr] + " | " + value);
+            if (array[i][attr] === value) {
+                return i;
+            }
+        }
+        return -1;
+    }
 	/*$scope.applicationModel = [];
 	$scope.applicationOptions = c.data.applications;
 	$scope.applicationExtraSettings = {
@@ -172,12 +238,18 @@
 			data.insertAppType = new SnippetNow_DAO().updateAppType(record,record[0].typeValue);
 		}
 	}
+	if (input && input.suggestion) {
+		//console.log(input.suggestion);
+		data.suggestion = input.suggestion;	
+		data.suggestion.response = new SnippetNow_DAO().addSuggestion(input.suggestion);
+	}
 
 	data.applications = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippetnow_applications','application','x_92893_snippetnow_table');
 	data.types = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippet_type','type','x_92893_snippetnow_table');
 	data.tags = new SnippetNow_DAO().getTagList();
 	data.current_user = gs.getUserID();
 	data.hasRole = new SnippetNow_DAO().checkRoles(data.current_user);
+	data.help = new SnippetNow_DAO().getAssocHelp();
 	
 	function getApps() {
 		
@@ -189,81 +261,120 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-11-22 05:28:57</sys_created_on>
         <sys_id>43d4d706db220300dfa77fcfbf9619ef</sys_id>
-        <sys_mod_count>173</sys_mod_count>
+        <sys_mod_count>254</sys_mod_count>
         <sys_name>SnippetNow Controls</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_43d4d706db220300dfa77fcfbf9619ef</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-09-15 01:39:42</sys_updated_on>
+        <sys_updated_on>2018-09-17 03:09:07</sys_updated_on>
         <template><![CDATA[<div class="" ng-if="c.data.hasRole">
-<!-- your widget template -->
+  <!-- your widget template -->
   
-    <div class="row">
-    	<button class="btn btn-success" ng-click="createNew()">
-        Create New <i class="fa fa-plus-circle show-circle" aria-hidden="true"></i>
-      </button> 
-      <button class="btn btn-danger" ng-click="searchRecords()">
-        Show All <i class="fa fa-times-circle" aria-hidden="true"></i>
-      </button>
-    </div>
-    <div class="row">
-      <div id="menu">
-        <div class="panel list-group">
-         <a href="javascript:void(0)" class="list-group-item" data-toggle="collapse" data-target="#apps" data-parent="#menu">APPLICATIONS <i class="fa fa-plus-circle" aria-hidden="true" ng-click="actionAppType('add','application');$event.stopPropagation();"></i><span class="badge badge-primary pull-right">{{c.data.applications.length}}</span></a>
-         <div id="apps" class="sublinks collapse">
+  <div class="row">
+    <button class="btn btn-success" ng-click="createNew()">
+    Create New <i class="fa fa-plus-circle show-circle" aria-hidden="true"></i>
+    </button>
+    <button class="btn btn-danger" ng-click="searchRecords(null)">
+    Show All <i class="fa fa-times-circle" aria-hidden="true"></i>
+    </button>
+    <button class="btn btn-info" ng-click="showNewsAndSuggestions('news_updates')">
+    Information
+    </button>
+  </div>
+  <div class="row">
+    <div id="menu">
+      <div class="panel list-group">
+        <a href="javascript:void(0)" class="list-group-item" data-toggle="collapse" data-target="#apps" data-parent="#menu">APPLICATIONS <i class="fa fa-plus-circle" aria-hidden="true" ng-click="actionAppType('add','application');$event.stopPropagation();"></i><span class="badge badge-primary pull-right">{{c.data.applications.length}}</span></a>
+        <div id="apps" class="sublinks collapse">
           <a ng-click="searchRecords(app.name); $event.stopPropagation();" class="list-group-item app-items small" ng-repeat="app in c.data.applications"><i class="fa fa-circle" style="color:{{app.color}}"></i> {{app.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="actionAppType('edit','application',app); $event.stopPropagation();"></i><span class="badge badge-default pull-right">{{app.count}}</span></a>
           
-         </div>
-         <a href="javascript:void(0)" class="list-group-item type-item-header" data-toggle="collapse" data-target="#types" data-parent="#menu">TYPES <i class="fa fa-plus-circle" aria-hidden="true" ng-click="actionAppType('add','type');$event.stopPropagation();"></i> <span class="badge badge-primary pull-right">{{c.data.types.length}}</span></a>
-         <div id="types" class="sublinks collapse">
-           <a ng-click="searchRecords(type.name); $event.stopPropagation();" class="list-group-item type-items small" ng-repeat="type in c.data.types"><i class="fa fa-circle" style="color:{{type.color}}"></i> {{type.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="actionAppType('edit','type',type); $event.stopPropagation();"></i><span class="badge pull-right">{{type.count}}</span></a>
-         </div>
-         
+        </div>
+        <a href="javascript:void(0)" class="list-group-item type-item-header" data-toggle="collapse" data-target="#types" data-parent="#menu">TYPES <i class="fa fa-plus-circle" aria-hidden="true" ng-click="actionAppType('add','type');$event.stopPropagation();"></i> <span class="badge badge-primary pull-right">{{c.data.types.length}}</span></a>
+        <div id="types" class="sublinks collapse">
+          <a ng-click="searchRecords(type.name); $event.stopPropagation();" class="list-group-item type-items small" ng-repeat="type in c.data.types"><i class="fa fa-circle" style="color:{{type.color}}"></i> {{type.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="actionAppType('edit','type',type); $event.stopPropagation();"></i><span class="badge pull-right">{{type.count}}</span></a>
+        </div>
+        
+      </div>
+    </div>
+    <div class="row">
+      <span class="badge badge-info" ng-repeat="tag in c.data.tags" ng-click="searchRecords(tag.text)">{{tag.text}}</span>
+    </div>
+    <!--<div class="panel-group" id="accordion">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#applications">Applications <span class="badge badge-primary pull-right">{{c.data.applications.length}}</span></a>
+          </h4>
+        </div>
+        <div id="applications" class="panel-collapse collapse">
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="app in c.data.applications"><i class="fa fa-circle" style="color:{{app.color}}"></i> {{app.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="editThis(app,'app'); $event.stopPropagation();"></i> <span class="badge badge-default pull-right">{{app.count}}</span></li>
+          </ul>
         </div>
       </div>
-      <div class="row">
-        <span class="badge badge-info" ng-repeat="tag in c.data.tags" ng-click="searchRecords(tag.text)">{{tag.text}}</span>
       </div>
-      <!--<div class="panel-group" id="accordion">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-              <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#applications">Applications <span class="badge badge-primary pull-right">{{c.data.applications.length}}</span></a>
-              </h4>
-            </div>
-            <div id="applications" class="panel-collapse collapse">
-              <ul class="list-group">
-                <li class="list-group-item" ng-repeat="app in c.data.applications"><i class="fa fa-circle" style="color:{{app.color}}"></i> {{app.name}} <i ng-id="$index-app-edit" class="fa fa-pencil" ng-click="editThis(app,'app'); $event.stopPropagation();"></i> <span class="badge badge-default pull-right">{{app.count}}</span></li>
-              </ul>
-            </div>
-          </div>
-      	</div>
-      	<div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title">
-              <a data-toggle="collapse" data-parent="#accordion" href="#types">Types <span class="badge badge-primary pull-right">{{c.data.types.length}}</span></a>
-            </h4>
-          </div>
-          <div id="types" class="panel-collapse collapse">
-            <ul class="list-group">
-              <li class="list-group-item" ng-repeat="type in c.data.types"><i class="fa fa-circle" style="color:{{type.color}}"></i> {{type.name}} <i ng-id="$index-type-edit" class="fa fa-pencil" ng-click="editThis(type,'type'); $event.stopPropagation();"></i> <span class="badge pull-right">{{type.count}}</span></li>
-            </ul>
-        </div>
-  	</div>-->
+      <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#types">Types <span class="badge badge-primary pull-right">{{c.data.types.length}}</span></a>
+        </h4>
+      </div>
+      <div id="types" class="panel-collapse collapse">
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat="type in c.data.types"><i class="fa fa-circle" style="color:{{type.color}}"></i> {{type.name}} <i ng-id="$index-type-edit" class="fa fa-pencil" ng-click="editThis(type,'type'); $event.stopPropagation();"></i> <span class="badge pull-right">{{type.count}}</span></li>
+        </ul>
+      </div>
+    </div>-->
     
-  
-</div>
-  
+    
+  </div>
+  <script type="text/ng-template" id="showHelpControls">
+  <div class="panel panel-info">
+    <div class="panel panel-heading">
+      SnippetNOW Help - {{modalData.title}}
+      <i class="fa fa-times fa-2x pull-right" aria-hidden="true" ng-click="c.closeModal()"></i>
+    </div>
+    <div class="panel panel-body">
+      
+        <div ng-if="modalData.topic != 'news_updates'" ng-bind-html="modalData.body"></div>
+        
+      
+      <div style="padding:25px" ng-if="modalData.topic == 'news_updates'">
+        <div class="news-overflow">
+          <div ng-bind-html="modalData.body"></div>
+        </div>
+        <hr>
+          <div class="form-group">
+            <label>Suggestion?</label>
+            <textarea ng-model="modalData.suggestion" class="form-control"></textarea>
+          </div>
+        </div>
+    </div>
+    <div class="panel panel-footer clearfix">
+      <div class="pull-right" ng-if="modalData.topic == 'news_updates'">
+        <span ng-if="saving.spinner">
+          <i class="fa fa-spinner fa-pulse fa-fw"></i>
+        </span>
+        <span ng-if="saving.showSaved">{{saving.saved}}</span>
+        <span ng-if="saving.showError">{{saving.error}}</span>
+        <button class="btn btn-danger" ng-click="closeModal()">Cancel</button>
+        <button class="btn btn-success saveSubmit" ng-if="modalData.suggestion" ng-disabled="submitDisabled" ng-click="saveSuggestion(modalData)">Submit</button>
+      </div>
+    </div>
+  </div>
+  </div>
+  </script>
+
   <script type="text/ng-template" id="actionAppType">
-	<div class="panel panel-primary">
-  	<div class="panel-heading">New {{modalData.typeName}}</div>
+    <div class="panel panel-primary">
+      <div class="panel-heading">New {{modalData.typeName}}</div>
     <div class="panel-body">
       <!--{{modalData}}-->
-    	<form>
-      	<div class="form-group">
-        	<label for="newTitle">Title</label>
+      <form>
+        <div class="form-group">
+          <label for="newTitle">Title</label>
           <input type="text" ng-model="modalData.name" class="form-control">
         </div>
         <div ng-if="modalData.typeValue == 'type'" class="form-group">
@@ -272,19 +383,19 @@
         </div>
         <label>Color</label>
         <div class="input-group">
-        
+          
           <input colorpicker ng-model="modalData.color" class="form-control"/>
           <span class="input-group-addon" colorpicker ng-model="modalData.color" id="basic-addon2"><i class="fa fa-square" aria-hidden="true" style="color:{{modalData.types.color}}"></i></span>
         </div>
         <div class="pull-right" style="padding-top: 10px">
-        	<span ng-if="modalData.response == 'success'"><i class="fa fa-check text-success" aria-hidden="true"></i> <span class="text-success">Successful</span></span>
-        	<button class="btn btn-danger" ng-click="c.closeModal()">Cancel</button>
+          <span ng-if="modalData.response == 'success'"><i class="fa fa-check text-success" aria-hidden="true"></i> <span class="text-success">Successful</span></span>
+          <button class="btn btn-danger" ng-click="c.closeModal()">Cancel</button>
           <button ng-if="!modalData.sys_id" class="btn btn-success" ng-click="insertAppType(modalData,'add')">Insert</button>
           <button ng-if="modalData.sys_id" class="btn btn-success" ng-click="insertAppType(modalData,'update')">Update</button>
         </div>
       </form>
     </div>
   </div>
-</script>]]></template>
+  </script>]]></template>
     </sp_widget>
 </record_update>

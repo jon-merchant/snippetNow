@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="SnippetNow Suggestions" max_length="40" name="x_92893_snippetnow_snippetnow_suggestions" type="collection">
+        <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>
+        <element label="Proposed Version" max_length="40" name="proposed_version" type="string"/>
+        <element label="Release Date" max_length="40" name="release_date" type="glide_date"/>
+        <element label="Submitted By" max_length="32" name="submitted_by" reference="sys_user" type="reference"/>
+        <element label="Suggestion" max_length="10000" name="suggestion" type="string"/>
+        <index name="index">
+            <element name="submitted_by"/>
+        </index>
+    </element>
+</database>

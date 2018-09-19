@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="submitted_by" label="Submitted By" language="en" table="x_92893_snippetnow_snippetnow_suggestions">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>submitted_by</element>
+            <help/>
+            <hint/>
+            <label>Submitted By</label>
+            <language>en</language>
+            <name>x_92893_snippetnow_snippetnow_suggestions</name>
+            <plural>Submitted Bys</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-09-16 17:47:17</sys_created_on>
+            <sys_id>d0b7249edb282340f5ac28f3ca961962</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Submitted By</sys_name>
+            <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
+            <sys_update_name>sys_documentation_x_92893_snippetnow_snippetnow_suggestions_submitted_by_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-09-16 17:47:17</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

@@ -5,7 +5,7 @@
     /* widget controller */
     var c = this;
     console.log("Listing", $scope);
-
+    $scope.searchRecords = {};
     $scope.$on('newAddedSnippet', function(event, data) {
         $timeout(function() {
             console.log("newAddedSnippet", data);
@@ -25,14 +25,13 @@
 
     $scope.$on('searchRecords', function(event, data) {
         $timeout(function() {
-
-            $scope.searchRecords = data;
-
+            $scope.searchRecords.search = data;
 
         });
     });
 
-    $scope.$watch('searchRecords', function(newValue, oldValue) {
+    $scope.$watch('searchRecords.search', function(newValue, oldValue) {
+        console.log("SearchRecords: ",newValue);
         if (newValue) {
             $scope.showClearAll = true;
         } else {
@@ -53,7 +52,22 @@
             }
 
         }, 500)
-    })
+    });
+    spUtil.recordWatch($scope, "x_92893_snippetnow_table", "", function(name,data) {
+        console.log("List New Record added",name.data.record);
+        if (name && name.data && name.data.record) {
+            c.data.recordWatcherSnippet = name.data.sys_id;
+            c.server.update().then(function(response) {
+                console.log("The Response Here",response);
+                if (c.data.current_user != response.recordWatcherSnippet.created_by.sys_id) {
+                    $scope.snippet.records.unshift(response.recordWatcherSnippet);
+                }
+            });
+            
+            console.log("snippets",$scope.snippet.records);
+        }
+    });
+
     $scope.openModal = function(tpl, topic) {
         console.log(topic);
         if (topic) {
@@ -156,11 +170,11 @@
     }
     $scope.clearSearch = function() {
         console.log("ClearSearch clicked");
-        $scope.searchRecords = null;
+        $scope.searchRecords.search = null;
         $scope.showClearAll = false;
     }
     $scope.filterBy = function(val) {
-        $scope.searchRecords = val;
+        $scope.searchRecords.search = val;
     }
     $scope.returnFirst = function(str) {
         return str.charAt(0).toUpperCase();
@@ -267,7 +281,12 @@ hr {
 	data.hasRole = new SnippetNow_DAO().checkRoles(data.current_user);
 	
 	if (input) {
-		data.snippet = {};
+
+		if (input.recordWatcherSnippet) {
+			data.recordWatcherSnippet = new SnippetNow_DAO().getSnippetRecord(input.recordWatcherSnippet);
+		}
+
+		/*data.snippet = {};
 		data.snippet.total_count = getTC();
 		data.snippet.applications = getApps();
 		data.snippet.types = getTypes();
@@ -275,7 +294,7 @@ hr {
 		data.snippet.records = getRecords();
 		data.snippet.tags = getTags();
 	
-		data.help = new SnippetNow_DAO().getHelp();
+		data.help = new SnippetNow_DAO().getHelp();*/
 	}
 	
 	function getTC() {
@@ -302,24 +321,24 @@ hr {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-11-22 05:47:57</sys_created_on>
         <sys_id>2239570adb220300dfa77fcfbf96192c</sys_id>
-        <sys_mod_count>377</sys_mod_count>
+        <sys_mod_count>408</sys_mod_count>
         <sys_name>SnippetNow List</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_2239570adb220300dfa77fcfbf96192c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-23 03:12:56</sys_updated_on>
+        <sys_updated_on>2018-09-17 02:32:31</sys_updated_on>
         <template><![CDATA[<div ng-if="c.data.hasRole">
 <!-- your widget template -->
   <div class="input-group" style="padding-bottom: 10px;">
-          <input type="text" ng-model="searchRecords" placeholder="Search..." class="form-control" />
+          <input type="text" ng-model="searchRecords.search" placeholder="Search..." class="form-control" />
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button"><i ng-if="showClearAll" class="fa fa-times" aria-hidden="true" ng-click="clearSearch()"></i><i ng-if="!showClearAll" class="fa fa-search" aria-hidden="true"></i></button>
+            <button class="btn btn-default" type="button"><i ng-if="searchRecords.search" class="fa fa-times" aria-hidden="true" ng-click="clearSearch()"></i><i ng-if="!searchRecords.search" class="fa fa-search" aria-hidden="true"></i></button>
           </span>
         </div>
   <div class="list-group">
-    <a class="snippet" ng-repeat="record in filterData = (snippet.records | filter : searchRecords) | limitTo:6:6*(currentPage-1)" class="list-group-item" ng-class="{active : activeItem === record}" ng-click="setActive(record)">
+    <a class="snippet" ng-repeat="record in filterData = (snippet.records | filter : searchRecords.search) | limitTo:6:6*(currentPage-1)" class="list-group-item" ng-class="{active : activeItem === record}" ng-click="setActive(record)">
     <!--<a ng-repeat="record in snippet.records.slice(((currentPage-1)*itemsPerPage), ((currentPage)*itemsPerPage)) | filter:searchRecords as totalItems" class="list-group-item ">-->
       <div class="pull-right">
       	<div><sn-avatar class="avatar-small-medium" primary="record.created_by.sys_id" /></div>  
