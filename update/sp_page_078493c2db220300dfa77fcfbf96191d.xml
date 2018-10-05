@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_page">
     <sp_page action="INSERT_OR_UPDATE">
         <category/>
-        <css>.saveSubmit.ng-enter,.saveSubmit.ng-leave {&#13;
+        <css>.padding-top-6 {&#13;
+  padding-top: 6px;&#13;
+}&#13;
+.padding-top-8 {&#13;
+  padding-top: 8px;&#13;
+}&#13;
+.padding-top-10 {&#13;
+  padding-top: 10px;&#13;
+}&#13;
+.padding-right-10 {&#13;
+  padding-right: 10px;&#13;
+}&#13;
+.padding-bottom-10 {&#13;
+  padding-bottom: 10px;&#13;
+}&#13;
+&#13;
+.vertical-middle {&#13;
+  vertical-align: middle;&#13;
+}&#13;
+.saveSubmit.ng-enter,.saveSubmit.ng-leave {&#13;
   transition: all 0.7s ease;&#13;
 }&#13;
 .saveSubmit.ng-enter,.saveSubmit.ng-leave.ng-leave-active {&#13;
@@ -31,14 +50,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-11-22 05:27:31</sys_created_on>
         <sys_id>078493c2db220300dfa77fcfbf96191d</sys_id>
-        <sys_mod_count>14</sys_mod_count>
+        <sys_mod_count>20</sys_mod_count>
         <sys_name>snippetnow</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_page_078493c2db220300dfa77fcfbf96191d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-09-16 21:48:21</sys_updated_on>
+        <sys_updated_on>2018-09-19 23:32:51</sys_updated_on>
         <title>SnippetNow</title>
     </sp_page>
     <sys_translated_text action="delete_multiple" query="documentkey=078493c2db220300dfa77fcfbf96191d"/>

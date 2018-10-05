@@ -32,14 +32,18 @@
         scrollHeight: '400'
     };
 
-    $scope.editorMode = 'plain_text';
+    $scope.snippetEditorMode = {
+        displayValue: 'Javascript',
+        value: 'javascript',
+        name: 'snippetEditorMode'
+    }
+    /*$scope.editorMode = 'plain_text';
     if ($scope.snippet.type && $scope.snippet.type.language.value.length > 0) {
         $scope.editorMode = $scope.snippet.type.language.value;
-    }
-
+    }*/
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/chrome");
-    editor.getSession().setMode("ace/mode/" + $scope.editorMode);
+    editor.getSession().setMode("ace/mode/" + $scope.snippetEditorMode.value);
     //editor.getSession().setMode("ace/mode/javascript");
     editor.getSession().setUseWrapMode(true);
     editor.setReadOnly(false);
@@ -47,11 +51,19 @@
         minLines: 20,
         maxLines: 50
     });
+    console.log("first editor",editor);
 
     $scope.$watch('editorMode', function(newValue, oldValue) {
         console.log(newValue);
         if (newValue) {
             editor.getSession().setMode("ace/mode/" + newValue);
+        }
+    })
+    $scope.$watchCollection('snippetEditorMode', function(newValue, oldValue) {
+        console.log("Watching Snippet Mode",newValue);
+        if (newValue) {
+            editor.getSession().setMode("ace/mode/" + newValue.value);
+            console.log("The editor",editor);
         }
     })
 
@@ -504,21 +516,29 @@
 
 
     $scope.$on("field.change", function(evt, parms) {
-        console.log("Field Change", parms.value);
+
+        console.log("Field Change", parms);
         if (parms.field.name == 'snippetType') {
             //c.data.setSnippetType = parms.newValue;
 
             var idx = findWithAttr($scope.types, 'sys_id', parms.field.value);
             console.log("idx", idx);
+            
             if (idx >= 0) {
-                $scope.editorMode = $scope.types[idx].language.value;
+                $scope.snippetEditorMode.value = $scope.types[idx].language.value;
+                $scope.snippetEditorMode.displayValue = $scope.types[idx].language.displayValue;
+                //$scope.editorMode = $scope.types[idx].language.value;
+                //editor.getSession().setMode("ace/mode/" + $scope.types[idx].language.value);
+                console.log("Editor 1",editor);
             }
         }
-
-
-        /*c.server.update().then(function(response) {
-        	spUtil.update($scope);
-        });*/
+        if (parms.field.name == 'snippetEditorMode') {
+            $scope.snippetEditorMode.value = parms.field.value;
+            $scope.snippetEditorMode.displayValue = parms.field.displayValue;
+            //editor.getSession().setMode("ace/mode/" + parms.field.value);
+            console.log("Editor",editor);
+        }
+        
     });
 
     $scope.loadTags = function(query) {
@@ -1034,6 +1054,8 @@
 	if (input && input.recordWatcherSnippet) {
 		data.recordWatcherSnippet = new SnippetNow_DAO().getSnippetRecord(input.recordWatcherSnippet);
 	}
+
+	data.editorModes = new SnippetNow_DAO().getEditorModes();
 	
 	/*data.snippetType = {};
 	data.snippetType.name = 'Please Select';
@@ -1175,14 +1197,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>365</sys_mod_count>
+        <sys_mod_count>452</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-09-17 03:01:03</sys_updated_on>
+        <sys_updated_on>2018-09-20 02:46:31</sys_updated_on>
         <template><![CDATA[<div ng-show="data.hasRole">
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
@@ -1240,7 +1262,6 @@
             </tags-input>  
            </div>
            <div ng-if="!youCanEdit">
-             
              <button ng-repeat="tag in snippet.tags" class="btn btn-default" ng-disabled="!youCanEdit">
                {{tag.text}}
              </button>
@@ -1250,6 +1271,7 @@
         <div class="col-lg-6">
           <div class="form-group" >
          
+
            <label for="snippetRelated">Related Snippets</label>
            <div class="related-snip-list">
              <button ng-repeat="rSnip in snippetSetModel" class="btn btn-default" ng-click="gotoSnippet(rSnip.id)"> {{rSnip.label}} </button>
@@ -1259,14 +1281,16 @@
           </div>
         </div>
       </div>
-
-
-
-       <div class="form-group editor-group" ng-class="editorHeight()">
+      <div class="form-group editor-group" ng-class="editorHeight()">
          <label for="snippetHTML">Snippet </label>
-         <div class="small pull-right" ng-if="snippet.sys_id">Show comments <input type="checkbox" ng-model="comments.show" ng-change="showComments(comments.show)" ng-true-value="true" ng-false-value="false"/></div>
-          <div id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
-          <div class="pull-right"><span class="small muted">[mode: {{editorMode.replace('_', ' ')}}]</span></div>
+          <div class="small pull-right" ng-if="snippet.sys_id">Show comments <input type="checkbox" ng-model="comments.show" ng-change="showComments(comments.show)" ng-true-value="true" ng-false-value="false"/></div>
+          <div class="padding-top-10" id="snippetHTML" id="editor" ng-model="snippet.editor" class="form-control"></div>
+          <!--<div class="pull-right"><span class="small muted">[mode: {{snippetEditorMode.value.replace('_', ' ')}}]</span></div>-->
+          <div class="col-lg-4 padding-top-10">
+            <div class="pull-left padding-top-6 padding-right-10">Editor Mode: </div>
+            <div ng-show="snippetType.value" class="padding-top-6">[{{snippetEditorMode.value.replace('_', ' ')}}]</div>
+          <div ng-show="!snippetType.value"><sn-record-picker sn-disabled="!youCanEdit" default-query="" field="snippetEditorMode" table="'x_92893_snippetnow_snippetnow_editor_mode'" display-field="'mode_name'" value-field="'mode_value'" search-fields="'mode_name'" page-size="100" ></sn-record-picker></div>
+        </div>
        </div>
        <div class="form-group clearfix" style="margin-bottom: 40px;">
           <div class="pull-right">
@@ -1276,9 +1300,7 @@
           </div>
       </div>
        
-        
-        
-        <div ng-if="showCommentBox" class="form-group">
+         <div ng-if="showCommentBox" class="form-group">
         	<label for="snippetComments">Add Comment</label>
           <textarea ng-model="snippet.add_comments" class="form-control"></textarea>
           
