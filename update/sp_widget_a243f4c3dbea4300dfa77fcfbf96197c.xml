@@ -5,15 +5,15 @@
     /* widget controller */
     var c = this;
 	$location.search("spa",1);
-    console.log("FIRST", c.data);
+    //console.log("FIRST", c.data);
     $scope.types = c.data.types;
     $scope.snippet = {};
     $scope.simpleTags = '';
     $scope.snippetType = {};
     $scope.snippetType.name = 'snippetType';
     $scope.snippetApp = {};
-    console.log("FIRST", $scope.snippet);
-    console.log("FIRST", c.data.snippet);
+    //console.log("FIRST", $scope.snippet);
+    //console.log("FIRST", c.data.snippet);
     $scope.snippetSetOptions = c.data.related_records;
     $scope.snippetSetModel = [];
     $scope.example1model = [];
@@ -52,25 +52,25 @@
         minLines: 20,
         maxLines: 50
     });
-    console.log("first editor",editor);
+    //console.log("first editor",editor);
 
     $scope.$watch('editorMode', function(newValue, oldValue) {
-        console.log(newValue);
+        //console.log(newValue);
         if (newValue) {
             editor.getSession().setMode("ace/mode/" + newValue);
         }
     })
     $scope.$watchCollection('snippetEditorMode', function(newValue, oldValue) {
-        console.log("Watching Snippet Mode",newValue);
+        //console.log("Watching Snippet Mode",newValue);
         if (newValue) {
             editor.getSession().setMode("ace/mode/" + newValue.value);
-            console.log("The editor",editor);
+            //console.log("The editor",editor);
         }
     })
 
     spUtil.recordWatch($scope, "x_92893_snippetnow_snippet_type", "", function(name, data) {
         if (name.data && name.data.action == 'entry') {
-            console.log(name);
+            //console.log(name);
             $scope.types.push({
                 color: name.data.record.color.value,
                 count: "0",
@@ -85,25 +85,25 @@
             });
 
         }
-        console.log("new List", $scope.types);
+        //console.log("new List", $scope.types);
         /*$scope.types = null;
         spUtil.update($scope);*/
 
     });
 
     spUtil.recordWatch($scope, "x_92893_snippetnow_table", "", function(name, data) {
-        console.log("New Snippet Added");
+        //console.log("New Snippet Added");
         if (name && name.data && name.data.record) {
-            console.log("add this one", name, $scope);
+            //console.log("add this one", name, $scope);
 
             delete(c.data.snippet);
             c.data.getSetOptions = true;
             c.data.getSetOptions_ID = name.data.sys_id;
             c.server.update().then(function(response) {
-                console.log("Response for the masses",response);
+                //console.log("Response for the masses",response);
 
                 if (response.current_user != response.snippet.created_by.sys_id) {
-                    console.log("Is this running?");
+                    //console.log("Is this running?");
                     $scope.snippetSetOptions = response.related_records;
                 }
             });
@@ -128,7 +128,7 @@
                 url: "/api/x_92893_snippetnow/snippetnow_api/getSnippet/" + $scope.snippet.sys_id
             })
             .success(function(response) {
-                console.log("Success", response);
+                //console.log("Success", response);
                 //need to check comments
                 oldComm = $scope.oldSnippet.previous_comments;
                 newComm = response.result.previous_comments;
@@ -136,7 +136,7 @@
                 if (oldComm.length != newComm.length) {
                     eq = false;
                 }
-                console.log("are they equal", eq, oldComm, newComm);
+               // console.log("are they equal", eq, oldComm, newComm);
                 if (!eq) {
                     $scope.snippet.previous_comments = response.result.previous_comments;
 
@@ -154,7 +154,7 @@
             .error(function(response) {
                 //$scope.isInSchedule = false;
                 //gs.info("Power Up Portal: Chat Queue Polling Error Communication "+JSON.stringify(response));
-                console.log("Cannot update snippet", response);
+                //console.log("Cannot update snippet", response);
                 nextLoad(++errorCount * 2 * loadTime);
             });
 
@@ -179,13 +179,13 @@
         cancelNextLoad();
     });
 
-	console.log("c.data.snippet",c.data.snippet);
-	console.log("data.snippet",$scope.data.snippet);
+	//console.log("c.data.snippet",c.data.snippet);
+	//console.log("data.snippet",$scope.data.snippet);
     if (c.data.snippet) {
         $scope.snippet = c.data.snippet;
 
         var related_id = $scope.snippetSetOptions.indexOf($scope.snippet.sys_id);
-        console.log(related_id);
+        //console.log(related_id);
         if (related_id > -1) {
             $scope.snippetSetOptions.splice(related_id, 1);
         }
@@ -199,7 +199,7 @@
 			} else {
 				ed = c.data.snippet.editor;
 			}
-            console.log(editor);
+            //console.log(editor);
             if (!c.data.snippet.allow_others_to_edit) {
                 //console.log("Hello");
                 editor.setReadOnly();
@@ -237,12 +237,12 @@
         });
     }
     $scope.openModal = function(tpl, topic) {
-        console.log(topic);
+        //console.log(topic);
         if (topic) {
             //var idx = findWithAttr(c.data.help, 'topic', topic);
             $scope.modalData = c.data.help[topic];
         }
-        console.log($scope.modalData, c.data.help);
+        //console.log($scope.modalData, c.data.help);
 
         $rootScope.modalInstance = $uibModal.open({
             templateUrl: tpl,
@@ -270,7 +270,7 @@
 
     $scope.showCommentBox = false;
     $scope.showComments = function(val) {
-        console.log("comments", val);
+        //console.log("comments", val);
         //if yes, show the add comments and previous comments
         if (val) {
             $scope.showCommentBox = true;
@@ -282,14 +282,14 @@
     $scope.$on('createNew', function(event, data) {
 		$location.search("spa",1);
 		$location.search("sys_id",null);
-        console.log(data);
+        //console.log(data);
         $scope.previousSnippet = $scope.snippet;
         $scope.previousSnippetType = $scope.snippetType;
         $scope.previousSnippetApp = $scope.snippetApp;
         $scope.previousSnippetRelatedList = $scope.snippetSetModel;
 
         if (data) {
-            console.log(editor);
+            //console.log(editor);
             $scope.snippet = {};
             editor.setValue("//Enter Your Code Here");
 
@@ -377,7 +377,7 @@
         c.data.getSetOptions = true;
         c.data.getSetOptions_ID = $scope.snippet.sys_id;
         c.server.update().then(function(response) {
-            console.log("Looking to get new option list", response);
+            //console.log("Looking to get new option list", response);
             $scope.snippetSetOptions = response.freshSetOptions;
             c.data.getSetOptions = false;
             c.data.getSetOptions_ID = null;
@@ -402,16 +402,16 @@
     $scope.$on("selectedSnippet", function(event, data) {
 		$location.search("spa",1);
 		$location.search("sys_id",data.sys_id);
-        console.log("Before the boo");
+        //console.log("Before the boo");
         $timeout(function() {
-            console.log("BOOO", data);
+            //console.log("BOOO", data);
             //might need to grab a fresh list of records for related list
             if (data) {
                 $scope.comments = {};
                 $scope.comments.show = false;
                 $scope.showCommentBox = false;
                 $scope.snippet = data;
-                console.log($scope.youCanEdit);
+                //console.log($scope.youCanEdit);
                 if (!$scope.canYouEdit()) {
                     editor.setReadOnly(false);
                 } else {
@@ -443,7 +443,7 @@
                 } else {
                     editor.getSession().setMode("ace/mode/plain_text");
                 }
-                console.log("Editor", editor);
+                //console.log("Editor", editor);
 
                 $scope.snippetSetModel = [];
                 if ($scope.snippet.related_list) {
@@ -472,7 +472,7 @@
                 c.data.getSetOptions = true;
                 c.data.getSetOptions_ID = $scope.snippet.sys_id;
                 c.server.update().then(function(response) {
-                    console.log("Looking to get new option list", response);
+                    //console.log("Looking to get new option list", response);
                     $scope.snippetSetOptions = response.freshSetOptions;
                     c.data.getSetOptions = false;
                     c.data.getSetOptions_ID = null;
@@ -494,10 +494,10 @@
 
 
                 var query = "name=x_92893_snippetnow_table^element_id=" + $scope.snippet.sys_id;
-                console.log("query", query);
+                //console.log("query", query);
 
                 spUtil.recordWatch($scope, "sys_journal_field", "name=x_92893_snippetnow_table^element_id=" + $scope.snippet.sys_id, function(name, data) {
-                    console.log("i saw that comment", name);
+                    //console.log("i saw that comment", name);
                     if (name && name.data && name.data.action == 'entry') {
                         c.data.snippet = null;
                         c.data.setOptions = null;
@@ -505,16 +505,16 @@
                         c.data.updateValue = {
                             userID: name.data.record.sys_created_by.value
                         }
-                        console.log("Getting the user", c.data);
+                        //console.log("Getting the user", c.data);
                         c.server.update().then(function(response) {
-                            console.log("Got User Response", response);
+                            //console.log("Got User Response", response);
                             if (response && response.updateValue) {
                                 var comment = {
                                     comment: name.data.record.sys_created_on.display_value + " - " + response.updateValue.user.name + " (Comments) \n " + name.data.record.value.display_value,
                                     created_by: response.updateValue.user
                                 }
                             }
-                            console.log("built new comment", comment);
+                            //console.log("built new comment", comment);
                             $scope.snippet.previous_comments.unshift(comment);
                         })
                         var comment = {};
@@ -529,26 +529,26 @@
 
     $scope.$on("field.change", function(evt, parms) {
 
-        console.log("Field Change", parms);
+        //console.log("Field Change", parms);
         if (parms.field.name == 'snippetType') {
             //c.data.setSnippetType = parms.newValue;
 
             var idx = findWithAttr($scope.types, 'sys_id', parms.field.value);
-            console.log("idx", idx);
+            //console.log("idx", idx);
             
             if (idx >= 0) {
                 $scope.snippetEditorMode.value = $scope.types[idx].language.value;
                 $scope.snippetEditorMode.displayValue = $scope.types[idx].language.displayValue;
                 //$scope.editorMode = $scope.types[idx].language.value;
                 //editor.getSession().setMode("ace/mode/" + $scope.types[idx].language.value);
-                console.log("Editor 1",editor);
+                //console.log("Editor 1",editor);
             }
         }
         if (parms.field.name == 'snippetEditorMode') {
             $scope.snippetEditorMode.value = parms.field.value;
             $scope.snippetEditorMode.displayValue = parms.field.displayValue;
             //editor.getSession().setMode("ace/mode/" + parms.field.value);
-            console.log("Editor",editor);
+            //console.log("Editor",editor);
         }
         
     });
@@ -559,20 +559,20 @@
     }
 
     function relatedList(list) {
-        console.log(list);
+        //console.log(list);
         var arr = [];
         if (list) {
             for (var i = 0; i < list.length; i++) {
                 arr.push(list[i].id);
             }
         }
-        console.log(arr);
+        //console.log(arr);
         arr = arr.join(",");
         return arr;
     }
 
     $scope.submit = function(type) {
-        console.log("Snippet", $scope.snippet);
+        //console.log("Snippet", $scope.snippet);
         //console.log("SnippetType",$scope.snippetType);
         //console.log("SnippetApp",$scope.snippetApp);
 
@@ -588,7 +588,7 @@
         //console.log("C DATA",c.data.snippet);
         c.server.update().then(function(response) {
             //spUtil.update($scope);
-            console.log("Response", response);
+            //console.log("Response", response);
             $scope.snippet.application.display_value = $scope.snippet.application.displayValue;
             $scope.snippet.type.display_value = $scope.snippet.type.displayValue;
 
@@ -744,7 +744,7 @@
 
     }
     $scope.loadNewSnippet = function(obj) {
-        console.log(obj);
+        //console.log(obj);
         $scope.closeModal();
 
         $http({
@@ -781,14 +781,14 @@
             c.attachmentItemWidget = response;
             c.openModal('addAttachment');
         });
-        console.log(c.attachmentItemWidget);
+        //console.log(c.attachmentItemWidget);
 
     }
 
     $scope.removeUS = function(str) {
-        console.log(str);
+        //console.log(str);
         var nStr = str.replace(/_/, " ");
-        console.log(nStr);
+        //console.log(nStr);
         return nStr;
     }
 
@@ -805,7 +805,7 @@
 
     function findWithAttr(array, attr, value) {
         for (var i = 0; i < array.length; i += 1) {
-            console.log(array[i][attr] + " | " + value);
+            //console.log(array[i][attr] + " | " + value);
             if (array[i][attr] === value) {
                 return i;
             }
@@ -1026,18 +1026,18 @@
         <script><![CDATA[(function() {
   /* populate the 'data' object */
   /* e.g., data.table = $sp.getValue('table'); */
-	console.log("Parameters");
-	console.log($sp.getParameter("sys_id"));
+	//console.log("Parameters");
+	//console.log($sp.getParameter("sys_id"));
   	if (input && input.snippet) {
-		console.log("Keeps Running");
-		console.log(input.snippet.sys_id);
+		//console.log("Keeps Running");
+		//console.log(input.snippet.sys_id);
 		var done = actionSnippet(input.snippet);
 		var sys_id;
 		if (input.snippet.sys_id) {
 			sys_id = input.snippet.sys_id;
 		}
 		
-		$sp.log("Inserted "+done);
+		//$sp.log("Inserted "+done);
 		if (done != false) {
 			data.recordAction = true;
 			sys_id = done;
@@ -1048,7 +1048,7 @@
 		data.snippet = new SnippetNow_DAO().getSnippetRecord(sys_id);
 	}
 	if (input && input.getSetOptions) {
-		console.log("getsetoptions");
+		//console.log("getsetoptions");
 		data.freshSetOptions = getSnippets(input.getSetOptions_ID);
 		
 		data.snippet = new SnippetNow_DAO().getSnippetRecord(input.getSetOptions_ID);
@@ -1083,7 +1083,7 @@
 	if (record.sys_id) {
 		//data.snippet = getSnippetRecord(record.sys_id);	
 		data.snippet = new SnippetNow_DAO().getSnippetRecord(record.sys_id);
-		console.log("Get a snippet");
+		//console.log("Get a snippet");
 	} else {
 		
 		/*data.snippet = {};
@@ -1094,11 +1094,11 @@
 		data.snippet.type.display_value = '';
 		data.snippet.type.value = '';*/
 	}
-	console.log(data.snippet);
+	//console.log(data.snippet);
 	data.tagList = new SnippetNow_DAO().getTagList();
 	data.current_user = gs.getUserID();
 	data.hasRole = new SnippetNow_DAO().checkRoles(data.current_user);
-	$sp.log(data.hasRole);
+	//$sp.log(data.hasRole);
 	
 	data.help = new SnippetNow_DAO().getAssocHelp();
 	data.types = new SnippetNow_DAO().getTypeApps('x_92893_snippetnow_snippet_type','type','x_92893_snippetnow_table');
@@ -1212,14 +1212,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-11-24 20:16:40</sys_created_on>
         <sys_id>a243f4c3dbea4300dfa77fcfbf96197c</sys_id>
-        <sys_mod_count>461</sys_mod_count>
+        <sys_mod_count>462</sys_mod_count>
         <sys_name>SnippetNow Editor</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_a243f4c3dbea4300dfa77fcfbf96197c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-04-25 22:19:50</sys_updated_on>
+        <sys_updated_on>2019-04-26 19:22:11</sys_updated_on>
         <template><![CDATA[<div ng-show="data.hasRole">
 <!-- your widget template -->
   <!--<div class="panel panel-primary">-->
