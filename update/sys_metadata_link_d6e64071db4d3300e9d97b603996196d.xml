@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
+    <sys_metadata_link action="INSERT_OR_UPDATE">
+        <directory>update</directory>
+        <documentkey>a2e57399db813300e9d97b603996196d</documentkey>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="x_92893_snippetnow_snippetnow_properties">
+    <x_92893_snippetnow_snippetnow_properties action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <property>slack.messaging.insert.record.webHook</property>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-04-25 22:58:01</sys_created_on>
+        <sys_id>a2e57399db813300e9d97b603996196d</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-04-25 23:00:51</sys_updated_on>
+        <value>https://hooks.slack.com/services/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</value>
+        <value_type>URL</value_type>
+    </x_92893_snippetnow_snippetnow_properties>
+</record_update>
+]]></payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-04-26 18:49:39</sys_created_on>
+        <sys_id>d6e64071db4d3300e9d97b603996196d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Created 2019-04-25 15:58:01</sys_name>
+        <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
+        <sys_update_name>sys_metadata_link_d6e64071db4d3300e9d97b603996196d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-04-26 18:49:39</sys_updated_on>
+        <tablename>x_92893_snippetnow_snippetnow_properties</tablename>
+    </sys_metadata_link>
+</record_update>

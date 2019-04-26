@@ -91,10 +91,19 @@
 	}
 
 	$scope.showNewsAndSuggestions = function(topic) {
+		var obj;
+		if (!topic) {
+			console.log("News",c.data.help[topic]);
+			obj = c.data.help[topic];
+			obj.topic = topic;
+		} else {
+			obj = {};
+			obj.title = "News";
+			obj.body = "There is currently no news.";
+			obj.topic = "news_updates";
+			
+		}
 		
-		console.log("News",c.data.help[topic]);
-		var obj = c.data.help[topic];
-		obj.topic = topic;
 		c.openModal('showHelpControls',obj);
 
 	}
@@ -261,14 +270,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-11-22 05:28:57</sys_created_on>
         <sys_id>43d4d706db220300dfa77fcfbf9619ef</sys_id>
-        <sys_mod_count>254</sys_mod_count>
+        <sys_mod_count>260</sys_mod_count>
         <sys_name>SnippetNow Controls</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_43d4d706db220300dfa77fcfbf9619ef</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-09-17 03:09:07</sys_updated_on>
+        <sys_updated_on>2019-04-26 15:06:04</sys_updated_on>
         <template><![CDATA[<div class="" ng-if="c.data.hasRole">
   <!-- your widget template -->
   

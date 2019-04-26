@@ -179,6 +179,20 @@
     $scope.returnFirst = function(str) {
         return str.charAt(0).toUpperCase();
     }
+	
+	$scope.truncate = function(string) {
+		var len = 25;
+		var s = string.split(" ");
+		var r;
+		
+		if(s.length > len){
+			s = s.slice(0, len);
+			r = s.join(" ") + "...";
+		} else {
+			r = string;
+		}
+		return r;
+	}
 
     function findWithAttr(array, attr, value) {
         for (var i = 0; i < array.length; i += 1) {
@@ -321,14 +335,14 @@ hr {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-11-22 05:47:57</sys_created_on>
         <sys_id>2239570adb220300dfa77fcfbf96192c</sys_id>
-        <sys_mod_count>408</sys_mod_count>
+        <sys_mod_count>413</sys_mod_count>
         <sys_name>SnippetNow List</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy/>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sp_widget_2239570adb220300dfa77fcfbf96192c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-09-17 02:32:31</sys_updated_on>
+        <sys_updated_on>2019-04-26 15:14:23</sys_updated_on>
         <template><![CDATA[<div ng-if="c.data.hasRole">
 <!-- your widget template -->
   <div class="input-group" style="padding-bottom: 10px;">
@@ -341,7 +355,8 @@ hr {
     <a class="snippet" ng-repeat="record in filterData = (snippet.records | filter : searchRecords.search) | limitTo:6:6*(currentPage-1)" class="list-group-item" ng-class="{active : activeItem === record}" ng-click="setActive(record)">
     <!--<a ng-repeat="record in snippet.records.slice(((currentPage-1)*itemsPerPage), ((currentPage)*itemsPerPage)) | filter:searchRecords as totalItems" class="list-group-item ">-->
       <div class="pull-right">
-      	<div><sn-avatar class="avatar-small-medium" primary="record.created_by.sys_id" /></div>  
+      	<!--<div uib-tooltip="{{record.created_by.name}}"><sn-avatar class="avatar-small-medium" primary="record.created_by.sys_id" /></div>-->  
+        <div><sn-avatar class="avatar-small-medium" primary="record.created_by.sys_id" /></div>
       </div>
       
     	<div class="snippet-title">
@@ -350,7 +365,7 @@ hr {
         </h2>
       </div> 
       <div class="snippet-description">
-        {{record.description}}
+        {{truncate(record.description)}}
       </div>
       <span ng-if="needHR(record)"><hr/></span>
       <div class="snippet-info">

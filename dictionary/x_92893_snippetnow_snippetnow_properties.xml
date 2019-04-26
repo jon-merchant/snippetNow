@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="SnippetNow Properties" max_length="40" name="x_92893_snippetnow_snippetnow_properties" type="collection">
+        <element label="Active" max_length="40" name="active" type="boolean"/>
+        <element label="Property" max_length="255" name="property" type="string"/>
+        <element label="Value" max_length="1000" name="value" type="string"/>
+        <element label="Value Type" max_length="40" name="value_type" type="string"/>
+    </element>
+</database>

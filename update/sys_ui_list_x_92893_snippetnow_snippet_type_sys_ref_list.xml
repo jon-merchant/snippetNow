@@ -3,7 +3,7 @@
         <sys_ui_list_element action="INSERT_OR_UPDATE">
             <average_value>false</average_value>
             <element>name</element>
-            <list_id display_value="x_92893_snippetnow_snippet_type" element="NULL" name="x_92893_snippetnow_snippet_type" parent="NULL" relationship="NULL" sys_domain="global" view="840d3162b92013006517ce7df7ee468d">5b7a8ba6db490300dfa77fcfbf96196d</list_id>
+            <list_id display_value="x_92893_snippetnow_snippet_type" element="NULL" name="x_92893_snippetnow_snippet_type" parent="NULL" relationship="NULL" sys_domain="global" view="f83811707420330078509adcc48c879b">5b7a8ba6db490300dfa77fcfbf96196d</list_id>
             <max_value>false</max_value>
             <min_value>false</min_value>
             <position>0</position>
@@ -40,7 +40,7 @@
             <sys_updated_by>admin</sys_updated_by>
             <sys_updated_on>2017-09-10 04:26:08</sys_updated_on>
             <sys_user/>
-            <view display_value="Reference List" name="sys_ref_list">840d3162b92013006517ce7df7ee468d</view>
+            <view display_value="Reference List" name="sys_ref_list">f83811707420330078509adcc48c879b</view>
             <view_name/>
         </sys_ui_list>
     </sys_ui_list>

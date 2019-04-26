@@ -3,7 +3,6 @@
         <access>public</access>
         <active>true</active>
         <api_name>x_92893_snippetnow.SnippetNow_DAO</api_name>
-        <caller_access/>
         <client_callable>true</client_callable>
         <description/>
         <name>SnippetNow_DAO</name>
@@ -561,6 +560,141 @@ SnippetNow_DAO.prototype = {
         } 
         return false;
     },
+	
+	useSlackMessagingOnInsert: function() {
+		/****************
+		* Are we using it or not?
+		* Via Business Rule on Insert
+		****************/
+		
+		var bool = false;
+		var gr = new GlideRecord('x_92893_snippetnow_snippetnow_properties');
+		gr.addQuery("property","slack.messaging.insert.record.use");
+		gr.query();
+		while(gr.next()) {
+			bool = (gr.getDisplayValue('value') == 'true');
+		}
+		return bool;
+	},
+	
+	slackMessageOnInsertWebHook: function() {
+		/*************
+		* get the webhook property
+		*************/
+		var wh = "";
+		var gr = new GlideRecord('x_92893_snippetnow_snippetnow_properties');
+		gr.addQuery("property","slack.messaging.insert.record.webHook");
+		gr.query();
+		while(gr.next()) {
+			wh = gr.getDisplayValue('value');
+		}
+		return wh;
+	},
+	
+	slackMessageHelper: function() {
+		/*************
+		* get the user for who to reach out to if you need access
+		*************/
+		
+		var hm = "";
+		var gr = new GlideRecord('x_92893_snippetnow_snippetnow_properties');
+		gr.addQuery('property','slack.messaging.global.helperID');
+		gr.query();
+		while(gr.next()) {
+			hm = gr.getDisplayValue('value');
+		}
+		return hm;
+	},
+	
+	slackMessageOnInsertBuilder: function(obj) {
+		/*************
+		* Build the message object
+		************/
+		
+		var message = {
+			"blocks": [
+				{
+					"type": "section",
+					"text": {
+						"type": "mrkdwn",
+						"text": "New Snippet Added!\n\n<"+obj.link+"|"+obj.title+">\n>_"+obj.description+"_"
+					},
+					"accessory": {
+						"type": "image",
+						"image_url": "https://66.media.tumblr.com/1921bcd13e12643771410200a322cb0e/tumblr_ogs5bcHWUc1udh5n8o1_500.gif",
+						"alt_text": "Carlton!"
+					}
+				},
+				{
+				"type": "context",
+				"elements": [
+				{
+					"type": "mrkdwn",
+					"text": "*Created By:* "+obj.sys_created_by+"\nIf you don't have access, reach out to <@"+obj.helperID+">"
+				}
+				]
+			}
+			]
+		};
+		message = JSON.stringify(message);
+		return message;
+		
+	},
+	
+	slackMessageOnInsert: function(record) {
+		
+		/***************
+		* Let's set up the message on insert
+		* need to get a few properties
+		***************/
+		var webHook = this.slackMessageOnInsertWebHook();
+		var instance = gs.getProperty('glide.servlet.uri');
+		var message = {
+			
+			link: instance + "sp?id=snippetNow&spa=1&sys_id="+record.sys_id,
+			helperID: this.slackMessageHelper(),
+			title: record.title,
+			description: this.truncate(record.description),
+			sys_created_by: record.sys_created_by,
+			
+		};
+		
+		var slackMessage = this.slackMessageOnInsertBuilder(message);
+		
+		gs.info(">>> slackMessageOnInsert message: "+JSON.stringify(message));
+		gs.info(">>> slackMessageOnInsert slackMessage: "+slackMessage);
+		
+		var request = new sn_ws.RESTMessageV2();
+		request.setHttpMethod("POST");
+		request.setEndpoint(webHook);
+		request.setRequestHeader("Accept","application/json");
+		request.setRequestHeader('Content-Type','application/json');
+		//OR METHOD # request.setEndpoint('SLACK_EndpointURL');
+		
+		// Your message
+		var reqBody = slackMessage;
+		request.setRequestBody(reqBody);
+		
+		var response = request.executeAsync();
+		var responseBody = response.getBody();
+		gs.info(">>> slackMessageOnInsert response: "+JSON.stringify(responseBody));
+		
+		
+	},
+			
+	truncate: function(string) {
+		var len = 25;
+		var s = string.split(" ");
+		var r;
+		
+		if(s.length > len){
+			s = s.slice(0, len);
+			r = s.join(" ") + "...";
+		} else {
+			r = string;
+		}
+		return r;
+	},
 
     type: 'SnippetNow_DAO'
 };]]></script>
@@ -568,13 +702,13 @@ SnippetNow_DAO.prototype = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-09-10 19:28:15</sys_created_on>
         <sys_id>54e89e7edbcd0300dfa77fcfbf96191b</sys_id>
-        <sys_mod_count>183</sys_mod_count>
+        <sys_mod_count>202</sys_mod_count>
         <sys_name>SnippetNow_DAO</sys_name>
         <sys_package display_value="SnippetNow" source="x_92893_snippetnow">86490346db010300dfa77fcfbf9619c2</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="SnippetNow">86490346db010300dfa77fcfbf9619c2</sys_scope>
         <sys_update_name>sys_script_include_54e89e7edbcd0300dfa77fcfbf96191b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-09-19 21:57:41</sys_updated_on>
+        <sys_updated_on>2019-04-26 18:32:06</sys_updated_on>
     </sys_script_include>
 </record_update>
