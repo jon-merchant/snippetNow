@@ -24,14 +24,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-09-08 15:03:55</sys_created_on>
         <sys_id>86490346db010300dfa77fcfbf9619c2</sys_id>
-        <sys_mod_count>9</sys_mod_count>
+        <sys_mod_count>10</sys_mod_count>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-04-26 18:52:37</sys_updated_on>
+        <sys_updated_on>2019-04-26 19:23:46</sys_updated_on>
         <template/>
         <trackable>true</trackable>
         <user_role display_value="x_92893_snippetnow.user" name="x_92893_snippetnow.user">92490f86db010300dfa77fcfbf9619a7</user_role>
         <vendor/>
         <vendor_prefix/>
-        <version>1.4.0</version>
+        <version>1.4.1</version>
     </sys_app>
 </record_update>
